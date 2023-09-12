@@ -1,8 +1,8 @@
 using BaXmlSplitter.Properties;
 using System.Collections;
 using System.Drawing.Text;
+using System.Linq;
 using System.Management.Automation;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
 namespace BaXmlSplitter
@@ -16,40 +16,23 @@ namespace BaXmlSplitter
         private string logFile;
         private string? xmlSourceFile;
         private string? xmlContent;
+        private BaXmlDocument xml = new()
+        {
+            ResolveEntities = false
+        };
         private string? uowStatesFile;
         private string? uowContent;
         private string? outputDir;
         private string? xpath;
         private Dictionary<string, Dictionary<int, UowState>>? statesPerProgram;
         private string? Program;
-        private const string DEFAULT_OUTPUT_DIR = "WIPItems";
+        private const string DEFAULT_OUTPUT_DIR = "WIP";
         private static readonly string[] PROGRAMS = new string[] { "B_IFM", "CH604PROD", "CTALPROD", "LJ4045PROD", "GXPROD" };
+        private static readonly TimeSpan TIMEOUT = TimeSpan.FromSeconds(15);
+        private const string UOW_PATTERN = @"\t*(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = ""(?<state>[^""]*)""\)$";
+        private static readonly Regex UOW_REGEX = new(UOW_PATTERN, RegexOptions.Compiled | RegexOptions.Multiline, TIMEOUT);
         private const string TIMESTAMP_FORMAT = "HH:mm:ss.fffffff";
-        private record class UowState
-        {
-            public string? XPath { get; set; }
-            public string? TagName { get; set; }
-            public string? Key { get; set; }
-            public string? Resource { get; set; }
-            public string? Title { get; set; }
-            public string? Level { get; set; }
-            public string? StateName { get; set; }
-            public int? StateValue { get; set; }
-            public string? Remark { get; set; }
-            public UowState(string tagName)
-            {
-                TagName = tagName;
-            }
-            public UowState(object? stateName, object? remark)
-            {
-                StateName = (string)(stateName ?? "");
-                Remark = (string)(remark ?? "");
-            }
-
-            public override string ToString() => string.Join(", ", GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
-            .Where(field => field.GetValue(this) != null)
-            .Select(field => $"{field.Name}={field.GetValue(this)}"));
-        }
+        private static readonly string[] NEWLINE = new[] { "\r\n", "\n" };
         public static bool IsBinary(string path)
         {
             FileInfo fi = new(path);
@@ -81,19 +64,11 @@ namespace BaXmlSplitter
             CR = (char)13 /** Carriage return character */,
             SUB = (char)26 /** Substitute character */
         }
-        enum Severity
-        {
-            Hint,
-            Warning,
-            Error,
-            Fatal
-        };
-
         private void LoadFonts()
         {
             uint dummy = 0;
             var seventyTwoFonts = new byte[][] { Resources._72_Black, Resources._72_Bold, Resources._72_BoldItalic, Resources._72_Condensed, Resources._72_CondensedBold, Resources._72_Italic, Resources._72_Light, Resources._72_Monospace_Bd, Resources._72_Monospace_Rg, Resources._72_Regular };
-            for(int i = 0; i < seventyTwoFonts.Length; i++)
+            for (int i = 0; i < seventyTwoFonts.Length; i++)
             {
                 IntPtr data = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(seventyTwoFonts[i].Length);
                 try
@@ -108,11 +83,19 @@ namespace BaXmlSplitter
                 }
             }
         }
-        private void DeSerializeStates()
+        public XmlSplitter()
+        {
+            InitializeComponent();
+            logFile = Path.Combine(Path.GetTempPath(), string.Format("BaXmlSplitter-{0}.log", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fffffff")));
+            File.Move(Path.GetTempFileName(), logFile);
+            WriteLog($"Started XML splitting tool with real time log at '{logFile}'");
+        }
+
+        internal static Dictionary<string, Dictionary<int, UowState>>? DeSerializeStates()
         {
             dynamic deSerializedStatesPerProgram = PSSerializer.Deserialize(Resources.StatesPerProgramXml);
             ICollection Programs = deSerializedStatesPerProgram.Keys;
-            statesPerProgram = new(Programs.Count);
+            Dictionary<string, Dictionary<int, UowState>> __statesPerProgram = new(Programs.Count);
             foreach (var Program in Programs)
             {
                 dynamic stateNames = deSerializedStatesPerProgram[Program];
@@ -128,40 +111,102 @@ namespace BaXmlSplitter
                     {
                         continue;
                     }
-                    UowState uowState = new(stateNameAndRemark.statename, stateNameAndRemark.remark);
-                    states.Add((int)StateValue, uowState);
+                    UowState uowState = new(value: StateValue, name: stateNameAndRemark.statename, remark: stateNameAndRemark.remark);
+                    states.Add(StateValue, uowState);
                 }
-                statesPerProgram.Add((string)Program, states);
+                __statesPerProgram.Add((string)Program, states);
             }
-        }
-        public XmlSplitter()
-        {
-            InitializeComponent();
-            logFile = Path.GetTempFileName();
-            WriteLog($"Start XML splitting tool with log at '{logFile}'");
+            return __statesPerProgram;
         }
 
+        internal static UowState[]? ParseUowContent(string? uowContent, string? Program, Dictionary<string, Dictionary<int, UowState>>? statesPerProgram, string? uowStatesFile, out List<LogMessage> logMessages, out Hashtable statesInManual, out string foundDoctype)
+        {
+            UowState[] states;
+            statesInManual = new();
+            logMessages = new();
+            if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(Program) && statesPerProgram != null && statesPerProgram[Program] != null)
+            {
+                foundDoctype = uowContent.Split(NEWLINE, StringSplitOptions.None)[0];
+                var stateMatches = UOW_REGEX.Matches(uowContent);
+                if (stateMatches.Count == 0)
+                {
+                    logMessages.Add(new LogMessage($"Invalid UOW file '{uowStatesFile}' chosen", Severity.Error));
+                    return null;
+                }
+                states = new UowState[stateMatches.Count];
+                for (int i = 0; i < stateMatches.Count; i++)
+                {
+                    states[i] = new(tag: stateMatches[i].Groups["tag"].Value);
+                    string[] xpaths = new string[] { $"//{states[i].TagName}", $"//{states[i].TagName?.ToLowerInvariant()}" };
+
+                    if (stateMatches[i].Groups["key"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["key"].Value))
+                    {
+                        states[i].Key = stateMatches[i].Groups["key"].Value;
+                        xpaths = xpaths.Select(xpath => $"{xpath}[contains(@key,'{states[i].Key}') or contains(@key,'{states[i].Key?.ToLowerInvariant()}')]").ToArray();
+                    }
+                    if (stateMatches[i].Groups["rs"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["rs"].Value))
+                    {
+                        states[i].Resource = stateMatches[i].Groups["rs"].Value;
+                    }
+                    if (stateMatches[i].Groups["title"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["title"].Value))
+                    {
+                        states[i].Title = stateMatches[i].Groups["title"].Value;
+                    }
+                    if (stateMatches[i].Groups["lvl"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["lvl"].Value))
+                    {
+                        states[i].Level = stateMatches[i].Groups["lvl"].Value;
+                    }
+                    if (stateMatches[i].Groups["state"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["state"].Value) && int.TryParse(stateMatches[i].Groups["state"].Value, out int stateValue))
+                    {
+                        var state = statesPerProgram[Program][stateValue];
+                        state.StateValue = states[i].StateValue = stateValue;
+                        if (!statesInManual.ContainsKey(stateValue))
+                        {
+                            statesInManual.Add(stateValue, state);
+                        }
+                        states[i].StateName = state.StateName;
+                        states[i].Remark = state.Remark;
+                    }
+                    states[i].XPath = string.Join('|', xpaths);
+                }
+                return states;
+            }
+            else
+            {
+                foundDoctype = "";
+                return null;
+            }
+        }
         private async void XmlSplitter_Load(object sender, EventArgs e)
         {
             await Task.Run(() =>
             {
                 LoadFonts();
-                DeSerializeStates();
+                statesPerProgram = DeSerializeStates();
             });
             WriteLog("Finished initializing.");
         }
 
-        private void WriteLog(string message, Severity severity = Severity.Hint, bool NoNewLine = false)
+        private void WriteLog(string message, Severity severity = Severity.Hint, bool NoNewLine = false, bool SkipFile = false)
         {
-            using FileStream log = File.Open(logFile, FileMode.Append);
-            using StreamWriter logWriter = new(log);
             string timestamped = string.Format("{0}:\t{1}", DateTime.Now.ToString(TIMESTAMP_FORMAT), message + (NoNewLine ? "" : Environment.NewLine));
-            logWriter.Write(timestamped);
-            logWriter.Flush();
-            logWriter.Close();
-            logWriter.Dispose();
-            logTextBox.Text += timestamped;
-            logTextBox.Select(0, logTextBox.Text.Length);
+            if (!SkipFile)
+            {
+                try
+                {
+                    using FileStream log = File.Open(logFile, FileMode.Append);
+                    using StreamWriter logWriter = new(log);
+                    logWriter.Write(timestamped);
+                    logWriter.Flush();
+                    logWriter.Close();
+                    logWriter.Dispose();
+                }
+                catch (Exception e)
+                {
+                    WriteLog($"Unable to write to log file at {logFile}: {e.Message}", Severity.Error, false, true);
+                }
+            }
+            logTextBox.SuspendLayout();
             switch (severity)
             {
                 case Severity.Hint:
@@ -177,8 +222,9 @@ namespace BaXmlSplitter
                     logTextBox.SelectionColor = Color.Red;
                     break;
             }
-            // scroll to the bottom of the logTextBox
-            logTextBox.SelectionStart = logTextBox.Text.Length;
+            logTextBox.AppendText(timestamped);
+            logTextBox.ScrollToCaret();
+            logTextBox.ResumeLayout();
         }
 
         private static string BrowseForFile(string? filter = null)
@@ -199,23 +245,7 @@ namespace BaXmlSplitter
             }
         }
 
-        private static bool ReadText(out string content, string filename, out Exception? exception)
-        {
-            try
-            {
-                content = File.ReadAllText(filename);
-                exception = null;
-                return true;
-            }
-            catch (IOException e)
-            {
-                content = string.Empty;
-                exception = e;
-                return false;
-            }
-        }
-
-        private static void ShowWarningBox(string message, string caption)
+        private static void ShowWarningBox(string message, string? caption)
         {
             MessageBoxButtons button = MessageBoxButtons.OK;
             MessageBoxIcon icon = MessageBoxIcon.Warning;
@@ -254,6 +284,16 @@ namespace BaXmlSplitter
             }
         }
 
+        private void XPathTextBox_TextChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(xpathTextBox.Text))
+            {
+                xpathTextBox.Visible = true;
+            } else
+            {
+                xpathTextBox.Visible = false;
+            }
+        }
         private async void XmlSelectTextBox_TextChanged(object sender, EventArgs e)
         {
             xmlSelectTextBox.Select(xmlSelectTextBox.Text.Length, 0);
@@ -274,8 +314,16 @@ namespace BaXmlSplitter
                     OutDirTextBox_TextChanged(sender, e);
                 }
                 WriteLog(string.Format("Reading XML file '{0}'", Path.GetFileName(xmlSourceFile)));
-                await Task.Run(() => TextFileChosen(out xmlContent, xmlSelectTextBox.Text, xmlSelectTextBox, "XML") );
-                WriteLog("Done reading XML file into memory.");
+                //TextFileChosen(out xmlContent, xmlSelectTextBox.Text, xmlSelectTextBox, "XML");
+                xmlContent = await File.ReadAllTextAsync(xmlSourceFile);
+                if (string.IsNullOrEmpty(xmlContent) && new FileInfo(xmlSourceFile).Length > 0)
+                {
+                    WriteLog("Unable to read XML file. Please check that the file is available and not locked by another process.", Severity.Error);
+                }
+                else
+                {
+                    WriteLog("Done reading XML file into memory.");
+                }
             }
         }
         private async void UowStatesTextBox_TextChanged(object sender, EventArgs e)
@@ -290,15 +338,22 @@ namespace BaXmlSplitter
                 }
                 uowStatesFile = uowTextBox.Text;
                 WriteLog($"Reading UOW file '{Path.GetFileName(uowStatesFile)}'");
-                await Task.Run(()=> TextFileChosen(out uowContent, uowTextBox.Text, uowTextBox, "UOW states") );
-                WriteLog("Done reading UOW file into memory.");
+                uowContent = await File.ReadAllTextAsync(uowStatesFile);
+                if (string.IsNullOrEmpty(uowContent) && new FileInfo(uowStatesFile).Length > 0)
+                {
+                    WriteLog("Unable to read UOW states file. Please check that the file is available and not locked by another process.", Severity.Error);
+                }
+                else
+                {
+                    WriteLog("Done reading UOW file into memory.");
+                }
             }
         }
 
         private void OutDirTextBox_TextChanged(object sender, EventArgs e)
         {
             outDirTextBox.Select(outDirTextBox.Text.Length, 0);
-            if(outputDir != outDirTextBox.Text)
+            if (outputDir != outDirTextBox.Text)
             {
                 // if the out dir does not exist, set outDirWillBeCreated.Visible to true
                 if (!string.IsNullOrWhiteSpace(outDirTextBox.Text) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(outDirTextBox.Text.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute))
@@ -320,19 +375,19 @@ namespace BaXmlSplitter
 
         private async void ExecuteSplit(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(uowTextBox.Text) || string.IsNullOrEmpty(uowContent))
+            if (string.IsNullOrEmpty(uowTextBox.Text) && string.IsNullOrEmpty(uowContent))
             {
                 ShowWarningBox("Please select a UOW states file before executing the split.", "Cannot proceed: No UOW states provided.");
                 WriteLog("Prematurely attempted to begin splitting prior to specifying UOW states", Severity.Warning);
                 return;
             }
-            if (string.IsNullOrEmpty(Program) || string.IsNullOrEmpty(programsComboBox.Text))
+            if (string.IsNullOrEmpty(Program) && string.IsNullOrEmpty(programsComboBox.Text))
             {
                 ShowWarningBox("Please select a program before executing the split.", "Cannot proceed: No program specified.");
                 WriteLog("Prematurely attempted to begin splitting prior to specifying program", Severity.Warning);
                 return;
             }
-            if (xmlSourceFile == null || string.IsNullOrEmpty(xmlContent))
+            if (xmlSourceFile == null && string.IsNullOrEmpty(xmlContent))
             {
                 ShowWarningBox("Please select an XML file before executing the split.", "Cannot proceed: No XML file provided.");
                 WriteLog("Prematurely attempted to begin splitting prior to specifying XML file", Severity.Warning);
@@ -344,15 +399,11 @@ namespace BaXmlSplitter
                 WriteLog("Prematurely attempted to begin splitting prior to specifying output directory", Severity.Warning);
                 return;
             }
-            if (string.IsNullOrEmpty(xpath))
-            {
-                await Task.Run(()=> ProcessUowStates());
-            }
-            if (xmlContent != null && xpath != null && !string.IsNullOrEmpty(xmlSourceFile))
+            if (!string.IsNullOrEmpty(xmlContent) && !string.IsNullOrEmpty(xmlSourceFile))
             {
                 execButton.Visible = false;
                 // show the progress bar
-                ProgressBar progressBar = new()
+                using ProgressBar progressBar = new()
                 {
                     Location = execButton.Location,
                     Size = execButton.Size,
@@ -366,47 +417,59 @@ namespace BaXmlSplitter
                     Maximum = 100,
                     Value = 0
                 };
-                XmlDocument xml = new();
-                xml.LoadXml(xmlContent);
-                var nodes = xml.SelectNodes(xpath);
-                WriteLog(string.Format("Splitting XML file '{0}' into {1} fragments", Path.GetFileName(xmlSourceFile), nodes?.Count));
-                for (int i = 0; i < nodes?.Count; i++)
+                stepsPanel.Controls.Add(progressBar);
+
+                await Task.Run(() => xml.LoadXml(xmlContent));
+
+                if (string.IsNullOrEmpty(xpath))
                 {
-                    progressBar.Value = (int)(100 * (i + 1) / nodes.Count);
-                    XmlDocument xmlFragment = new();
-                    if (nodes[i] == null)
+                    var logMessages = await Task.Run(() => ProcessUowStates(sender, e));
+                    foreach (LogMessage logMessage in logMessages)
                     {
-                        continue;
+                        WriteLog(logMessage.Message, logMessage.Severity);
+                        if (logMessage.Severity > Severity.Hint)
+                        {
+                            ShowWarningBox(logMessage.Message, Enum.GetName(logMessage.Severity));
+                        }
                     }
-                    _ = xmlFragment.AppendChild(xmlFragment.ImportNode(nodes[i]!, true));
-                    var key = nodes[i]?.Attributes?["key"]?.Value;
-                    if (key != null)
-                    {
-                        var outPath = Path.Combine(outDirTextBox.Text, string.Format("{0}-{1}.xml", Path.GetFileNameWithoutExtension(xmlSourceFile), key));
-                        // write the fragment to the outPath
-                        xmlFragment.Save(outPath);
-                        WriteLog(string.Format("Wrote fragment to '{0}'", outPath), Severity.Hint);
-                    }
-                    else
-                    {
-                        WriteLog(string.Format("Unable to get 'key' attribute from node {0}", nodes[i]!.Name), Severity.Hint);
-                    }
-
                 }
-            }
-        }
+                if (string.IsNullOrEmpty(xpath))
+                {
+                    WriteLog("Stopping split. No XPath.", Severity.Error);
+                } else
+                {
 
-        private void TextFileChosen(out string content, string path, TextBox textBox, string fileDescription)
-        {
-            if (ReadText(out content, path, out Exception? exception))
-            {
-                textBox.Text = path;
-                textBox.Select(textBox.Text.Length, 0);
-            }
-            else
-            {
-                var message = exception?.Message;
-                ShowWarningBox(string.Format("Unable to read {0} file '{1}'\n{2}", fileDescription, path, message), string.Format("{0} file '{1}' unreadable", fileDescription, path));
+                    var nodes = await Task.Run(() => xml.SelectNodes(xpath));
+                    WriteLog(string.Format("Splitting XML file '{0}' into {1} fragments", Path.GetFileName(xmlSourceFile), nodes?.Count));
+                    for (int i = 0; i < nodes?.Count; i++)
+                    {
+                        progressBar.Value = (int)(100 * (i + 1) / nodes.Count);
+                        BaXmlDocument xmlFragment = new()
+                        {
+                            ResolveEntities = false
+                        };
+                        if (nodes[i] == null)
+                        {
+                            continue;
+                        }
+                        _ = await Task.Run(() => xmlFragment.AppendChild(xmlFragment.ImportNode(nodes[i]!, true)));
+                        var key = nodes[i]?.Attributes?["key"]?.Value;
+                        if (key != null)
+                        {
+                            var outPath = Path.Combine(outDirTextBox.Text, string.Format("{0}-{1}.xml", Path.GetFileNameWithoutExtension(xmlSourceFile), key));
+                            // write the fragment to the outPath
+                            await Task.Run(() => xmlFragment.Save(outPath));
+                            WriteLog(string.Format("Wrote fragment to '{0}'", outPath), Severity.Hint);
+                        }
+                        else
+                        {
+                            WriteLog(string.Format("Unable to get 'key' attribute from node {0}", nodes[i]!.Name), Severity.Hint);
+                        }
+
+                    }
+                }
+                progressBar.Visible = false;
+                execButton.Visible = true;
             }
         }
 
@@ -429,7 +492,7 @@ namespace BaXmlSplitter
                         }
                         else
                         {
-                            if (IsBinary(path) && !ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", path), string.Format("{0} appears to be binary", (new FileInfo(path)).Name)))
+                            if (IsBinary(path) && !ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", path), string.Format("{0} appears to be binary", Path.GetFileName(path))))
                             {
                                 continue;
                             }
@@ -446,113 +509,66 @@ namespace BaXmlSplitter
             }
         }
 
-        private void ProcessUowStates()
+        private LogMessage[] ProcessUowStates(object sender, EventArgs e)
         {
-            if (uowContent != null && !string.IsNullOrEmpty(Program))
+            List<LogMessage> logMessages = new()
             {
-                WriteLog("Parsing units of work states file");
-                var stateMatches = Regex.Matches(uowContent, @"\t*(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = ""(?<state>[^""]*)""\)$", RegexOptions.Multiline);
-                if(stateMatches.Count == 0)
+                new LogMessage("Parsing units of work states file")
+            };
+            UowState[]? states = ParseUowContent(uowContent, Program, statesPerProgram, uowStatesFile, out List<LogMessage> parseUowLogMessages, out Hashtable statesInManual, out string impliedDoctype);
+            if (states == null)
+            {
+                logMessages.Add(new LogMessage("Not ready to process unit of work states. Check that UOW states file was loaded and parsed properly.", Severity.Warning));
+            }
+            else
+            {
+                // check that the root node name is the same as the uowStatesFileDoctype
+                if (xml.DocumentElement == null || string.IsNullOrEmpty(xml.DocumentElement.Name))
                 {
-                    ShowWarningBox("The file chosen as the units of work states does not appear to be valid; please choose another", "Invalid UOW file");
-                    WriteLog($"Invalid UOW file '{uowStatesFile}' chosen", Severity.Error);
-                    return;
+                    logMessages.Add(new LogMessage("No root node name identifiable in XML content. Please check the XML is correct.", Severity.Error));
+                    return logMessages.ToArray();
                 }
-                var states = new UowState[stateMatches.Count];
-                Hashtable statesInManual = new();
-                for (int i = 0; i < stateMatches.Count; i++)
+                else if (string.IsNullOrEmpty(impliedDoctype))
                 {
-                    states[i] = new(stateMatches[i].Groups["tag"].Value);
-                    string[] xpaths = new string[] { $"//{states[i].TagName}", $"//{states[i].TagName?.ToLowerInvariant()}" };
-
-                    if (stateMatches[i].Groups["key"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["key"].Value))
-                    {
-                        states[i].Key = stateMatches[i].Groups["key"].Value;
-                        xpaths = xpaths.Select(xpath => $"{xpath}[contains(@key,'{states[i].Key}') or contains(@key,'{states[i].Key?.ToLowerInvariant()}')]").ToArray();
-                    }
-                    if (stateMatches[i].Groups["rs"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["rs"].Value))
-                    {
-                        states[i].Resource = stateMatches[i].Groups["rs"].Value;
-                    }
-                    if (stateMatches[i].Groups["title"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["title"].Value))
-                    {
-                        states[i].Title = stateMatches[i].Groups["title"].Value;
-                    }
-                    if (stateMatches[i].Groups["lvl"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["lvl"].Value))
-                    {
-                        states[i].Level = stateMatches[i].Groups["lvl"].Value;
-                    }
-                    if (stateMatches[i].Groups["state"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["state"].Value) && int.TryParse(stateMatches[i].Groups["state"].Value, out int stateValue))
-                    {
-                        var state = statesPerProgram[Program][stateValue];
-                        if (!statesInManual.ContainsKey(stateValue))
-                        {
-                            statesInManual.Add(stateValue, state);
-                        }
-                        states[i].StateValue = stateValue;
-                        states[i].StateName = state.StateName;
-                        states[i].Remark = state.Remark;
-                    }
-                    states[i].XPath = string.Join('|', xpaths);
+                    logMessages.Add(new LogMessage("The UOW states file was empty. Please check the UOW states file is correct.", Severity.Error));
+                    return logMessages.ToArray();
                 }
-                WriteLog(string.Format("Found {0} distinct work states in the manual: {1}", statesInManual.Count, string.Join("; ", statesInManual.Values.Cast<UowState>().Select(uow => uow.ToString()))));
-                var listView = new ListView
+                else if (!xml.DocumentElement.Name.Equals(impliedDoctype,StringComparison.InvariantCultureIgnoreCase))
                 {
-                    BackColor = SystemColors.Control,
-                    BorderStyle = BorderStyle.None,
-                    Dock = DockStyle.Fill,
-                    FullRowSelect = true,
-                    HeaderStyle = ColumnHeaderStyle.Nonclickable,
-                    HideSelection = false,
-                    Location = new Point(0, 0),
-                    MultiSelect = true,
-                    Name = "UOWStatesInManualSelectList",
-                    Size = this.Size,
-                    TabIndex = 0,
-                    UseCompatibleStateImageBehavior = false,
-                    View = View.Details
-                };
-                listView.Columns.AddRange(new ColumnHeader[]
-                {
-                        new ColumnHeader { Name = "Value", Text = "Value", TextAlign = HorizontalAlignment.Right, Width = (int)(Size.Width*0.1111) },
-                        new ColumnHeader { Name = "Name", Text = "Name", TextAlign = HorizontalAlignment.Center, Width = (int)(Size.Width*0.2222) },
-                        new ColumnHeader { Name = "Remark", Text = "Remark", TextAlign = HorizontalAlignment.Left, Width = (int)(Size.Width*0.6667) }
-                });
-                var items = statesInManual.Values.Cast<UowState>().Select(state => new ListViewItem(new string[] { state.StateValue.ToString() ?? "", state.StateName ?? "", state.Remark ?? "" }));
-                listView.Items.AddRange(items.ToArray());
+                    logMessages.Add(new LogMessage(string.Format("Root node name '{0}' does not match UOW states file doctype '{1}'. Please check the UOW states file is correct.", xml.DocumentElement.Name.ToUpperInvariant(), impliedDoctype.ToUpperInvariant()), Severity.Error));
+                    return logMessages.ToArray();
+                }
+                logMessages.Add(new LogMessage(string.Format("Found {0} distinct work states in the manual:\n\t{1}", statesInManual.Count, string.Join("\n\t", statesInManual.Values.Cast<UowState>().Select(uow => uow.ToString())))));
+                var items = statesInManual.Values.Cast<UowState>().ToArray().Select(state => new ListViewItem(new string[] { state.StateValue.ToString() ?? "", state.StateName ?? "", state.Remark ?? "" }));
                 // display the multi select list view
-                var dialog = new Form
+                var dialog = new SelectStates(items.ToArray(), states)
                 {
-                    Text = "Select UOW states from this manual on which to split",
-                    Size = this.Size,
+                    Font = Font,
                     StartPosition = FormStartPosition.CenterParent,
                     Icon = Resources.Icon
-            };
-                dialog.Controls.Add(listView);
-                dialog.AcceptButton = new Button { DialogResult = DialogResult.OK, Text = "OK" };
-                dialog.CancelButton = new Button { DialogResult = DialogResult.Cancel, Text = "Cancel" };
+                };
                 dialog.ShowDialog();
                 if (dialog.DialogResult == DialogResult.OK)
                 {
-                    var selectedIndices = listView.SelectedIndices;
-                    var chosenStatesToSplit = selectedIndices.Cast<int>().Select(index => (statesInManual[index] as UowState)?.StateValue).ToArray();
-                    if (selectedIndices.Count > 0)
+                    var selectedStates = dialog.SelectedStates;
+                    if (selectedStates != null && selectedStates.Length > 0)
                     {
-                        xpathTextBox.Text = xpath = string.Join('|', states.Where(state => chosenStatesToSplit.Contains(state.StateValue)).Select(state => state.XPath));
-                        xpathGroupBox.Visible = true;
+                        xpathTextBox.Text = xpath = string.Join('|', states.Where((UowState state) => selectedStates.Select((UowState state) => state.StateValue).Contains(state.StateValue)).Select(state => state.XPath));
+                        XPathTextBox_TextChanged(sender, e);
                     }
                     else
                     {
-                        ShowWarningBox("Please re-execute the split to select the states.", "No states chosen");
-                        WriteLog("No states chosen to split manual.", Severity.Warning);
+                        logMessages.Add(new LogMessage("No states chosen to split manual.", Severity.Warning));
                     }
                 }
             }
+            return logMessages.ToArray<LogMessage>();
         }
+
 
         private void ProgramGroupBox(object sender, EventArgs e)
         {
-            if(Program != programsComboBox.Text && PROGRAMS.Contains<string>(programsComboBox.Text))
+            if ((string.IsNullOrEmpty(Program) && !string.IsNullOrEmpty(programsComboBox.Text)) || (Program != programsComboBox.Text && PROGRAMS.Contains<string>(programsComboBox.Text)))
             {
                 Program = programsComboBox.Text;
                 WriteLog($"Program chosen for manual: {Program}");
