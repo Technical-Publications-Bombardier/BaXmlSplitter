@@ -1,10 +1,17 @@
-using BaXmlSplitter.Properties;
+﻿using BaXmlSplitter.Properties;
 using System.Collections;
+using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Text;
 using System.Linq;
 using System.Management.Automation;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
+
 namespace BaXmlSplitter
 {
     public partial class XmlSplitter : Form
@@ -14,6 +21,7 @@ namespace BaXmlSplitter
             IntPtr pdv, in uint pcFonts);
         private PrivateFontCollection fonts = new();
         private string logFile;
+        private string? splittingReportHtml;
         private string? xmlSourceFile;
         private string? xmlContent;
         private BaXmlDocument xml = new()
@@ -74,7 +82,7 @@ namespace BaXmlSplitter
                 try
                 {
                     System.Runtime.InteropServices.Marshal.Copy(seventyTwoFonts[i], 0, data, seventyTwoFonts[i].Length);
-                    AddFontMemResourceEx(data, (uint)seventyTwoFonts[i].Length, IntPtr.Zero, in dummy);
+                    _ = AddFontMemResourceEx(data, (uint)seventyTwoFonts[i].Length, IntPtr.Zero, in dummy);
                     fonts.AddMemoryFont(data, seventyTwoFonts[i].Length);
                 }
                 finally
@@ -249,7 +257,7 @@ namespace BaXmlSplitter
         {
             MessageBoxButtons button = MessageBoxButtons.OK;
             MessageBoxIcon icon = MessageBoxIcon.Warning;
-            MessageBox.Show(message, caption, button, icon);
+            _ = MessageBox.Show(message, caption, button, icon);
         }
 
         private static bool ShowConfirmationBox(string message, string caption)
@@ -289,7 +297,8 @@ namespace BaXmlSplitter
             if (!string.IsNullOrEmpty(xpathTextBox.Text))
             {
                 xpathTextBox.Visible = true;
-            } else
+            }
+            else
             {
                 xpathTextBox.Visible = false;
             }
@@ -399,6 +408,20 @@ namespace BaXmlSplitter
                 WriteLog("Prematurely attempted to begin splitting prior to specifying output directory", Severity.Warning);
                 return;
             }
+            // check if outputDir exists, if not, create it
+            if (!Directory.Exists(outputDir))
+            {
+                try
+                {
+                    _ = Directory.CreateDirectory(outputDir);
+                }
+                catch (Exception ex)
+                {
+                    ShowWarningBox(string.Format("Unable to create output directory '{0}': {1}", outputDir, ex.Message), "Cannot proceed: Unable to create output directory.");
+                    WriteLog(string.Format("Unable to create output directory '{0}': {1}", outputDir, ex.Message), Severity.Fatal);
+                    return;
+                }
+            }
             if (!string.IsNullOrEmpty(xmlContent) && !string.IsNullOrEmpty(xmlSourceFile))
             {
                 execButton.Visible = false;
@@ -436,11 +459,82 @@ namespace BaXmlSplitter
                 if (string.IsNullOrEmpty(xpath))
                 {
                     WriteLog("Stopping split. No XPath.", Severity.Error);
-                } else
+                }
+                else
                 {
-
                     var nodes = await Task.Run(() => xml.SelectNodes(xpath));
                     WriteLog(string.Format("Splitting XML file '{0}' into {1} fragments", Path.GetFileName(xmlSourceFile), nodes?.Count));
+                    StringBuilder htmlReportBuilder = new();
+                    _ = htmlReportBuilder.Append($"""
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>Report on Splitting {Path.GetFileNameWithoutExtension(xmlSourceFile)}</title>
+                            <style>
+                        """);
+                    _ = htmlReportBuilder.Append("""
+                                table,
+                                th,
+                                td {
+                                    border: 1px solid black;
+                                    border-collapse: collapse;
+                                }
+
+                                th,
+                                td {
+                                    padding: 5px;
+                                    text-align: left;
+                                }
+
+                                tr:nth-child(even) {
+                                    background-color: #eee;
+                                }
+
+                                tr:nth-child(odd) {
+                                    background-color: #fff;
+                                }
+                                aside {
+                                    background-color: #e7f3fe;
+                                    border-left: 6px solid #2196F3;
+                                    text-align: left;
+                                    padding: 4px;
+                                    -webkit-box-shadow: 2px 2px 4px -1px rgba(0, 0, 0, 0.75);
+                                    -moz-box-shadow: 2px 2px 4px -1px rgba(0, 0, 0, 0.75);
+                                    box-shadow: 2px 2px 4px -1px rgba(0, 0, 0, 0.75);
+                                    margin-bottom: 0.5em;
+                                }
+                                aside::before {
+                                    content: "ⓘ";
+                                    font-weight: bold;
+                                    font-size: 1.5em;
+                                    width: 1.3em;
+                                    position: relative;
+                                    float: left;
+                                    color: #2196F3;
+                                }
+                            </style>
+                        </head>
+                        """);
+                    _ = htmlReportBuilder.Append($"""
+                        <body>
+                            <p>The source XML, '{Path.GetFileName(xmlSourceFile)}', was split into {nodes?.Count} units of work using the XPath query below:</p>
+                            <pre><code>{xpath}</code></pre>
+                            <p> This is the full report of the XML splitting results:</p>
+                            <table>
+                                <caption><p>Table showing the details on each node that was split from the source XML.</p><aside>The opening tag of the parent is built from the parent's name and its attribute name-value pairs. It may be slightly different than how it appears in the original XML.</aside><aside>Note also that "Node" in this context refers to the unit of work as XML element that was split off from the source XML.</aside></caption>
+                                <colgroup><col /><col /><col /><col /><col /><col /></colgroup>
+                                <tr>
+                                    <th>Node Number</th>
+                                    <th>Node Element Name</th>
+                                    <th>'Key' Value</th>
+                                    <th>Immediate Parent Opening Tag</th>
+                                    <th>Full XPath</th>
+                                    <th>Filename of Split</th>
+                                </tr>
+                        """);
+
                     for (int i = 0; i < nodes?.Count; i++)
                     {
                         progressBar.Value = (int)(100 * (i + 1) / nodes.Count);
@@ -452,25 +546,109 @@ namespace BaXmlSplitter
                         {
                             continue;
                         }
+
                         _ = await Task.Run(() => xmlFragment.AppendChild(xmlFragment.ImportNode(nodes[i]!, true)));
                         var key = nodes[i]?.Attributes?["key"]?.Value;
-                        if (key != null)
+                        if (!string.IsNullOrEmpty(key))
                         {
                             var outPath = Path.Combine(outDirTextBox.Text, string.Format("{0}-{1}.xml", Path.GetFileNameWithoutExtension(xmlSourceFile), key));
                             // write the fragment to the outPath
                             await Task.Run(() => xmlFragment.Save(outPath));
                             WriteLog(string.Format("Wrote fragment to '{0}'", outPath), Severity.Hint);
+                            _ = htmlReportBuilder.AppendFormat(@"<tr><!-- Node Number --><td>{0}</td>", i + 1);
+                            _ = htmlReportBuilder.AppendFormat(@"<!-- Node Element Name --><td>{0}</td>", nodes[i]!.Name);
+                            _ = htmlReportBuilder.AppendFormat(@"<!-- 'Key' Value --><td>{0}</td>", key);
+                            XmlNode? parent = nodes[i]!.ParentNode;
+                            string parentTag = String.Empty;
+                            if (parent != null && parent.Attributes != null)
+                            {
+                                parentTag = $"<{parent.Name}";
+                                foreach (XmlAttribute attrib in parent.Attributes)
+                                {
+                                    parentTag += $" {attrib.Name}=\"{attrib.Value}\"";
+                                }
+                                parentTag += ">";
+                            }
+                            else if (parent != null)
+                            {
+                                parentTag = $"<{parent.Name}>";
+                            }
+                            _ = htmlReportBuilder.AppendFormat(@"<!-- Immediate Parent Opening Tag --><td>{0}</td>", string.IsNullOrEmpty(parentTag) ? "&nbsp;" : parentTag);
+                            _ = htmlReportBuilder.AppendFormat(@"<!-- Full XPath --><td>{0}</td>", GenerateUniqueXPath(nodes[i]!));
+                            _ = htmlReportBuilder.AppendFormat(@"<!-- Filename of Split --><td>{0}</td></tr>", Path.GetFileName(outPath));
                         }
                         else
                         {
                             WriteLog(string.Format("Unable to get 'key' attribute from node {0}", nodes[i]!.Name), Severity.Hint);
                         }
-
                     }
+                    _ = htmlReportBuilder.Append("</table></body></html>");
+                    splittingReportHtml = htmlReportBuilder.ToString();
+                    // display the report in the default browser
+                    await Task.Run(() => DisplayHtmlReport());
                 }
                 progressBar.Visible = false;
+                stepsPanel.Controls.Remove(progressBar);
                 execButton.Visible = true;
             }
+        }
+
+        private void DisplayHtmlReport()
+        {
+            if (string.IsNullOrEmpty(splittingReportHtml) || string.IsNullOrEmpty(xmlSourceFile))
+            {
+                return;
+            }
+            string reportOutPath = Path.Combine(outDirTextBox.Text, $"Splitting{Path.GetFileNameWithoutExtension(xmlSourceFile)}Report-{DateTime.Now:yyyy-MM-dd-HH-mm-ss-fffffff}.html");
+
+            try
+            {
+                File.WriteAllText(reportOutPath, splittingReportHtml);
+                ProcessStartInfo psi = new()
+                {
+                    UseShellExecute = true,
+                    FileName = reportOutPath
+                };
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                WriteLog(ex.ToString(), Severity.Error);
+                return;
+            }
+            WriteLog($"Wrote XML splitting report to {reportOutPath}");
+        }
+
+        private string GenerateUniqueXPath(XmlNode xmlNode)
+        {
+            if (xmlNode.NodeType == XmlNodeType.Attribute && xmlNode is XmlAttribute xmlNodeAsAttrib && xmlNodeAsAttrib.OwnerElement != null)
+            {
+                // attributes have an OwnerElement, not a ParentNode; also they have             
+                // to be matched by name, not found by position
+                return string.Format("{0}/@{1}", GenerateUniqueXPath(xmlNodeAsAttrib.OwnerElement), xmlNode.Name);
+            }
+            if (xmlNode.ParentNode == null)
+            {
+                // the only node with no parent is the root node, which has no path
+                return string.Empty;
+            }
+
+            // Get the Index
+            int indexInParent = 1;
+            XmlNode? siblingNode = xmlNode.PreviousSibling;
+            // Loop thru all Siblings
+            while (siblingNode != null)
+            {
+                // Increase the Index if the Sibling has the same Name
+                if (siblingNode.Name == xmlNode.Name)
+                {
+                    indexInParent++;
+                }
+                siblingNode = siblingNode.PreviousSibling;
+            }
+
+            // the path to a node is the path to its parent, plus "/node()[n]", where n is its position among its siblings.         
+            return string.Format("{0}/{1}[{2}]", GenerateUniqueXPath(xmlNode.ParentNode), xmlNode.Name, indexInParent);
         }
 
         private void OnDragDrop(object sender, DragEventArgs e)
@@ -533,7 +711,7 @@ namespace BaXmlSplitter
                     logMessages.Add(new LogMessage("The UOW states file was empty. Please check the UOW states file is correct.", Severity.Error));
                     return logMessages.ToArray();
                 }
-                else if (!xml.DocumentElement.Name.Equals(impliedDoctype,StringComparison.InvariantCultureIgnoreCase))
+                else if (!xml.DocumentElement.Name.Equals(impliedDoctype, StringComparison.InvariantCultureIgnoreCase))
                 {
                     logMessages.Add(new LogMessage(string.Format("Root node name '{0}' does not match UOW states file doctype '{1}'. Please check the UOW states file is correct.", xml.DocumentElement.Name.ToUpperInvariant(), impliedDoctype.ToUpperInvariant()), Severity.Error));
                     return logMessages.ToArray();
@@ -547,7 +725,7 @@ namespace BaXmlSplitter
                     StartPosition = FormStartPosition.CenterParent,
                     Icon = Resources.Icon
                 };
-                dialog.ShowDialog();
+                _ = dialog.ShowDialog();
                 if (dialog.DialogResult == DialogResult.OK)
                 {
                     var selectedStates = dialog.SelectedStates;
