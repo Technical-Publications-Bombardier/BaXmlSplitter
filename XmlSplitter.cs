@@ -157,13 +157,35 @@ namespace BaXmlSplitter
 
         private void XPathTextBox_TextChanged(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(xpathTextBox.Text))
+            void xpathTextBoxDelegate()
             {
-                xpathTextBox.Visible = true;
+                xpathTextBox.SuspendLayout();
+                xpathLabel.SuspendLayout();
+                xpathGroupBox.SuspendLayout();
+                if (!string.IsNullOrEmpty(xpath) && (!xpathTextBox.Visible || !xpathGroupBox.Visible || !xpathLabel.Visible))
+                {
+                    xpathTextBox.Text = xpath;
+                    xpathTextBox.Visible = true;
+                    xpathGroupBox.Visible = true;
+                    xpathLabel.Visible = true;
+                }
+                else
+                {
+                    xpathTextBox.Visible = false;
+                    xpathGroupBox.Visible = false;
+                    xpathLabel.Visible = false;
+                }
+                xpathGroupBox.ResumeLayout();
+                xpathLabel.ResumeLayout();
+                xpathTextBox.ResumeLayout();
+            }
+            if (xpathTextBox.InvokeRequired)
+            {
+                xpathTextBox.Invoke(xpathTextBoxDelegate);
             }
             else
             {
-                xpathTextBox.Visible = false;
+                xpathTextBoxDelegate();
             }
         }
         private async void XmlSelectTextBox_TextChanged(object sender, EventArgs e)
@@ -391,10 +413,6 @@ namespace BaXmlSplitter
                             </style>
                         </head>
                         """);
-                        /*
-                         * Regex uppercaseXPathRe = new(@"//([^a-z\[]+)\[contains\(@key,'([^'a-z]+)'\)", RegexOptions.Compiled);
-                         * string[] xpathPartials = xpath.Split(XmlSplitterHelpers.XPATH_SEPARATORS, StringSplitOptions.None).Where(x => x.Contains("//") && uppercaseXPathRe.IsMatch(x)).Select(partial => partial + "]").ToArray();
-                         */
                         string dateTimeNow = DateTime.Now.ToString("yyyy - MM - dd - HH - mm - ss - fffffff");
                         string reportBaseFilename = $"{Path.GetFileNameWithoutExtension(xmlSourceFile)}SplittingReport - {dateTimeNow}";
                         string[] splittingReportFilenames = Enum.GetNames<XmlSplitReport.ReportFormat>().Select(format => $"{reportBaseFilename}.{format.ToLowerInvariant()}").ToArray();
@@ -407,13 +425,13 @@ namespace BaXmlSplitter
                             </ul>
                             <p>Below is the full HTML report of the XML splitting results:</p>
                             <table>
-                                <caption><p>Table showing the details on each node that was split from the source XML.</p><aside aria-label="Information note">The opening tag of the parent is built from the parent's name and its attribute name-value pairs. It may be slightly different than how it appears in the original XML.</aside><aside aria-label="Information note">Note also that "Node" in this context refers to the unit of work as XML element that was split off from the source XML.</aside></caption>
+                                <caption><p>Table showing the details on each node that was split from the source XML.</p><aside aria-label="Information note">The tag of the parent is the <em>most recent containing element</em> having a <code>key</code> attribute. For brevity, the parent tag is reproduced as a self-closing tag without any inner XML. As a string literal, it may be slightly different than how it appears in the original XML.</aside><aside aria-label="Information note">Note also that "Node" in this context refers to the unit of work as an <a href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmlnode?view=net-8.0"><code>XmlNode</code></a> that was split off from the source <a href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmldocument?view=net-8.0"><code>XmlDocument</code></a>.</aside></caption>
                                 <colgroup><col /><col /><col /><col /><col /><col /><col /><col /><col /></colgroup>
                                 <tr>
                                     <th>Node Number</th>
                                     <th>Node Element Name</th>
-                                    <th>'Key' Value</th>
-                                    <th>Immediate Parent Opening Tag</th>
+                                    <th>Node 'Key' Value</th>
+                                    <th>Keyed Parent's Opening Tag</th>
                                     <th>Full XPath</th>
                                     <th>Filename of Split</th>
                                     <th>UOW State Value</th>
@@ -442,32 +460,20 @@ namespace BaXmlSplitter
                                         // write the fragment to the outPath
                                         await Task.Run(() => xmlFragment.Save(outPath));
                                         WriteLog(string.Format("Wrote fragment to '{0}'", outPath), Severity.Hint);
-                                        XmlNode? parent = curNode.ParentNode;
-                                        string parentTag = String.Empty;
-                                        if (parent != null && parent.Attributes != null)
-                                        {
-                                            parentTag = $"<{parent.Name}";
-                                            foreach (XmlAttribute attrib in parent.Attributes)
-                                            {
-                                                parentTag += $" {attrib.Name}=\"{attrib.Value}\"";
-                                            }
-                                            parentTag += ">";
-                                        }
-                                        else if (parent != null)
-                                        {
-                                            parentTag = $"<{parent.Name}>";
-                                        }
-                                        XmlSplitReportEntry reportEntry = new(nodeNumber: nodeNum++, nodeElementName: curNode.Name, keyValue: key, immediateParentOpeningTag: parentTag, fullXPath: GenerateUniqueXPath(curNode), filenameOfSplit: Path.GetFileName(outPath), uowState: curState);
+                                        XmlNode parentTag = XmlSplitterHelpers.CalculateParentTag(curNode);
+                                        XmlSplitReportEntry reportEntry = new(nodeNumber: nodeNum++, nodeElementName: curNode.Name, keyValue: key, keyedParentTag: parentTag, fullXPath: GenerateUniqueXPath(curNode), filenameOfSplit: Path.GetFileName(outPath), uowState: curState);
                                         report.Add(reportEntry);
-                                        _ = htmlReportBuilder.AppendFormat(@"<tr><!-- Node Number --><td>{0}</td>", reportEntry.NodeNumber);
+                                        _ = htmlReportBuilder.Append("<tr>");
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- Node Number --><td>{0}</td>", reportEntry.NodeNumber);
                                         _ = htmlReportBuilder.AppendFormat(@"<!-- Node Element Name --><td>{0}</td>", reportEntry.NodeElementName);
-                                        _ = htmlReportBuilder.AppendFormat(@"<!-- 'Key' Value --><td>{0}</td>", reportEntry.KeyValue);
-                                        _ = htmlReportBuilder.AppendFormat(@"<!-- Immediate Parent Opening Tag --><td><code>{0}</code></td>", string.IsNullOrEmpty(reportEntry.ImmediateParentOpeningTag) ? "&nbsp;" : HttpUtility.HtmlEncode(reportEntry.ImmediateParentOpeningTag));
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- Node's 'Key' Value --><td>{0}</td>", reportEntry.KeyValue);
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- Keyed Parent's Tag --><td><code>{0}</code></td>", reportEntry.KeyedParentTag == null ? "&nbsp;" : HttpUtility.HtmlEncode(reportEntry.KeyedParentTag.OuterXml));
                                         _ = htmlReportBuilder.AppendFormat(@"<!-- Full XPath --><td><code>{0}</code></td>", HttpUtility.HtmlEncode(reportEntry.FullXPath));
                                         _ = htmlReportBuilder.AppendFormat(@"<!-- Filename of Split --><td>{0}</td>", reportEntry.FilenameOfSplit);
-                                        _ = htmlReportBuilder.AppendFormat(@"<!-- UOW State Value --><td>{0}</td>", reportEntry.UowState.StateValue);
-                                        _ = htmlReportBuilder.AppendFormat(@"<!-- UOW State Name --><td>{0}</td>", reportEntry.UowState.StateName);
-                                        _ = htmlReportBuilder.AppendFormat(@"<!-- UOW State Remark --><td>{0}</td></tr>", string.IsNullOrEmpty(reportEntry.UowState.Remark) ? "&nbsp;" : HttpUtility.HtmlEncode(reportEntry.UowState.Remark));
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- ETPS UOW State Value --><td>{0}</td>", reportEntry.UowState.StateValue);
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- ETPS UOW State Name --><td>{0}</td>", reportEntry.UowState.StateName);
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- ETPS UOW State Remark --><td>{0}</td>", string.IsNullOrEmpty(reportEntry.UowState.Remark) ? "&nbsp;" : HttpUtility.HtmlEncode(reportEntry.UowState.Remark));
+                                        _ = htmlReportBuilder.Append("</tr>");
                                     }
                                     else
                                     {
@@ -647,7 +653,7 @@ namespace BaXmlSplitter
                     if (selectedStates != null && selectedStates.Length > 0)
                     {
                         fullyQualifiedSelectedStates = states.Where((UowState state) => selectedStates.Select((UowState state) => state.StateValue).Contains(state.StateValue));
-                        xpathTextBox.Text = xpath = string.Join('|', fullyQualifiedSelectedStates.Select(state => state.XPath));
+                        xpath = string.Join('|', fullyQualifiedSelectedStates.Select(state => state.XPath));
                         XPathTextBox_TextChanged(sender, e);
                     }
                     else

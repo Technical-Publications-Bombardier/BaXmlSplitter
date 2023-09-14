@@ -7,9 +7,22 @@ namespace BaXmlSplitter
     {
         private XmlSplitReportEntry[] _entries = new XmlSplitReportEntry[DEFAULT_CAPACITY];
         private XmlSplitReportEntry[] Entries { get => _entries.Take(lastIndex).ToArray(); set => _entries = value; }
+        private string[] AdditionalElementNames => Entries.Select(entry => entry.KeyedParentTag.Name).Distinct().ToArray();
+        private Dictionary<string, string[]> AdditionalAttributeNamesPerElement
+        {
+            get
+            {
+                Dictionary<string, string[]> builder = new();
+                foreach (string elementName in AdditionalElementNames)
+                {
+                    builder.Add(elementName, Entries.Where(entry => entry.KeyedParentTag.Name == elementName).SelectMany(entry => entry.KeyedParentTag.Attributes!.Cast<XmlAttribute>().Select(attrib => attrib.Name)).Distinct().ToArray());
+                }
+                return builder;
+            }
+        }
         private int lastIndex = 0;
         private const int DEFAULT_CAPACITY = 10;
-        private static readonly string[] FIELDS = new string[] { "NodeNumber", "NodeElementName", "KeyValue", "ImmediateParentOpeningTag", "FullXPath", "FilenameOfSplit" };
+        private static readonly string[] FIELDS = new string[] { "NodeNumber", "NodeElementName", "KeyValue", "KeyedParentTag", "FullXPath", "FilenameOfSplit" };
 
         internal enum ReportFormat
         {
@@ -47,7 +60,7 @@ namespace BaXmlSplitter
                         writer.WriteLine(string.Join(separator, FIELDS));
                         foreach (XmlSplitReportEntry entry in Entries)
                         {
-                            string line = string.Join(separator, new string[] { entry.NodeNumber.ToString(), entry.NodeElementName, entry.KeyValue, entry.ImmediateParentOpeningTag, entry.FullXPath, entry.FilenameOfSplit });
+                            string line = string.Join(separator, new string[] { entry.NodeNumber.ToString(), entry.NodeElementName, entry.KeyValue, entry.KeyedParentTag.OuterXml, entry.FullXPath, entry.FilenameOfSplit });
                             writer.WriteLine(line);
                         }
                         break;
@@ -56,21 +69,23 @@ namespace BaXmlSplitter
                     {
                         XmlDocument xmlReport = new();
                         XmlElement root = xmlReport.CreateElement("XmlSplitReport");
-                        const string dtd = """
+                        string dtd = """
                         <!ELEMENT XmlSplitReport (Entry*)>
-                        <!ELEMENT Entry (Name, ParentTag, XPath, Filename, State)>
+                        <!ELEMENT Entry (NodeName, ParentTag, XPath, Filename, State)>
                         <!ATTLIST Entry
                                   NodeNumber CDATA #REQUIRED
                                   Key CDATA #REQUIRED>
-                        <!ELEMENT Name (#PCDATA)>
-                        <!ELEMENT ParentTag (#PCDATA)>
+                        <!ELEMENT NodeName (#PCDATA)>
+                        """;
+                        dtd += $"<!ELEMENT ParentTag ({string.Join('|', AdditionalElementNames)})>";
+                        dtd += string.Join(Environment.NewLine, AdditionalElementNames.Select(name => { string[] attlist = AdditionalAttributeNamesPerElement[name]; return $"<!ELEMENT {name} EMPTY>{Environment.NewLine}<!ATTLIST {name}{Environment.NewLine}{string.Join(Environment.NewLine + "\t", attlist.Select(attribute => $"{attribute} CDATA #IMPLIED").ToArray())}>"; }).ToArray());
+                        dtd += """
                         <!ELEMENT XPath (#PCDATA)>
                         <!ELEMENT Filename (#PCDATA)>
-                        <!ELEMENT State (#PCDATA)>
-                        <!ATTLIST State
-                                  Value CDATA #REQUIRED
-                                  Name CDATA #REQUIRED
-                                  Remark CDATA #IMPLIED>
+                        <!ELEMENT State (Value, StateName, Remark)>
+                        <!ELEMENT Value (#PCDATA)>
+                        <!ELEMENT StateName (#PCDATA)>
+                        <!ELEMENT Remark (#PCDATA)>
                         <!ENTITY % HTMLlat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml-lat1.ent">
                         """;
                         _ = xmlReport.AppendChild(xmlReport.CreateDocumentType("XmlSplitReport", null, null, dtd));
@@ -85,11 +100,17 @@ namespace BaXmlSplitter
                             XmlAttribute key = xmlReport.CreateAttribute("Key");
                             key.Value = entry.KeyValue;
                             _ = xmlEntry.Attributes.Append(key);
-                            XmlElement name = xmlReport.CreateElement("Name");
-                            name.InnerText = entry.NodeElementName;
-                            _ = xmlEntry.AppendChild(name);
+                            XmlElement nodeName = xmlReport.CreateElement("NodeName");
+                            nodeName.InnerText = entry.NodeElementName;
+                            _ = xmlEntry.AppendChild(nodeName);
                             XmlElement parentTag = xmlReport.CreateElement("ParentTag");
-                            parentTag.InnerText = entry.ImmediateParentOpeningTag;
+                            // append a child element to parentTag with only the name and attributes of entry.KeyedParentTag, but none of its content
+                            XmlElement keyedParentTag = xmlReport.CreateElement(entry.KeyedParentTag.Name);
+                            foreach (XmlAttribute attrib in entry.KeyedParentTag.Attributes!)
+                            {
+                                keyedParentTag.SetAttribute(attrib.Name, attrib.Value);
+                            }
+                            _ = parentTag.AppendChild(keyedParentTag);
                             _ = xmlEntry.AppendChild(parentTag);
                             XmlElement xpath = xmlReport.CreateElement("XPath");
                             xpath.InnerText = entry.FullXPath;
@@ -97,20 +118,21 @@ namespace BaXmlSplitter
                             XmlElement filename = xmlReport.CreateElement("Filename");
                             filename.InnerText = entry.FilenameOfSplit;
                             _ = xmlEntry.AppendChild(filename);
+
+                            #region UowState
                             XmlElement state = xmlReport.CreateElement("State");
                             _ = xmlEntry.AppendChild(state);
-                            XmlAttribute value = xmlReport.CreateAttribute("Value");
-                            value.Value = entry.UowState.StateValue.ToString();
-                            _ = state.Attributes.Append(value);
-                            XmlAttribute nameAttribute = xmlReport.CreateAttribute("Name");
-                            nameAttribute.Value = entry.UowState.StateName;
-                            _ = state.Attributes.Append(nameAttribute);
-                            if (!string.IsNullOrEmpty(entry.UowState.Remark))
+                            XmlElement stateValue = xmlReport.CreateElement("Value");
+                            stateValue.InnerText = entry.UowState.StateValue.ToString() is string stateValueStr ? stateValueStr : "&nbsp;";
+                            XmlElement stateName = xmlReport.CreateElement("StateName");
+                            stateName.InnerText = entry.UowState.StateName is string stateNameStr ? stateNameStr : "&nbsp;";
+                            XmlElement stateRemark = xmlReport.CreateElement("Remark");
+                            stateRemark.InnerText = entry.UowState.Remark is string remarkStr ? remarkStr : "&nbsp;";
+                            foreach (XmlElement statePartial in new XmlElement[] { stateValue, stateName, stateRemark })
                             {
-                                XmlAttribute remark = xmlReport.CreateAttribute("Remark");
-                                remark.Value = HttpUtility.HtmlEncode(entry.UowState.Remark);
-                                _ = state.Attributes.Append(remark);
+                                _ = state.AppendChild(statePartial);
                             }
+                            #endregion UowState
                         }
                         xmlReport.Save(outPath);
                         break;
@@ -124,17 +146,30 @@ namespace BaXmlSplitter
         public int NodeNumber;
         public string NodeElementName;
         public string KeyValue;
-        public string ImmediateParentOpeningTag;
+        public XmlNode KeyedParentTag
+        {
+            get
+            {
+                XmlElement element = new XmlDocument().CreateElement(_keyedParentTag.Name);
+                foreach (XmlAttribute attrib in _keyedParentTag.Attributes!)
+                {
+                    element.SetAttribute(attrib.Name, attrib.Value);
+                }
+                return element;
+            }
+            set => _keyedParentTag = value;
+        }
         public string FullXPath;
         public string FilenameOfSplit;
         public UowState UowState;
+        private XmlNode _keyedParentTag;
 
-        public XmlSplitReportEntry(int nodeNumber, string nodeElementName, string keyValue, string immediateParentOpeningTag, string fullXPath, string filenameOfSplit, UowState uowState)
+        public XmlSplitReportEntry(int nodeNumber, string nodeElementName, string keyValue, XmlNode keyedParentTag, string fullXPath, string filenameOfSplit, UowState uowState)
         {
             NodeNumber = nodeNumber;
             NodeElementName = nodeElementName;
             KeyValue = keyValue;
-            ImmediateParentOpeningTag = immediateParentOpeningTag;
+            _keyedParentTag = KeyedParentTag = keyedParentTag;
             FullXPath = fullXPath;
             FilenameOfSplit = filenameOfSplit;
             UowState = uowState;
