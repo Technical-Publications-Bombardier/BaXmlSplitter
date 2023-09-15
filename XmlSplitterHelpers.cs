@@ -10,15 +10,18 @@ using System.Xml.XPath;
 internal static class XmlSplitterHelpers
 {
     internal const string DEFAULT_OUTPUT_DIR = "WIP";
-    internal const string UOW_PATTERN = @"\t*(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = ""(?<state>[^""]*)""\)$";
     internal const string TIMESTAMP_FORMAT = "HH:mm:ss.fffffff";
-    internal static readonly string[] PROGRAMS = new string[] { "B_IFM", "CH604PROD", "CTALPROD", "LJ4045PROD", "GXPROD" };
+    internal static readonly string[] PROGRAMS = ["B_IFM", "CH604PROD", "CTALPROD", "LJ4045PROD", "GXPROD"];
     internal static readonly TimeSpan TIMEOUT = TimeSpan.FromSeconds(15);
-    internal static readonly Regex UOW_REGEX = new(UOW_PATTERN, RegexOptions.Compiled | RegexOptions.Multiline, TIMEOUT);
-    internal static readonly string[] NEWLINE = new[] { "\r\n", "\n" };
-    internal static readonly string[] XPATH_SEPARATORS = new[] { "|", " or " };
-    internal static readonly Regex XML_FILENAME_RE = new(@"([\w_-]+[\d-]{8,}).*", RegexOptions.Compiled);
+    internal const RegexOptions RE_OPTIONS = RegexOptions.Compiled | RegexOptions.Multiline;
+    internal const string UOW_PATTERN = @"\t*(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = ""(?<state>[^""]*)""\)$";
+    internal const string XML_FILENAME_PATTERN = @"([\w_-]+[\d-]{8,}).*";
+    internal static readonly Regex UOW_REGEX = new(UOW_PATTERN, RE_OPTIONS, TIMEOUT);
+    internal static readonly Regex XML_FILENAME_RE = new(XML_FILENAME_PATTERN, RE_OPTIONS, TIMEOUT);
+    internal static readonly string[] NEWLINES = ["\r\n", "\n"];
+    internal static readonly string[] XPATH_SEPARATORS = ["|", " or "];
 
+    #region BinaryCheck
     public static bool IsBinary(string path)
     {
         FileInfo fi = new(path);
@@ -49,6 +52,7 @@ internal static class XmlSplitterHelpers
         return (ch > ((int)ControlChars.NUL) && ch < ((int)ControlChars.BS))
             || (ch > ((int)ControlChars.CR) && ch < ((int)ControlChars.SUB));
     }
+    #endregion BinaryCheck
 
     internal static Dictionary<string, Dictionary<int, UowState>>? DeSerializeStates()
     {
@@ -77,7 +81,10 @@ internal static class XmlSplitterHelpers
         }
         return __statesPerProgram;
     }
-
+    internal static bool PathIsValid(string pathToTest)
+    {
+        return !string.IsNullOrWhiteSpace(pathToTest) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(pathToTest.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute);
+    }
     internal static XmlNode CalculateParentTag(XmlNode curNode)
     {
         if (curNode is XmlDocument doc && doc.ChildNodes is XmlNodeList children && children.Cast<XmlNode>() is IEnumerable<XmlNode> childrenList && childrenList.FirstOrDefault(predicate: child => child.NodeType is not XmlNodeType.Comment and not XmlNodeType.DocumentType) is XmlNode result)
@@ -93,14 +100,18 @@ internal static class XmlSplitterHelpers
             return CalculateParentTag(curNode.ParentNode!);
         }
     }
-    internal static UowState[]? ParseUowContent(string? uowContent, string? Program, Dictionary<string, Dictionary<int, UowState>>? statesPerProgram, string? uowStatesFile, out List<LogMessage> logMessages, out Hashtable statesInManual, out string foundDoctype)
+    internal static string GetUowStatesDocnbr(ref string content)
+    {
+        return content.Split(NEWLINES, StringSplitOptions.None)[0];
+    }
+    internal static UowState[]? ParseUowContent(string? uowContent, string? Program, Dictionary<string, Dictionary<int, UowState>>? statesPerProgram, string? uowStatesFile, out List<LogMessage> logMessages, out Hashtable statesInManual, out string foundDocnbr)
     {
         UowState[] states;
-        statesInManual = new();
-        logMessages = new();
+        statesInManual = [];
+        logMessages = [];
         if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(Program) && statesPerProgram != null && statesPerProgram[Program] != null)
         {
-            foundDoctype = uowContent.Split(NEWLINE, StringSplitOptions.None)[0];
+            foundDocnbr = GetUowStatesDocnbr(ref uowContent);
             var stateMatches = UOW_REGEX.Matches(uowContent);
             if (stateMatches.Count == 0)
             {
@@ -111,7 +122,7 @@ internal static class XmlSplitterHelpers
             for (int i = 0; i < stateMatches.Count; i++)
             {
                 states[i] = new(tag: stateMatches[i].Groups["tag"].Value);
-                string[] xpaths = new string[] { $"//{states[i].TagName}", $"//{states[i].TagName?.ToLowerInvariant()}" };
+                string[] xpaths = [$"//{states[i].TagName}", $"//{states[i].TagName?.ToLowerInvariant()}"];
 
                 if (stateMatches[i].Groups["key"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["key"].Value))
                 {
@@ -147,7 +158,7 @@ internal static class XmlSplitterHelpers
         }
         else
         {
-            foundDoctype = "";
+            foundDocnbr = "";
             return null;
         }
     }

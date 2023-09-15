@@ -36,7 +36,7 @@ namespace BaXmlSplitter
         private string? outputDir;
         private string? xpath;
         private Dictionary<string, Dictionary<int, UowState>>? statesPerProgram;
-        private string? Program;
+        private string? program;
         private IEnumerable<UowState>? fullyQualifiedSelectedStates;
 
         private void LoadFonts()
@@ -191,7 +191,7 @@ namespace BaXmlSplitter
         private async void XmlSelectTextBox_TextChanged(object sender, EventArgs e)
         {
             xmlSelectTextBox.Select(xmlSelectTextBox.Text.Length, 0);
-            if (!string.IsNullOrWhiteSpace(xmlSelectTextBox.Text) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(xmlSelectTextBox.Text.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute) && File.Exists(xmlSelectTextBox.Text))
+            if (XmlSplitterHelpers.PathIsValid(xmlSelectTextBox.Text) && File.Exists(xmlSelectTextBox.Text))
             {
                 if (!string.IsNullOrEmpty(xmlSourceFile) && Path.GetFullPath(xmlSourceFile) == Path.GetFullPath(xmlSelectTextBox.Text))
                 {
@@ -223,7 +223,7 @@ namespace BaXmlSplitter
         private async void UowStatesTextBox_TextChanged(object sender, EventArgs e)
         {
             uowTextBox.Select(uowTextBox.Text.Length, 0);
-            if (!string.IsNullOrWhiteSpace(uowTextBox.Text) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(uowTextBox.Text.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute) && File.Exists(uowTextBox.Text) && (!XmlSplitterHelpers.IsBinary(uowTextBox.Text) || XmlSplitterHelpers.ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", uowTextBox.Text), string.Format("File '{0}' is not text", (new FileInfo(uowTextBox.Text)).Name))))
+            if (XmlSplitterHelpers.PathIsValid(uowTextBox.Text) && File.Exists(uowTextBox.Text) && (!XmlSplitterHelpers.IsBinary(uowTextBox.Text) || XmlSplitterHelpers.ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", uowTextBox.Text), string.Format("File '{0}' is not text", Path.GetFileName(uowTextBox.Text)))))
             {
 
                 if (!string.IsNullOrEmpty(uowStatesFile) && uowStatesFile == uowTextBox.Text)
@@ -233,6 +233,8 @@ namespace BaXmlSplitter
                 uowStatesFile = uowTextBox.Text;
                 WriteLog($"Reading UOW file '{Path.GetFileName(uowStatesFile)}'");
                 uowContent = await File.ReadAllTextAsync(uowStatesFile);
+                xpath = string.Empty;
+                XPathTextBox_TextChanged(sender, e);
                 if (string.IsNullOrEmpty(uowContent) && new FileInfo(uowStatesFile).Length > 0)
                 {
                     WriteLog("Unable to read UOW states file. Please check that the file is available and not locked by another process.", Severity.Error);
@@ -250,9 +252,10 @@ namespace BaXmlSplitter
             if (outputDir != outDirTextBox.Text)
             {
                 // if the out dir does not exist, set outDirWillBeCreated.Visible to true
-                if (!string.IsNullOrWhiteSpace(outDirTextBox.Text) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(outDirTextBox.Text.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute))
+                if (XmlSplitterHelpers.PathIsValid(outDirTextBox.Text))
                 {
                     outputDir = outDirTextBox.Text;
+                    outDirWillBeCreated.SuspendLayout();
                     if (!Directory.Exists(outputDir))
                     {
                         outDirWillBeCreated.Enabled = outDirWillBeCreated.Visible = true;
@@ -262,11 +265,26 @@ namespace BaXmlSplitter
                     {
                         outDirWillBeCreated.Enabled = outDirWillBeCreated.Visible = false;
                     }
+                    outDirWillBeCreated.ResumeLayout();
                     WriteLog($"Selected units of work will be written to {outputDir}");
                 }
             }
         }
-
+        private void CheckExecuteSplitIsReady(object sender, EventArgs e)
+        {
+            execButton.SuspendLayout();
+            if (/* the XML is selected */ !(string.IsNullOrEmpty(xmlSourceFile) || string.IsNullOrEmpty(xmlContent) || 
+                /* UOW states is selected */ string.IsNullOrEmpty(uowStatesFile) || string.IsNullOrEmpty(uowContent) || 
+                /* output dir is set */ string.IsNullOrEmpty(outputDir) ||
+                /* program is chosen */ string.IsNullOrEmpty(program)))
+            {
+                execButton.Enabled = true;
+            } else
+            {
+                execButton.Enabled = false;
+            }
+            execButton.ResumeLayout();
+        }
         private async void ExecuteSplit(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(uowTextBox.Text) && string.IsNullOrEmpty(uowContent))
@@ -275,7 +293,7 @@ namespace BaXmlSplitter
                 WriteLog("Prematurely attempted to begin splitting prior to specifying UOW states", Severity.Warning);
                 return;
             }
-            if (string.IsNullOrEmpty(Program) && string.IsNullOrEmpty(programsComboBox.Text))
+            if (string.IsNullOrEmpty(program) && string.IsNullOrEmpty(programsComboBox.Text))
             {
                 XmlSplitterHelpers.ShowWarningBox("Please select a program before executing the split.", "Cannot proceed: No program specified.");
                 WriteLog("Prematurely attempted to begin splitting prior to specifying program", Severity.Warning);
@@ -398,10 +416,12 @@ namespace BaXmlSplitter
                                     font-weight: bold;
                                     font-size: 1.5em;
                                     display: inline-block;
-                                    width: 1.3em;
                                     line-height: 0.9em;
                                     color: #2196F3;
                                     text-shadow: 1px 1px 4px black;
+                                    background-color: white;
+                                    border-radius: 50%;
+                                    margin-right: 0.4em;
                                 }
                                 pre {
                                     display: block;
@@ -425,13 +445,13 @@ namespace BaXmlSplitter
                             </ul>
                             <p>Below is the full HTML report of the XML splitting results:</p>
                             <table>
-                                <caption><p>Table showing the details on each node that was split from the source XML.</p><aside aria-label="Information note">The tag of the parent is the <em>most recent containing element</em> having a <code>key</code> attribute. For brevity, the parent tag is reproduced as a self-closing tag without any inner XML. As a string literal, it may be slightly different than how it appears in the original XML.</aside><aside aria-label="Information note">Note also that "Node" in this context refers to the unit of work as an <a href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmlnode?view=net-8.0"><code>XmlNode</code></a> that was split off from the source <a href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmldocument?view=net-8.0"><code>XmlDocument</code></a>.</aside></caption>
+                                <caption><p>Table showing the details on each node that was split from the source XML.</p><aside aria-label="Information note">The tag of the parent is the <em>most recent containing XML node</em> having a <code>key</code> attribute; or, where there is no such <code>key</code>-bearing node, the root node for the document is indicated. For brevity, the parent tag is represented as a self-closing tag without inner XML.</aside><aside aria-label="Information note">"Node" in this context refers to the unit of work as an <a href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmlnode?view=net-8.0"><code>XmlNode</code></a> that was split off from the source <a href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmldocument?view=net-8.0"><code>XmlDocument</code></a>.</aside></caption>
                                 <colgroup><col /><col /><col /><col /><col /><col /><col /><col /><col /></colgroup>
                                 <tr>
                                     <th>Node Number</th>
                                     <th>Node Element Name</th>
                                     <th>Node 'Key' Value</th>
-                                    <th>Keyed Parent's Opening Tag</th>
+                                    <th>Key-bearing Parent's Opening Tag</th>
                                     <th>Full XPath</th>
                                     <th>Filename of Split</th>
                                     <th>UOW State Value</th>
@@ -467,7 +487,7 @@ namespace BaXmlSplitter
                                         _ = htmlReportBuilder.AppendFormat(@"<!-- Node Number --><td>{0}</td>", reportEntry.NodeNumber);
                                         _ = htmlReportBuilder.AppendFormat(@"<!-- Node Element Name --><td>{0}</td>", reportEntry.NodeElementName);
                                         _ = htmlReportBuilder.AppendFormat(@"<!-- Node's 'Key' Value --><td>{0}</td>", reportEntry.KeyValue);
-                                        _ = htmlReportBuilder.AppendFormat(@"<!-- Keyed Parent's Tag --><td><code>{0}</code></td>", reportEntry.KeyedParentTag == null ? "&nbsp;" : HttpUtility.HtmlEncode(reportEntry.KeyedParentTag.OuterXml));
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- Key-bearing Parent's Tag --><td><code>{0}</code></td>", reportEntry.KeyedParentTag == null ? "&nbsp;" : HttpUtility.HtmlEncode(reportEntry.KeyedParentTag.OuterXml));
                                         _ = htmlReportBuilder.AppendFormat(@"<!-- Full XPath --><td><code>{0}</code></td>", HttpUtility.HtmlEncode(reportEntry.FullXPath));
                                         _ = htmlReportBuilder.AppendFormat(@"<!-- Filename of Split --><td>{0}</td>", reportEntry.FilenameOfSplit);
                                         _ = htmlReportBuilder.AppendFormat(@"<!-- ETPS UOW State Value --><td>{0}</td>", reportEntry.UowState.StateValue);
@@ -610,11 +630,11 @@ namespace BaXmlSplitter
 
         private LogMessage[] ProcessUowStates(object sender, EventArgs e)
         {
-            List<LogMessage> logMessages = new()
-            {
+            List<LogMessage> logMessages =
+            [
                 new LogMessage("Parsing units of work states file")
-            };
-            UowState[]? states = XmlSplitterHelpers.ParseUowContent(uowContent, Program, statesPerProgram, uowStatesFile, out List<LogMessage> parseUowLogMessages, out Hashtable statesInManual, out string impliedDocnbr);
+            ];
+            UowState[]? states = XmlSplitterHelpers.ParseUowContent(uowContent, program, statesPerProgram, uowStatesFile, out List<LogMessage> parseUowLogMessages, out Hashtable statesInManual, out string impliedDocnbr);
             if (states == null)
             {
                 logMessages.Add(new LogMessage("Not ready to process unit of work states. Check that UOW states file was loaded and parsed properly.", Severity.Warning));
@@ -668,10 +688,10 @@ namespace BaXmlSplitter
 
         private void ProgramGroupBox(object sender, EventArgs e)
         {
-            if ((string.IsNullOrEmpty(Program) && !string.IsNullOrEmpty(programsComboBox.Text)) || (Program != programsComboBox.Text && XmlSplitterHelpers.PROGRAMS.Contains<string>(programsComboBox.Text)))
+            if ((string.IsNullOrEmpty(program) && !string.IsNullOrEmpty(programsComboBox.Text)) || (program != programsComboBox.Text && XmlSplitterHelpers.PROGRAMS.Contains<string>(programsComboBox.Text)))
             {
-                Program = programsComboBox.Text;
-                WriteLog($"Program chosen for manual: {Program}");
+                program = programsComboBox.Text;
+                WriteLog($"program chosen for manual: {program}");
             }
         }
 
