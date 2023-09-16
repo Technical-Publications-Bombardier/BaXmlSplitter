@@ -36,20 +36,24 @@ namespace BaXmlSplitter
         private string? outputDir;
         private string? xpath;
         private Dictionary<string, Dictionary<int, UowState>>? statesPerProgram;
+        private Dictionary<string, string[]>? checkoutItems;
         private string? program;
         private IEnumerable<UowState>? fullyQualifiedSelectedStates;
 
         private void LoadFonts()
         {
-            uint dummy = 0;
-            var seventyTwoFonts = new byte[][] { Resources._72_Black, Resources._72_Bold, Resources._72_BoldItalic, Resources._72_Condensed, Resources._72_CondensedBold, Resources._72_Italic, Resources._72_Light, Resources._72_Monospace_Bd, Resources._72_Monospace_Rg, Resources._72_Regular };
+            uint discard = 0;
+            byte[][] seventyTwoFonts =
+            [
+                Resources._72_Black, Resources._72_Bold, Resources._72_BoldItalic, Resources._72_Condensed, Resources._72_CondensedBold, Resources._72_Italic, Resources._72_Light, Resources._72_Monospace_Bd, Resources._72_Monospace_Rg, Resources._72_Regular
+            ];
             for (int i = 0; i < seventyTwoFonts.Length; i++)
             {
                 IntPtr data = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(seventyTwoFonts[i].Length);
                 try
                 {
                     System.Runtime.InteropServices.Marshal.Copy(seventyTwoFonts[i], 0, data, seventyTwoFonts[i].Length);
-                    _ = AddFontMemResourceEx(data, (uint)seventyTwoFonts[i].Length, IntPtr.Zero, in dummy);
+                    _ = AddFontMemResourceEx(data, (uint)seventyTwoFonts[i].Length, IntPtr.Zero, in discard);
                     fonts.AddMemoryFont(data, seventyTwoFonts[i].Length);
                 }
                 finally
@@ -71,7 +75,8 @@ namespace BaXmlSplitter
             await Task.Run(() =>
             {
                 LoadFonts();
-                statesPerProgram = XmlSplitterHelpers.DeSerializeStates();
+                statesPerProgram = XmlSplitterHelpers.DeserializeStates();
+                checkoutItems = XmlSplitterHelpers.DeserializeCheckoutItems();
             });
             WriteLog("Finished initializing.");
         }
@@ -201,7 +206,7 @@ namespace BaXmlSplitter
                 {
                     xmlSourceFile = Path.GetFullPath(xmlSelectTextBox.Text);
                 }
-                var container = Path.GetDirectoryName(xmlSourceFile);
+                string? container = Path.GetDirectoryName(xmlSourceFile);
                 if (container != null)
                 {
                     outDirTextBox.Text = Path.Combine(container, XmlSplitterHelpers.DEFAULT_OUTPUT_DIR);
@@ -349,7 +354,7 @@ namespace BaXmlSplitter
 
                 if (string.IsNullOrEmpty(xpath))
                 {
-                    var logMessages = await Task.Run(() => ProcessUowStates(sender, e));
+                    LogMessage[] logMessages = await Task.Run(() => ProcessUowStates(sender, e));
                     foreach (LogMessage logMessage in logMessages)
                     {
                         WriteLog(logMessage.Message, logMessage.Severity);
@@ -365,7 +370,7 @@ namespace BaXmlSplitter
                 }
                 else
                 {
-                    var nodes = await Task.Run(() => xml.SelectNodes(xpath));
+                    XmlNodeList? nodes = await Task.Run(() => xml.SelectNodes(xpath));
                     if (nodes != null && nodes.Count > 0)
                     {
                         WriteLog(string.Format("Splitting XML file '{0}' into {1} fragments", Path.GetFileName(xmlSourceFile), nodes.Count));
@@ -475,7 +480,7 @@ namespace BaXmlSplitter
                                     _ = await Task.Run(() => xmlFragment.AppendChild(xmlFragment.ImportNode(curNode, true)));
                                     if (curNode.Attributes?["key"]?.Value is string key)
                                     {
-                                        var outPath = XmlSplitterHelpers.XML_FILENAME_RE.Replace(Path.GetFileNameWithoutExtension(xmlSourceFile), m => Regex.Replace(m.Groups[1].Value, @"[_-]$", string.Empty));
+                                        string outPath = XmlSplitterHelpers.XML_FILENAME_RE.Replace(Path.GetFileNameWithoutExtension(xmlSourceFile), m => Regex.Replace(m.Groups[1].Value, @"[_-]$", string.Empty));
                                         outPath = Path.Combine(outputDir, string.Format("{0}-{1}.xml", outPath, key));
                                         // write the fragment to the outPath
                                         await Task.Run(() => xmlFragment.Save(outPath));
@@ -524,7 +529,7 @@ namespace BaXmlSplitter
             {
                 foreach (XmlSplitReport.ReportFormat format in Enum.GetValuesAsUnderlyingType<XmlSplitReport.ReportFormat>())
                 {
-                    var reportFilename = Path.Combine(outputDir, $"{baseFilename}.{Enum.GetName(format)}");
+                    string reportFilename = Path.Combine(outputDir, $"{baseFilename}.{Enum.GetName(format)}");
                     WriteLog($"Writing report to {reportFilename}");
                     report.Save(reportFilename, format);
                 }
@@ -593,7 +598,7 @@ namespace BaXmlSplitter
         private void OnDragDrop(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.Copy;
-            var data = e.Data;
+            IDataObject? data = e.Data;
             if (data != null && data.GetData(DataFormats.FileDrop) != null)
             {
                 if (data.GetData(DataFormats.FileDrop) is string[] paths)
@@ -645,22 +650,22 @@ namespace BaXmlSplitter
                 if (xml.DocumentElement == null || string.IsNullOrEmpty(xml.DocumentElement.GetAttribute("docnbr")))
                 {
                     logMessages.Add(new LogMessage("No root node docnbr identifiable in XML content. Please check the XML is correct.", Severity.Error));
-                    return logMessages.ToArray();
+                    return [.. logMessages];
                 }
                 else if (string.IsNullOrEmpty(impliedDocnbr))
                 {
                     logMessages.Add(new LogMessage("The UOW states file was empty. Please check the UOW states file is correct.", Severity.Error));
-                    return logMessages.ToArray();
+                    return [.. logMessages];
                 }
                 else if (!xml.DocumentElement.GetAttribute("docnbr").Equals(impliedDocnbr, StringComparison.OrdinalIgnoreCase))
                 {
                     logMessages.Add(new LogMessage(string.Format("Root node docnbr '{0}' does not match UOW states file docnbr '{1}'. Please check the UOW states file is correct.", xml.DocumentElement.GetAttribute("docnbr").ToUpperInvariant(), impliedDocnbr.ToUpperInvariant()), Severity.Error));
-                    return logMessages.ToArray();
+                    return [.. logMessages];
                 }
                 logMessages.Add(new LogMessage(string.Format("Found {0} distinct work states in the manual:\n\t{1}", statesInManual.Count, string.Join("\n\t", statesInManual.Values.Cast<UowState>().Select(uow => uow.ToString())))));
-                var items = statesInManual.Values.Cast<UowState>().ToArray().Select(state => new ListViewItem(new string[] { state.StateValue.ToString() ?? "", state.StateName ?? "", state.Remark ?? "" }));
+                IEnumerable<ListViewItem> items = statesInManual.Values.Cast<UowState>().ToArray().Select(state => new ListViewItem(new string[] { state.StateValue.ToString() ?? "", state.StateName ?? "", state.Remark ?? "" }));
                 // display the multi select list view
-                var dialog = new SelectStates(items.ToArray(), states)
+                SelectStates dialog = new(items.ToArray(), states)
                 {
                     Font = Font,
                     StartPosition = FormStartPosition.CenterParent,
@@ -669,7 +674,7 @@ namespace BaXmlSplitter
                 _ = dialog.ShowDialog();
                 if (dialog.DialogResult == DialogResult.OK)
                 {
-                    var selectedStates = dialog.SelectedStates;
+                    UowState[]? selectedStates = dialog.SelectedStates;
                     if (selectedStates != null && selectedStates.Length > 0)
                     {
                         fullyQualifiedSelectedStates = states.Where((UowState state) => selectedStates.Select((UowState state) => state.StateValue).Contains(state.StateValue));
@@ -682,7 +687,7 @@ namespace BaXmlSplitter
                     }
                 }
             }
-            return logMessages.ToArray<LogMessage>();
+            return [.. logMessages];
         }
 
 
