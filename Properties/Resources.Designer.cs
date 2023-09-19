@@ -164,13 +164,13 @@ namespace BaXmlSplitter.Properties {
         ///   Looks up a localized string similar to &lt;Objs Version=&quot;1.1.0.1&quot; xmlns=&quot;http://schemas.microsoft.com/powershell/2004/04&quot;&gt;
         ///  &lt;Obj RefId=&quot;0&quot;&gt;
         ///    &lt;TN RefId=&quot;0&quot;&gt;
-        ///      &lt;T&gt;System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String[], System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]&lt;/T&gt;
+        ///      &lt;T&gt;System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Hashtable, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]&lt;/T&gt;
         ///      &lt;T&gt;System.Object&lt;/T&gt;
         ///    &lt;/TN&gt;
         ///    &lt;DCT&gt;
         ///      &lt;En&gt;
-        ///        &lt;S N=&quot;Key&quot;&gt;FCOM2&lt;/S&gt;
-        ///        &lt;Obj N=&quot;Value&quot; RefId [rest of string was truncated]&quot;;.
+        ///        &lt;S N=&quot;Key&quot;&gt;GXPROD&lt;/S&gt;
+        ///        &lt;Obj N [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string CheckoutItems {
             get {
@@ -185,6 +185,18 @@ namespace BaXmlSplitter.Properties {
             get {
                 object obj = ResourceManager.GetObject("Icon", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Objs Version=&quot;1.1.0.1&quot; xmlns=&quot;http://schemas.microsoft.com/powershell/2004/04&quot;&gt;
+        ///  &lt;Obj RefId=&quot;0&quot;&gt;
+        ///    &lt;TN RefId=&quot;0&quot;&gt;
+        ///      &lt;T&gt;System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=7.0.0.0, Culture=neutral, PublicKeyToke [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string LookupDocnbr {
+            get {
+                return ResourceManager.GetString("LookupDocnbr", resourceCulture);
             }
         }
         

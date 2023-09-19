@@ -1,5 +1,4 @@
-﻿using System.Web;
-using System.Xml;
+﻿using System.Xml;
 
 namespace BaXmlSplitter
 {

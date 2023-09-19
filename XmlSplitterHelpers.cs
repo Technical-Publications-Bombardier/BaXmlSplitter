@@ -1,17 +1,16 @@
 ﻿using BaXmlSplitter;
 using BaXmlSplitter.Properties;
 using System.Collections;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
-using System.Windows.Forms.VisualStyles;
 using System.Xml;
-using System.Xml.Serialization;
 
 internal static class XmlSplitterHelpers
 {
     internal const string DEFAULT_OUTPUT_DIR = "WIP";
     internal const string TIMESTAMP_FORMAT = "HH:mm:ss.fffffff";
-    internal static readonly string[] PROGRAMS = ["B_IFM", "CH604PROD", "CTALPROD", "LJ4045PROD", "GXPROD"];
+    internal static readonly string[] PROGRAMS = Enum.GetNames(typeof(Program));
     internal static readonly TimeSpan TIMEOUT = TimeSpan.FromSeconds(15);
     internal const RegexOptions RE_OPTIONS = RegexOptions.Compiled | RegexOptions.Multiline;
     internal const string UOW_PATTERN = @"\t*(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = ""(?<state>[^""]*)""\)$";
@@ -20,6 +19,15 @@ internal static class XmlSplitterHelpers
     internal static readonly Regex XML_FILENAME_RE = new(XML_FILENAME_PATTERN, RE_OPTIONS, TIMEOUT);
     internal static readonly string[] NEWLINES = ["\r\n", "\n"];
     internal static readonly string[] XPATH_SEPARATORS = ["|", " or "];
+
+    internal enum Program
+    {
+        B_IFM,
+        CH604PROD,
+        CTALPROD,
+        GXPROD,
+        LJ4045PROD
+    };
 
     #region BinaryCheck
     public static bool IsBinary(string path)
@@ -53,45 +61,62 @@ internal static class XmlSplitterHelpers
             || (ch > ((int)ControlChars.CR) && ch < ((int)ControlChars.SUB));
     }
     #endregion BinaryCheck
-    internal static Dictionary<string, string[]>? DeserializeCheckoutItems()
+    internal static Dictionary<Program, Dictionary<string, string[]>>? DeserializeCheckoutItems()
     {
         dynamic deserializedCheckoutUowItems = PSSerializer.Deserialize(Resources.CheckoutItems);
-        ICollection docnbrs = deserializedCheckoutUowItems.Keys;
-        Dictionary<string, string[]>? __checkoutUowItems = new(docnbrs.Count);
-        foreach (string docnbr in docnbrs)
+        Dictionary<Program, Dictionary<string, string[]>> __programCheckoutItems = new(PROGRAMS.Length);
+        foreach(var program in Enum.GetNames(typeof(Program)))
         {
-            dynamic deserializedUowNames = deserializedCheckoutUowItems[docnbr];
-            if (deserializedUowNames.ToArray(typeof(string)) is string[] uowNames)
+            ICollection docnbrs = deserializedCheckoutUowItems[program].Keys;
+            Dictionary<string, string[]>? checkoutUowItems = new(docnbrs.Count);
+            foreach (string docnbr in docnbrs)
             {
-                __checkoutUowItems.Add(docnbr, value: uowNames);
+                dynamic deserializedUowNames = deserializedCheckoutUowItems[program][docnbr];
+                if (deserializedUowNames.ToArray(typeof(string)) is string[] uowNames)
+                {
+                    checkoutUowItems.Add(docnbr, value: uowNames);
+                }
             }
+            __programCheckoutItems.Add(Enum.Parse<Program>(program), checkoutUowItems);
         }
-        return __checkoutUowItems;
+        return __programCheckoutItems;
     }
-    internal static Dictionary<string, Dictionary<int, UowState>>? DeserializeStates()
+    internal static Dictionary<Program, Dictionary<string, string>>? DeserializeDocnbrsPerCheckoutItem()
+    {
+        dynamic deserializedDocnbrsPerCheckoutItem = PSSerializer.Deserialize(Resources.LookupDocnbr);
+        Dictionary<Program, Dictionary<string, string>> __lookupCheckoutPerDocnbrPerProgram = new(PROGRAMS.Length);
+        foreach (string program in Enum.GetNames(typeof(Program)))
+        {
+            ICollection docnbrs = deserializedDocnbrsPerCheckoutItem[program].Keys;
+            Dictionary<string, string>? docnbrsPerCheckoutItem = new(docnbrs.Count);
+            foreach (string docnbr in docnbrs)
+            {
+                dynamic deserializedCheckoutItem = deserializedDocnbrsPerCheckoutItem[program][docnbr];
+                if (deserializedCheckoutItem is string checkoutItem)
+                {
+                    docnbrsPerCheckoutItem.Add(docnbr, checkoutItem);
+                }
+            }
+            __lookupCheckoutPerDocnbrPerProgram.Add(Enum.Parse<Program>(program), docnbrsPerCheckoutItem);
+        }
+        return __lookupCheckoutPerDocnbrPerProgram;
+    }
+    internal static Dictionary<Program, Dictionary<int, UowState>>? DeserializeStates()
     {
         dynamic deserializedStatesPerProgram = PSSerializer.Deserialize(Resources.StatesPerProgramXml);
         ICollection programs = deserializedStatesPerProgram.Keys;
-        Dictionary<string, Dictionary<int, UowState>> __statesPerProgram = new(programs.Count);
-        foreach (string program in programs)
+        Dictionary<Program, Dictionary<int, UowState>> __statesPerProgram = new(programs.Count);
+        foreach (string program in programs.Cast<string>())
         {
             dynamic stateNames = deserializedStatesPerProgram[program];
-            if (stateNames == null)
-            {
-                continue;
-            }
             Dictionary<int, UowState> states = new(stateNames.Count);
             foreach (int StateValue in stateNames.Keys)
             {
                 dynamic stateNameAndRemark = stateNames[StateValue];
-                if (stateNameAndRemark == null)
-                {
-                    continue;
-                }
                 UowState uowState = new(value: StateValue, name: stateNameAndRemark.statename, remark: stateNameAndRemark.remark);
                 states.Add(StateValue, uowState);
             }
-            __statesPerProgram.Add(program, states);
+            __statesPerProgram.Add((Program)Enum.Parse(typeof(Program), program), states);
         }
         return __statesPerProgram;
     }
@@ -118,12 +143,12 @@ internal static class XmlSplitterHelpers
     {
         return content.Split(NEWLINES, StringSplitOptions.None)[0];
     }
-    internal static UowState[]? ParseUowContent(string? uowContent, string? Program, Dictionary<string, Dictionary<int, UowState>>? statesPerProgram, string? uowStatesFile, out List<LogMessage> logMessages, out Hashtable statesInManual, out string foundDocnbr)
+    internal static UowState[]? ParseUowContent(string? uowContent, string? programStr, Dictionary<Program, Dictionary<int, UowState>>? statesPerProgram, string? uowStatesFile, out List<LogMessage> logMessages, out Hashtable statesInManual, out string foundDocnbr)
     {
         UowState[] states;
         statesInManual = [];
         logMessages = [];
-        if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(Program) && statesPerProgram != null && statesPerProgram[Program] != null)
+        if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(programStr) && statesPerProgram != null && (Program)Enum.Parse(typeof(Program),programStr) is Program program && statesPerProgram[program] != null)
         {
             foundDocnbr = GetUowStatesDocnbr(ref uowContent);
             MatchCollection stateMatches = UOW_REGEX.Matches(uowContent);
@@ -157,7 +182,7 @@ internal static class XmlSplitterHelpers
                 }
                 if (stateMatches[i].Groups["state"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["state"].Value) && int.TryParse(stateMatches[i].Groups["state"].Value, out int stateValue))
                 {
-                    UowState state = statesPerProgram[Program][stateValue];
+                    UowState state = statesPerProgram[program][stateValue];
                     state.StateValue = states[i].StateValue = stateValue;
                     if (!statesInManual.ContainsKey(stateValue))
                     {
