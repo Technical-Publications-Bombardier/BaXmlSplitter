@@ -1,7 +1,7 @@
 ﻿using BaXmlSplitter;
 using BaXmlSplitter.Properties;
 using System.Collections;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -127,10 +127,6 @@ internal static class XmlSplitterHelpers
             __statesPerProgram.Add((Programs)Enum.Parse(typeof(Programs), program), states);
         }
         return __statesPerProgram;
-    }
-    internal static bool PathIsValid(string pathToTest)
-    {
-        return !string.IsNullOrWhiteSpace(pathToTest) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(pathToTest.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute);
     }
     internal static XmlNode CalculateParentTag(XmlNode curNode)
     {
