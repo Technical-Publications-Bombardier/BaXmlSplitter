@@ -304,6 +304,7 @@ namespace BaXmlSplitter
             xpathTextBox.AccessibleDescription = "The XPath query that would select the nodes on which the XML will be split";
             xpathTextBox.AccessibleName = "XPath";
             xpathTextBox.AccessibleRole = AccessibleRole.Text;
+            xpathTextBox.Font = new Font("Cascadia Code Light", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             xpathTextBox.Location = new Point(12, 45);
             xpathTextBox.Multiline = true;
             xpathTextBox.Name = "xpathTextBox";
