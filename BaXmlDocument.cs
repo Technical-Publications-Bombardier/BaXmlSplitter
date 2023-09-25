@@ -70,13 +70,13 @@ namespace BaXmlSplitter
                 HashSet<XmlNode> notAlreadySeen = new(nodes.Count);
                 for (int i = 0; i < nodes.Count; i++)
                 {
-                    if (nodes[i] != null && nodes[i] is XmlNode node && notAlreadySeen.Add(node) && !checkoutNames.Contains(node.Name, StringComparer.OrdinalIgnoreCase) && node.ParentNode is XmlNode ancestor)
+                    if (nodes[i] is not null && nodes[i] is XmlNode node && notAlreadySeen.Add(node) && !checkoutNames.Contains(node.Name, StringComparer.OrdinalIgnoreCase) && node.ParentNode is XmlNode ancestor)
                     {
-                        while (ancestor != null && ancestor.Name is string ancestorName && !checkoutNames.Contains(ancestorName, StringComparer.OrdinalIgnoreCase) && ancestor.ParentNode is XmlNode greatAncestor)
+                        while (ancestor is not null && ancestor.Name is string ancestorName && !checkoutNames.Contains(ancestorName, StringComparer.OrdinalIgnoreCase) && ancestor.ParentNode is XmlNode greatAncestor)
                         {
                             ancestor = greatAncestor;
                         }
-                        if (ancestor != null && notAlreadySeen.Add(ancestor) && checkoutNames.Contains(ancestor.Name, StringComparer.OrdinalIgnoreCase))
+                        if (ancestor is not null && notAlreadySeen.Add(ancestor) && checkoutNames.Contains(ancestor.Name, StringComparer.OrdinalIgnoreCase))
                         {
                             selectedNodes.Add(ancestor);
                         }

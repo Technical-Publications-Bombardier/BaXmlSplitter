@@ -131,23 +131,23 @@ internal static class XmlSplitterHelpers
     /// Determines whether the specified parent is descendant.
     /// </summary>
     /// <param name="parent">The parent.</param>
-    /// <param name="purportedChild">The node that may be a child of the parent.</param>
+    /// <param name="possibleChild">The node that may be a child of the parent.</param>
     /// <returns>
     ///   <c>true</c> if the specified parent is descendant; otherwise, <c>false</c>.
     /// </returns>
-    internal static bool IsDescendant(XmlNode parent, XmlNode purportedChild)
+    internal static bool IsDescendant(XmlNode parent, XmlNode possibleChild)
     {
-        if (parent == purportedChild)
+        if (parent == possibleChild)
         {
-            return true; // purportedChild is the same node as parent
+            return true; // possibleChild is the same node as parent
         }
-        else if (purportedChild.ParentNode == null)
+        else if (possibleChild.ParentNode is null)
         {
-            return false; // purportedChild has no parent
+            return false; // possibleChild has no parent
         }
         else
         {
-            return IsDescendant(parent, purportedChild.ParentNode); // recursively check parent's parent
+            return IsDescendant(parent, possibleChild.ParentNode); // recursively check parent's parent
         }
     }
     internal static XmlNode CalculateParentTag(XmlNode curNode)
@@ -156,7 +156,7 @@ internal static class XmlSplitterHelpers
         {
             return result;
         }
-        else if /* has key attrib */ (curNode.ParentNode != null && curNode.ParentNode.Attributes != null && curNode.ParentNode.Attributes.Cast<XmlAttribute>().Any(attrib => attrib.Name.Equals("key", StringComparison.OrdinalIgnoreCase)))
+        else if /* has key attrib */ (curNode.ParentNode is not null && curNode.ParentNode.Attributes is not null && curNode.ParentNode.Attributes.Cast<XmlAttribute>().Any(attrib => attrib.Name.Equals("key", StringComparison.OrdinalIgnoreCase)))
         {
             return curNode.ParentNode;
         }
@@ -174,7 +174,7 @@ internal static class XmlSplitterHelpers
         UowState[] states;
         statesInManual = [];
         logMessages = [];
-        if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(programStr) && statesPerProgram != null && (Programs)Enum.Parse(typeof(Programs), programStr) is Programs program && statesPerProgram[program] != null)
+        if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(programStr) && statesPerProgram is not null && (Programs)Enum.Parse(typeof(Programs), programStr) is Programs program && statesPerProgram[program] is not null)
         {
             foundDocnbr = GetUowStatesDocnbr(ref uowContent);
             MatchCollection stateMatches = UOW_REGEX.Matches(uowContent);

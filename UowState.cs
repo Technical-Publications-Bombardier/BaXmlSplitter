@@ -32,7 +32,7 @@ namespace BaXmlSplitter
 
         public override string ToString()
         {
-            return String.Join(", ", new ArrayList() { (StateValue == null ? null : $"StateValue={StateValue}"), (string.IsNullOrEmpty(StateName) ? null : $"StateName='{StateName}'"), (string.IsNullOrEmpty(Remark) ? null : $"Remark='{Remark}'"), (string.IsNullOrEmpty(XPath) ? null : $"XPath='{XPath}'"), (string.IsNullOrEmpty(TagName) ? null : $"TagName='{TagName}'"), (string.IsNullOrEmpty(Key) ? null : $"Key='{Key}'"), (string.IsNullOrEmpty(Resource) ? null : $"Resource='{Resource}'"), (string.IsNullOrEmpty(Title) ? null : $"Title='{Title}'"), (string.IsNullOrEmpty(Level) ? null : $"Level='{Level}'") }.Cast<string>().Where(field => !string.IsNullOrEmpty(field)).ToArray());
+            return String.Join(", ", new ArrayList() { (StateValue is null ? null : $"StateValue={StateValue}"), (string.IsNullOrEmpty(StateName) ? null : $"StateName='{StateName}'"), (string.IsNullOrEmpty(Remark) ? null : $"Remark='{Remark}'"), (string.IsNullOrEmpty(XPath) ? null : $"XPath='{XPath}'"), (string.IsNullOrEmpty(TagName) ? null : $"TagName='{TagName}'"), (string.IsNullOrEmpty(Key) ? null : $"Key='{Key}'"), (string.IsNullOrEmpty(Resource) ? null : $"Resource='{Resource}'"), (string.IsNullOrEmpty(Title) ? null : $"Title='{Title}'"), (string.IsNullOrEmpty(Level) ? null : $"Level='{Level}'") }.Cast<string>().Where(field => !string.IsNullOrEmpty(field)).ToArray());
         }
 
         private string GetDebuggerDisplay()
@@ -42,12 +42,12 @@ namespace BaXmlSplitter
 
         public bool Equals(IUowState? other)
         {
-            return other != null && StateValue == other.StateValue;
+            return other is not null && StateValue == other.StateValue;
         }
 
         public bool Equals(IUowState? x, IUowState? y)
         {
-            return x != null && y != null && x.StateValue == y.StateValue;
+            return x is not null && y is not null && x.StateValue == y.StateValue;
         }
 
         public int GetHashCode(IUowState obj)
