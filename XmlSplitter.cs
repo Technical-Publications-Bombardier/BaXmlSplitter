@@ -66,7 +66,7 @@ namespace BaXmlSplitter
         /// </summary>
         private Dictionary<XmlSplitterHelpers.Programs, Dictionary<int, UowState>>? statesPerProgram;
         private Dictionary<XmlSplitterHelpers.Programs, Dictionary<string, string[]>>? checkoutItems;
-        private Dictionary<XmlSplitterHelpers.Programs, Dictionary<string, string>>? docnbrsPerCheckoutItem;
+        private Dictionary<XmlSplitterHelpers.Programs, Dictionary<string, string>>? manualFromDocnbr;
         private string? program;
         private IEnumerable<UowState>? fullyQualifiedSelectedStates;
 
@@ -128,7 +128,7 @@ namespace BaXmlSplitter
                 LoadFonts();
                 statesPerProgram = XmlSplitterHelpers.DeserializeStates();
                 checkoutItems = XmlSplitterHelpers.DeserializeCheckoutItems();
-                docnbrsPerCheckoutItem = XmlSplitterHelpers.DeserializeDocnbrsPerCheckoutItem();
+                manualFromDocnbr = XmlSplitterHelpers.DeserializeDocnbrManualFromProgram();
             });
             WriteLog("Finished initializing.");
         }
@@ -480,11 +480,17 @@ namespace BaXmlSplitter
                 {
                     string[]? checkoutElementNames = null;
                     XmlNode[]? nodes = null;
-                    if (checkoutItems is not null && docnbrsPerCheckoutItem is not null && xml.DocumentElement is not null && xml.DocumentElement.GetAttribute("docnbr") is string docnbr && !string.IsNullOrEmpty(program))
+                    if (checkoutItems is not null && manualFromDocnbr is not null && xml.DocumentElement is not null && xml.DocumentElement.GetAttribute("docnbr") is string docnbr && !string.IsNullOrEmpty(program))
                     {
                         WriteLog($"Using checkout element names on {Path.GetFileName(xmlSourceFile)} to restrict XPath query by docnbr '{docnbr}'.");
-                        XmlSplitterHelpers.Programs enumProgram = Enum.Parse<XmlSplitterHelpers.Programs>(program);
-                        checkoutElementNames = checkoutItems[enumProgram][docnbrsPerCheckoutItem[enumProgram][docnbr]];
+                        XmlSplitterHelpers.Programs ofPrograms = Enum.Parse<XmlSplitterHelpers.Programs>(program);
+                        string manual = manualFromDocnbr[ofPrograms][docnbr];
+                        foreach(string manualNameKey in checkoutItems[ofPrograms].Keys)
+                        {
+                            XmlSplitterHelpers.bestMatch.Enqueue(manualNameKey, XmlSplitterHelpers.jaccard.Distance(manual, manualNameKey));
+                        }
+
+                        checkoutElementNames = checkoutItems[ofPrograms][XmlSplitterHelpers.bestMatch.Dequeue()];
                         nodes = await Task.Run(() => xml.SelectNodesByCheckout(xpath, checkoutElementNames));
                     }
                     else

@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows</TargetFramework>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -14,6 +15,8 @@
 		<Title>Bombardier XML Splitting Tool</Title>
 		<NeutralLanguage>en-CA</NeutralLanguage>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<RepositoryUrl>https://github.com/mavaddat/BaXmlSplitter</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 		<DebugSymbols>true</DebugSymbols>
@@ -47,6 +50,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="F23.StringSimilarity" Version="5.1.0" />
 		<PackageReference Include="System.Management.Automation" Version="7.4.0-preview.5" />
 	</ItemGroup>
 
