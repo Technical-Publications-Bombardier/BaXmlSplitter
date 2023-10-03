@@ -344,7 +344,8 @@ internal static class XmlSplitterHelpers
                     else if (currentIndentation == tabIndentation - 1)
                     {
                         // we came out of parent element
-                        siblingCount = elementStack.Pop();
+                        _ = elementStack.Pop();
+                        siblingCount = new OrderedDictionary(StringComparer.OrdinalIgnoreCase);
                     }
                     // else currentIndentation == tabIndentation // we are at the same level as our predecessor
                     SiblingCountIncrement();
