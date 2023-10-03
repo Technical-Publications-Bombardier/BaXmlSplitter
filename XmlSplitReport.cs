@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Reflection;
 using System.Xml;
 
 namespace BaXmlSplitter
@@ -6,26 +7,16 @@ namespace BaXmlSplitter
     /// <summary>
     /// The XML splitting result report in XML, CSV, and TSV.
     /// </summary>
-    internal class XmlSplitReport(int capacity = XmlSplitReport.DEFAULT_CAPACITY)
+    internal class XmlSplitReport : List<XmlSplitReportEntry>
     {
-        /// <summary>
-        /// The entries
-        /// </summary>
-        private XmlSplitReportEntry[] _entries = new XmlSplitReportEntry[capacity];
-        /// <summary>
-        /// Gets or sets the entries.
-        /// </summary>
-        /// <value>
-        /// The entries.
-        /// </value>
-        private XmlSplitReportEntry[] Entries { get => _entries.Take(lastIndex).ToArray(); set => _entries = value; }
+
         /// <summary>
         /// Gets the parent tag names.
         /// </summary>
         /// <value>
         /// The parent tag names.
         /// </value>
-        private string[] ParentTagNames => Entries.SelectMany(entry => new[] { entry.CheckoutParent.Name, entry.KeyedParent.Name }).Distinct().ToArray();
+        private string[] ParentTagNames => this.SelectMany(entry => new[] { entry.CheckoutParent.Name, entry.KeyedParent.Name }).Distinct().ToArray();
         /// <summary>
         /// Gets or sets the additional attribute names per element.
         /// </summary>
@@ -37,28 +28,20 @@ namespace BaXmlSplitter
             get
             {
                 Dictionary<string, HashSet<string>> builder = [];
-                foreach (string elementName in ParentTagNames)
+                foreach (var elementName in ParentTagNames)
                 {
                     builder.Add(elementName, [
-                        .. Entries.Where(entry => entry.KeyedParent.Name == elementName).SelectMany(entry => entry.KeyedParent.Attributes!.Cast<XmlAttribute>().Select(attrib => attrib.Name)),
-                        .. Entries.Where(entry => entry.CheckoutParent.Name == elementName).SelectMany(entry => entry.CheckoutParent.Attributes!.Cast<XmlAttribute>().Select(attrib => attrib.Name))
+                        .. this.Where(entry => entry.KeyedParent.Name == elementName).SelectMany(entry => entry.KeyedParent.Attributes!.Cast<XmlAttribute>().Select(attribute => attribute.Name)),
+                        .. this.Where(entry => entry.CheckoutParent.Name == elementName).SelectMany(entry => entry.CheckoutParent.Attributes!.Cast<XmlAttribute>().Select(attribute => attribute.Name))
                         ]);
                 }
                 return builder;
             }
         }
         /// <summary>
-        /// The last index
-        /// </summary>
-        private int lastIndex = 0;
-        /// <summary>
-        /// The default capacity
-        /// </summary>
-        private const int DEFAULT_CAPACITY = 10;
-        /// <summary>
         /// The fields
         /// </summary>
-        private static readonly string[] FIELDS = ["CheckoutParentNumber", "CheckoutParentName", "CheckoutParentKey", "CheckoutParentTag", "UowNumber", "UowElementName", "UowKeyValue", "KeyedParent", "FullXPathToUow", "FilenameOfSplit"];
+        private static readonly string[] Fields = typeof(XmlSplitReportEntry).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance).Cast<FieldInfo>().Select(field => field.Name).ToArray();
 
         /// <summary>
         /// Available report formats
@@ -78,27 +61,7 @@ namespace BaXmlSplitter
             /// </summary>
             XML
         }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="XmlSplitReport"/> class.
-        /// </summary>
-        public XmlSplitReport() : this(DEFAULT_CAPACITY)
-        {
 
-        }
-
-        /// <summary>
-        /// Adds the specified entry.
-        /// </summary>
-        /// <param name="entry">The entry.</param>
-        /// <returns></returns>
-        public void Add(XmlSplitReportEntry entry)
-        {
-            if (lastIndex + 1 >= _entries.Length)
-            {
-                Array.Resize(ref _entries, 2 * _entries.Length);
-            }
-            _entries[lastIndex++] = entry;
-        }
         /// <summary>
         /// Saves the specified out path.
         /// </summary>
@@ -113,11 +76,10 @@ namespace BaXmlSplitter
                 case ReportFormat.TSV:
                     {
                         using StreamWriter writer = new(outPath);
-                        char separator = outFormat == ReportFormat.CSV ? ',' : '\t';
-                        writer.WriteLine(string.Join(separator, FIELDS));
-                        foreach (XmlSplitReportEntry entry in Entries)
+                        var separator = outFormat == ReportFormat.CSV ? ',' : '\t';
+                        writer.WriteLine(string.Join(separator, Fields));
+                        foreach (var line in this.Select(entry => string.Join(separator, new string[] { entry.CheckoutParentNumber.ToString(), entry.CheckoutParent.Name, entry.CheckoutParent.Attributes?["key"]?.Value ?? "&nbsp;", entry.CheckoutParent.OuterXml, entry.NodeNumber.ToString(), entry.UowNode.Name, entry.UowNode.Attributes?["key"]?.Value ?? "&nbsp;", entry.KeyedParent.OuterXml, entry.FullXPath, entry.FilenameOfSplit })))
                         {
-                            string line = string.Join(separator, new string[] { entry.CheckoutParentNumber.ToString(), entry.CheckoutParent.Name, entry.CheckoutParent.Attributes?["key"]?.Value ?? "&nbsp;", entry.CheckoutParent.OuterXml, entry.NodeNumber.ToString(), entry.UowNode.Name.ToString(), entry.UowNode.Attributes?["key"]?.Value ?? "&nbsp;", entry.KeyedParent.OuterXml, entry.FullXPath, entry.FilenameOfSplit });
                             writer.WriteLine(line);
                         }
                         break;
@@ -125,18 +87,18 @@ namespace BaXmlSplitter
                 case ReportFormat.XML:
                     {
                         XmlDocument xmlReport = new();
-                        XmlElement root = xmlReport.CreateElement("XmlSplitReport");
-                        string dtd = """
-                        <!ELEMENT XmlSplitReport (Entry*)>
-                        <!ELEMENT Entry (CheckoutName, NodeName, Ancestors, XPathToUow, Filename, State)>
-                        <!ATTLIST Entry
-                                  CheckoutNumber CDATA #REQUIRED
-                                  NodeNumber CDATA #REQUIRED
-                                  CheckoutKey CDATA #REQUIRED
-                                  UowKey CDATA #REQUIRED>
-                        <!ELEMENT CheckoutName (#PCDATA)>
-                        <!ELEMENT NodeName (#PCDATA)>
-                        """;
+                        var root = xmlReport.CreateElement("XmlSplitReport");
+                        var dtd = """
+                                  <!ELEMENT XmlSplitReport (Entry*)>
+                                  <!ELEMENT Entry (CheckoutName, NodeName, Ancestors, XPathToUow, Filename, State)>
+                                  <!ATTLIST Entry
+                                            CheckoutNumber CDATA #REQUIRED
+                                            NodeNumber CDATA #REQUIRED
+                                            CheckoutKey CDATA #REQUIRED
+                                            UowKey CDATA #REQUIRED>
+                                  <!ELEMENT CheckoutName (#PCDATA)>
+                                  <!ELEMENT NodeName (#PCDATA)>
+                                  """;
                         dtd += Environment.NewLine;
                         dtd += $"<!ELEMENT Ancestors ({(ParentTagNames.Length > 0 ? string.Join('|', ParentTagNames) : "EMPTY")})*>";
                         dtd += Environment.NewLine;
@@ -152,68 +114,68 @@ namespace BaXmlSplitter
                         """;
                         _ = xmlReport.AppendChild(xmlReport.CreateDocumentType("XmlSplitReport", null, null, dtd));
                         _ = xmlReport.AppendChild(root);
-                        foreach (XmlSplitReportEntry entry in Entries)
+                        foreach (var entry in this)
                         {
-                            XmlElement xmlEntry = xmlReport.CreateElement("Entry");
+                            var xmlEntry = xmlReport.CreateElement("Entry");
                             _ = root.AppendChild(xmlEntry);
-                            XmlAttribute checkoutNumber = xmlReport.CreateAttribute("CheckoutNumber");
+                            var checkoutNumber = xmlReport.CreateAttribute("CheckoutNumber");
                             checkoutNumber.Value = entry.CheckoutParentNumber.ToString();
                             _ = xmlEntry.Attributes.Append(checkoutNumber);
-                            XmlAttribute nodeNumber = xmlReport.CreateAttribute("NodeNumber");
+                            var nodeNumber = xmlReport.CreateAttribute("NodeNumber");
                             nodeNumber.Value = entry.NodeNumber.ToString();
                             _ = xmlEntry.Attributes.Append(nodeNumber);
-                            XmlAttribute checkoutKey = xmlReport.CreateAttribute("CheckoutKey");
+                            var checkoutKey = xmlReport.CreateAttribute("CheckoutKey");
                             checkoutKey.Value = entry.CheckoutParent.Attributes?["key"]?.Value;
                             _ = xmlEntry.Attributes.Append(checkoutKey);
-                            XmlAttribute uowKey = xmlReport.CreateAttribute("UowKey");
+                            var uowKey = xmlReport.CreateAttribute("UowKey");
                             uowKey.Value = entry.UowNode.Attributes?["key"]?.Value;
                             _ = xmlEntry.Attributes.Append(uowKey);
-                            XmlElement checkoutName = xmlReport.CreateElement("CheckoutName");
+                            var checkoutName = xmlReport.CreateElement("CheckoutName");
                             checkoutName.InnerText = entry.CheckoutParent.Name;
                             _ = xmlEntry.AppendChild(checkoutName);
-                            XmlElement nodeName = xmlReport.CreateElement("NodeName");
+                            var nodeName = xmlReport.CreateElement("NodeName");
                             nodeName.InnerText = entry.UowNode.Name;
                             _ = xmlEntry.AppendChild(nodeName);
-                            XmlElement parents = xmlReport.CreateElement("Ancestors");
+                            var parents = xmlReport.CreateElement("Ancestors");
                             // append a child element to parents with only the name and attributes of entry.KeyedParent, but none of its content
 
-                            XmlElement keyedParent = xmlReport.CreateElement(entry.KeyedParent.Name);
-                            foreach (XmlAttribute attrib in entry.KeyedParent.Attributes!)
+                            var keyedParent = xmlReport.CreateElement(entry.KeyedParent.Name);
+                            foreach (XmlAttribute attribute in entry.KeyedParent.Attributes!)
                             {
-                                keyedParent.SetAttribute(attrib.Name, attrib.Value);
+                                keyedParent.SetAttribute(attribute.Name, attribute.Value);
                             }
                             _ = parents.AppendChild(keyedParent);
                             if (entry.CheckoutParent.OuterXml != entry.KeyedParent.OuterXml)
                             {
-                                XmlElement checkoutParent = xmlReport.CreateElement(entry.CheckoutParent.Name);
-                                XmlComment checkoutComment = xmlReport.CreateComment("The checkout node below is the parent container (to the unit-of-work that is in progress) which is permitted to be exported.");
-                                foreach (XmlAttribute attrib in entry.CheckoutParent.Attributes!)
+                                var checkoutParent = xmlReport.CreateElement(entry.CheckoutParent.Name);
+                                var checkoutComment = xmlReport.CreateComment("The checkout node below is the parent container (to the unit-of-work that is in progress) which is permitted to be exported.");
+                                foreach (XmlAttribute attribute in entry.CheckoutParent.Attributes!)
                                 {
-                                    checkoutParent.SetAttribute(attrib.Name, attrib.Value);
+                                    checkoutParent.SetAttribute(attribute.Name, attribute.Value);
                                 }
                                 _ = parents.AppendChild(checkoutComment);
                                 _ = parents.AppendChild(checkoutParent);
                             }
                             _ = xmlEntry.AppendChild(parents);
-                            XmlElement xpath = xmlReport.CreateElement("XPathToUow");
+                            var xpath = xmlReport.CreateElement("XPathToUow");
                             xpath.InnerText = entry.FullXPath;
-                            XmlComment xpathComment = xmlReport.CreateComment("The XPath below is for the unit-of-work node, not the checkout node.");
+                            var xpathComment = xmlReport.CreateComment("The XPath below is for the unit-of-work node, not the checkout node.");
                             _ = xmlEntry.AppendChild(xpathComment);
                             _ = xmlEntry.AppendChild(xpath);
-                            XmlElement filename = xmlReport.CreateElement("Filename");
+                            var filename = xmlReport.CreateElement("Filename");
                             filename.InnerText = entry.FilenameOfSplit;
                             _ = xmlEntry.AppendChild(filename);
 
                             #region UowState
-                            XmlElement state = xmlReport.CreateElement("State");
+                            var state = xmlReport.CreateElement("State");
                             _ = xmlEntry.AppendChild(state);
-                            XmlElement stateValue = xmlReport.CreateElement("Value");
-                            stateValue.InnerText = entry.UowState.StateValue.ToString() is string stateValueStr ? stateValueStr : "&nbsp;";
-                            XmlElement stateName = xmlReport.CreateElement("StateName");
-                            stateName.InnerText = entry.UowState.StateName is string stateNameStr ? stateNameStr : "&nbsp;";
-                            XmlElement stateRemark = xmlReport.CreateElement("Remark");
-                            stateRemark.InnerText = entry.UowState.Remark is string remarkStr ? remarkStr : "&nbsp;";
-                            foreach (XmlElement statePartial in new XmlElement[] { stateValue, stateName, stateRemark })
+                            var stateValue = xmlReport.CreateElement("Value");
+                            stateValue.InnerText = entry.UowState.StateValue.ToString() is { } stateValueStr ? stateValueStr : "&nbsp;";
+                            var stateName = xmlReport.CreateElement("StateName");
+                            stateName.InnerText = entry.UowState.StateName is { } stateNameStr ? stateNameStr : "&nbsp;";
+                            var stateRemark = xmlReport.CreateElement("Remark");
+                            stateRemark.InnerText = entry.UowState.Remark is { } remarkStr ? remarkStr : "&nbsp;";
+                            foreach (var statePartial in new XmlElement[] { stateValue, stateName, stateRemark })
                             {
                                 _ = state.AppendChild(statePartial);
                             }
@@ -247,10 +209,10 @@ namespace BaXmlSplitter
         private static XmlElement NodeToTag(XmlNode node)
         {
 
-            XmlElement element = new XmlDocument().CreateElement(node.Name);
-            foreach (XmlAttribute attrib in node.Attributes!)
+            var element = new XmlDocument().CreateElement(node.Name);
+            foreach (XmlAttribute attribute in node.Attributes!)
             {
-                element.SetAttribute(attrib.Name, attrib.Value);
+                element.SetAttribute(attribute.Name, attribute.Value);
             }
             return element;
         }

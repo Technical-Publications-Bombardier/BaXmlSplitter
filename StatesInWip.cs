@@ -1,15 +1,13 @@
-﻿using System.Data;
-
-namespace BaXmlSplitter
+﻿namespace BaXmlSplitter
 {
     internal partial class SelectStates : Form
     {
-        private readonly UowState[] AllStates;
+        private readonly UowState[] _allStates;
         public UowState[]? SelectedStates { get; set; }
         public SelectStates(ListViewItem[] items, UowState[] allStates)
         {
             InitializeComponent();
-            AllStates = allStates;
+            _allStates = allStates;
             AcceptButton = okButton;
             CancelButton = cancelButton;
             statesListView.Items.AddRange(items);
@@ -25,14 +23,7 @@ namespace BaXmlSplitter
         private void ListView_DrawItem(object? sender, DrawListViewItemEventArgs e)
         {
             e.DrawDefault = true;
-            if ((e.ItemIndex % 2) == 0)
-            {
-                e.Item.BackColor = Color.LightSteelBlue;
-            }
-            else
-            {
-                e.Item.BackColor = Color.AliceBlue;
-            }
+            e.Item.BackColor = (e.ItemIndex % 2) == 0 ? Color.LightSteelBlue : Color.AliceBlue;
             e.Item.UseItemStyleForSubItems = true;
         }
 
@@ -43,8 +34,8 @@ namespace BaXmlSplitter
         }
         private void OkButton_Click(object sender, EventArgs e)
         {
-            IEnumerable<int> indices = statesListView.CheckedItems.Cast<ListViewItem>().Where(item => int.TryParse(item.SubItems[0].Text, out int value)).Select(item => int.Parse(item.SubItems[0].Text)).Cast<int>();
-            SelectedStates = AllStates.Where((UowState stateFromAll) => stateFromAll.StateValue is int stateValue && indices.Contains(stateValue)).Cast<UowState>().ToArray();
+            var indices = statesListView.CheckedItems.Cast<ListViewItem>().Where(item => int.TryParse(item.SubItems[0].Text, out var value)).Select(item => int.Parse(item.SubItems[0].Text)).Cast<int>();
+            SelectedStates = _allStates.Where((UowState stateFromAll) => stateFromAll.StateValue is { } stateValue && indices.Contains(stateValue)).Cast<UowState>().ToArray();
             DialogResult = DialogResult.OK;
             Close();
         }

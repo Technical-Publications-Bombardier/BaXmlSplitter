@@ -1,10 +1,17 @@
-﻿using BaXmlSplitter;
-using BaXmlSplitter.Properties;
+﻿using System;
 using System.Collections;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Management.Automation;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using BaXmlSplitter.Properties;
 using F23.StringSimilarity;
+
+namespace BaXmlSplitter;
 
 /// <summary>
 /// Collection of static methods and fields that aid the <see cref="XmlSplitter" />.
@@ -16,13 +23,13 @@ internal static class XmlSplitterHelpers
     /// <summary>The timestamp format.</summary>
     internal const string TIMESTAMP_FORMAT = "HH:mm:ss.fffffff";
     /// <summary>The CSDB programs.</summary>
-    internal static readonly string[] PROGRAMS = Enum.GetNames<Programs>();
+    internal static readonly string[] PROGRAMS = Enum.GetNames<CsdbProgram>();
     /// <summary>The regular expression timeout.</summary>
     internal static readonly TimeSpan TIMEOUT = TimeSpan.FromSeconds(15);
     /// <summary>The regular expression options.</summary>
     internal const RegexOptions RE_OPTIONS = RegexOptions.Compiled | RegexOptions.Multiline;
     /// <summary>The UOW states file parsing regular expression pattern.</summary>
-    internal const string UOW_PATTERN = @"\t*(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = ""(?<state>[^""]*)""\)$";
+    internal const string UOW_PATTERN = @"(?<tabs>\t*)(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = ""(?<state>[^""]*)""\)$";
     /// <summary>The UOW states file regular expression
     /// object.</summary>
     internal static readonly Regex UOW_REGEX = new(UOW_PATTERN, RE_OPTIONS, TIMEOUT);
@@ -37,14 +44,14 @@ internal static class XmlSplitterHelpers
     /// </summary>
     internal static readonly string[] XPATH_SEPARATORS = ["|", " or "];
     /// <summary>
-    /// The <see cref="Jaccard"/> object for performing string similarity calculations.
+    /// The <see cref="F23.StringSimilarity.Jaccard"/> object for performing string similarity calculations.
     /// </summary>
-    internal static readonly Jaccard jaccard = new(k: 2);
+    internal static readonly Jaccard Jaccard = new(k: 2);
     /// <summary>
     /// <para>The priority queue for automatically ordering string similarity results.</para>
     /// <para>This will be used for finding closest matching manual name in the <see cref="XmlSplitter.checkoutItems"/> keys for each manual type in the <see cref="XmlSplitter.manualFromDocnbr"/> dictionary.</para>
     /// </summary>
-    internal static readonly PriorityQueue<string, double> bestMatch = new();
+    internal static readonly PriorityQueue<string, double> BestMatch = new();
 
     /// <summary>
     /// Font families loaded by <see cref="XmlSplitter.LoadFonts"/>.
@@ -73,9 +80,9 @@ internal static class XmlSplitterHelpers
         _72_Monospace
     };
     /// <summary>
-    /// The CSDB Programs.
+    /// The CSDB CsdbProgram.
     /// </summary>
-    internal enum Programs
+    internal enum CsdbProgram
     {
         /// <summary>
         /// The <c>B_IFM</c> program for instrument flight manuals
@@ -110,7 +117,7 @@ internal static class XmlSplitterHelpers
     public static bool IsBinary(string path)
     {
         FileInfo fi = new(path);
-        long length = fi.Length;
+        var length = fi.Length;
         if (length == 0) return false;
 
         using StreamReader stream = new(path);
@@ -133,19 +140,19 @@ internal static class XmlSplitterHelpers
         /// <summary>
         /// The null character
         /// </summary>
-        NUL = (char)0 /** Null character */,
+        NUL = (char)0,
         /// <summary>
         /// The backspace character
         /// </summary>
-        BS = (char)8 /** Backspace character */,
+        BS = (char)8,
         /// <summary>
         /// The carriage return character
         /// </summary>
-        CR = (char)13 /** Carriage return character */,
+        CR = (char)13,
         /// <summary>
         /// The substitute character
         /// </summary>
-        SUB = (char)26 /** Substitute character */
+        SUB = (char)26
     }
     /// <summary>
     /// Determines whether [is control character] [the specified character ch].
@@ -156,8 +163,7 @@ internal static class XmlSplitterHelpers
     /// </returns>
     public static bool IsControlChar(int ch)
     {
-        return (ch > ((int)ControlChars.NUL) && ch < ((int)ControlChars.BS))
-            || (ch > ((int)ControlChars.CR) && ch < ((int)ControlChars.SUB));
+        return ch is > (int)ControlChars.NUL and < (int)ControlChars.BS or > (int)ControlChars.CR and < (int)ControlChars.SUB;
     }
     #endregion BinaryCheck
     /// <summary>
@@ -174,71 +180,70 @@ internal static class XmlSplitterHelpers
     ///     </div>
     ///   </span>
     /// </summary>
-    /// <returns>Returns a Dictionary that maps <see cref="Programs" /> to a Dictionary where the key is the manual name and the value is an array of the element names eligible for checkout.</returns>
-    internal static Dictionary<Programs, Dictionary<string, string[]>>? DeserializeCheckoutItems()
+    /// <returns>Returns a Dictionary that maps <see cref="CsdbProgram" /> to a Dictionary where the key is the manual name and the value is an array of the element names eligible for checkout.</returns>
+    internal static Dictionary<CsdbProgram, Dictionary<string, string[]>>? DeserializeCheckoutItems()
     {
         dynamic deserializedCheckoutUowItems = PSSerializer.Deserialize(Resources.CheckoutItems);
-        Dictionary<Programs, Dictionary<string, string[]>> __programCheckoutItems = new(PROGRAMS.Length);
-        foreach (var program in Enum.GetNames<Programs>())
+        Dictionary<CsdbProgram, Dictionary<string, string[]>> programCheckoutItems = new(PROGRAMS.Length);
+        foreach (var program in Enum.GetNames<CsdbProgram>())
         {
             ICollection docnbrs = deserializedCheckoutUowItems[program].Keys;
             Dictionary<string, string[]>? checkoutUowItems = new(docnbrs.Count);
             foreach (string docnbr in docnbrs)
             {
-                dynamic deserializedUowNames = deserializedCheckoutUowItems[program][docnbr];
+                var deserializedUowNames = deserializedCheckoutUowItems[program][docnbr];
                 if (deserializedUowNames.ToArray(typeof(string)) is string[] uowNames)
                 {
                     checkoutUowItems.Add(docnbr, value: uowNames);
                 }
             }
-            __programCheckoutItems.Add(Enum.Parse<Programs>(program), checkoutUowItems);
+            programCheckoutItems.Add(Enum.Parse<CsdbProgram>(program), checkoutUowItems);
         }
-        return __programCheckoutItems;
+        return programCheckoutItems;
     }
     /// <summary>
     /// Deserializes the UOW states from PowerShell CLI XML.
     /// </summary>
-    /// <returns>Returns a dictionary that maps <see cref="Programs"/> to a Dictionary where the key is the state value (int) and the value is the details of the work state as a <see cref="UowState"/> object.</returns>
-    internal static Dictionary<Programs, Dictionary<int, UowState>>? DeserializeStates()
+    /// <returns>Returns a dictionary that maps <see cref="CsdbProgram"/> to a Dictionary where the key is the state value (int) and the value is the details of the work state as a <see cref="UowState"/> object.</returns>
+    internal static Dictionary<CsdbProgram, Dictionary<int, UowState>>? DeserializeStates()
     {
         dynamic deserializedStatesPerProgram = PSSerializer.Deserialize(Resources.StatesPerProgramXml);
         ICollection programs = deserializedStatesPerProgram.Keys;
-        Dictionary<Programs, Dictionary<int, UowState>> __statesPerProgram = new(programs.Count);
-        foreach (string program in programs.Cast<string>())
+        Dictionary<CsdbProgram, Dictionary<int, UowState>> statesPerProgram = new(programs.Count);
+        foreach (var program in programs.Cast<string>())
         {
-            dynamic stateNames = deserializedStatesPerProgram[program];
+            var stateNames = deserializedStatesPerProgram[program];
             Dictionary<int, UowState> states = new(stateNames.Count);
-            foreach (int StateValue in stateNames.Keys)
+            foreach (int stateValue in stateNames.Keys)
             {
-                dynamic stateNameAndRemark = stateNames[StateValue];
-                UowState uowState = new(value: StateValue, name: stateNameAndRemark.statename, remark: stateNameAndRemark.remark);
-                states.Add(StateValue, uowState);
+                var stateNameAndRemark = stateNames[stateValue];
+                UowState uowState = new(StateValue: stateValue, StateName: stateNameAndRemark.statename, Remark: stateNameAndRemark.remark);
+                states.Add(stateValue, uowState);
             }
-            __statesPerProgram.Add((Programs)Enum.Parse(typeof(Programs), program), states);
+            statesPerProgram.Add((CsdbProgram)Enum.Parse(typeof(CsdbProgram), program), states);
         }
-        return __statesPerProgram;
+        return statesPerProgram;
     }
     /// <summary>
     /// Deserializes the Dictionary to get the manual type from the docnbr per program.
     /// </summary>
-    /// <returns>Returns a dictionary that maps <see cref="Programs"/> to a Dictionary where the key is the docnbr (string) and the value is the manual type (string).</returns>
-    internal static Dictionary<Programs, Dictionary<string, string>>? DeserializeDocnbrManualFromProgram()
+    /// <returns>Returns a dictionary that maps <see cref="CsdbProgram"/> to a Dictionary where the key is the docnbr (string) and the value is the manual type (string).</returns>
+    internal static Dictionary<CsdbProgram, Dictionary<string, string>>? DeserializeDocnbrManualFromProgram()
     {
         dynamic deserializedDocnbrManualFromProgram = PSSerializer.Deserialize(Resources.DocnbrManualFromProgram);
         ICollection programs = deserializedDocnbrManualFromProgram.Keys;
-        Dictionary<Programs, Dictionary<string, string>> __docnbrManualFromProgram = new(programs.Count);
-        foreach (string program in programs.Cast<string>())
+        Dictionary<CsdbProgram, Dictionary<string, string>> docnbrManualFromProgram = new(programs.Count);
+        foreach (var program in programs.Cast<string>())
         {
-            dynamic manualFromDocnbr = deserializedDocnbrManualFromProgram[program];
-            Dictionary<string, string> __manualFromDocnbr = new(manualFromDocnbr.Count);
-            foreach (string docnbr in manualFromDocnbr.Keys)
+            Dictionary<string, string> manualFromDocnbr = new(deserializedDocnbrManualFromProgram[program].Count);
+            foreach (string docnbr in deserializedDocnbrManualFromProgram[program].Keys)
             {
-                dynamic manual = manualFromDocnbr[docnbr];
-                __manualFromDocnbr.Add(docnbr, manual);
+                var manual = deserializedDocnbrManualFromProgram[program][docnbr];
+                manualFromDocnbr.Add(docnbr, manual);
             }
-            __docnbrManualFromProgram.Add((Programs)Enum.Parse(typeof(Programs), program), __manualFromDocnbr);
+            docnbrManualFromProgram.Add(Enum.Parse<CsdbProgram>(program), manualFromDocnbr);
         }
-        return __docnbrManualFromProgram;
+        return docnbrManualFromProgram;
     }
     /// <summary>
     /// Determines whether the specified parent node is an ancestor of the possible child node.
@@ -250,7 +255,7 @@ internal static class XmlSplitterHelpers
     /// </returns>
     internal static bool IsDescendant(XmlNode parent, XmlNode possibleChild)
     {
-        if (parent == possibleChild)
+        if (parent.Equals(possibleChild))
         {
             return true; // possibleChild is the same node as parent
         }
@@ -270,15 +275,15 @@ internal static class XmlSplitterHelpers
     /// <returns></returns>
     internal static XmlNode CalculateParentTag(XmlNode curNode)
     {
-        if (curNode is XmlDocument doc && doc.ChildNodes is XmlNodeList children && children.Cast<XmlNode>() is IEnumerable<XmlNode> childrenList && childrenList.FirstOrDefault(predicate: child => child.NodeType is not XmlNodeType.Comment and not XmlNodeType.DocumentType) is XmlNode result)
+        if (curNode is XmlDocument { ChildNodes: { } children } && children.Cast<XmlNode>() is { } childrenList && childrenList.FirstOrDefault(predicate: child => child.NodeType is not XmlNodeType.Comment and not XmlNodeType.DocumentType) is { } result)
         {
             return result;
         }
-        else if /* has key attrib */ (curNode.ParentNode is not null && curNode.ParentNode.Attributes is not null && curNode.ParentNode.Attributes.Cast<XmlAttribute>().Any(attrib => attrib.Name.Equals("key", StringComparison.OrdinalIgnoreCase)))
+        else if /* has key attribute */ (curNode.ParentNode?.Attributes != null && curNode.ParentNode.Attributes.Cast<XmlAttribute>().Any(attribute => attribute.Name.Equals("key", StringComparison.OrdinalIgnoreCase)))
         {
             return curNode.ParentNode;
         }
-        else /* does not have key attrib; need to recurse */
+        else /* does not have key attribute; need to recurse */
         {
             return CalculateParentTag(curNode.ParentNode!);
         }
@@ -302,31 +307,59 @@ internal static class XmlSplitterHelpers
     /// <param name="logMessages">The log messages to return to the caller.</param>
     /// <param name="statesInManual">The UOW states that actually appear in the current manual.</param>
     /// <param name="foundDocnbr">The found docnbr in the UOW states file.</param>
-    /// <returns>An array of <see cref="UowState"/> objects corresponding to the states per node indicated by the states file. May be null if parsing fails.</returns>
-    internal static UowState[]? ParseUowContent(string? uowContent, string? programStr, Dictionary<Programs, Dictionary<int, UowState>>? statesPerProgram, string? uowStatesFile, out List<LogMessage> logMessages, out Hashtable statesInManual, out string foundDocnbr)
+    /// <returns>
+    /// An array of <see cref="UowState" /> objects corresponding to the states per node indicated by the states file. May be null if parsing fails.
+    /// </returns>
+    internal static UowState[]? ParseUowContent(string? uowContent, string? programStr, Dictionary<CsdbProgram, Dictionary<int, UowState>>? statesPerProgram, string? uowStatesFile, out List<LogMessage> logMessages, out Hashtable statesInManual, out string foundDocnbr)
     {
         UowState[] states;
         statesInManual = [];
         logMessages = [];
-        if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(programStr) && statesPerProgram is not null && (Programs)Enum.Parse(typeof(Programs), programStr) is Programs program && statesPerProgram[program] is not null)
+        var tabIndentation = 0;
+        if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(programStr) && statesPerProgram is not null && (CsdbProgram)Enum.Parse(typeof(CsdbProgram), programStr) is var program)
         {
             foundDocnbr = GetUowStatesDocnbr(ref uowContent);
-            MatchCollection stateMatches = UOW_REGEX.Matches(uowContent);
+            var stateMatches = UOW_REGEX.Matches(uowContent);
             if (stateMatches.Count == 0)
             {
                 logMessages.Add(new LogMessage($"Invalid UOW file '{uowStatesFile}' chosen", Severity.Error));
                 return null;
             }
             states = new UowState[stateMatches.Count];
-            for (int i = 0; i < stateMatches.Count; i++)
+            Stack<OrderedDictionary> elementStack = new(stateMatches.Count);
+            OrderedDictionary siblingCount = new(StringComparer.OrdinalIgnoreCase);
+            for (var i = 0; i < stateMatches.Count; i++)
             {
-                states[i] = new(tag: stateMatches[i].Groups["tag"].Value);
-                string[] xpaths = [$"//{states[i].TagName}", $"//{states[i].TagName?.ToLowerInvariant()}"];
+                states[i] = new UowState(TagName: stateMatches[i].Groups["tag"].Value);
 
+                var currentIndentation = stateMatches[i].Groups["tabs"].Value.Length;
+                if (stateMatches[i].Groups["tabs"].Success)
+                {
+                    if (currentIndentation == tabIndentation + 1)
+                    {
+                        // we went into a child element
+                        // my parent is the previous element on the stack
+                        elementStack.Push(siblingCount);
+                    }
+                    else if (currentIndentation == tabIndentation - 1)
+                    {
+                        // we came out of parent element
+                        siblingCount = elementStack.Pop();
+                    }
+                    // else currentIndentation == tabIndentation // we are at the same level as our predecessor
+                    SiblingCountIncrement();
+                    tabIndentation = currentIndentation;
+                }
+                else
+                {
+                    Debug.WriteLine($"Tabs group was null at count {i}", "Error");
+                }
+                var parentPath = CalculateParentPath(elementStack);
+                states[i].XPath = $"/{parentPath}/{states[i].TagName}[{siblingCount[states[i].TagName!]}]".ToLowerInvariant();
                 if (stateMatches[i].Groups["key"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["key"].Value))
                 {
                     states[i].Key = stateMatches[i].Groups["key"].Value;
-                    xpaths = xpaths.Select(xpath => $"{xpath}[contains(@key,'{states[i].Key}') or contains(@key,'{states[i].Key?.ToLowerInvariant()}')]").ToArray();
+                    states[i].XPath = $"{states[i].XPath}[contains(@key,'{states[i].Key}') or contains(@key,'{states[i].Key?.ToLowerInvariant()}')]";
                 }
                 if (stateMatches[i].Groups["rs"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["rs"].Value))
                 {
@@ -340,9 +373,9 @@ internal static class XmlSplitterHelpers
                 {
                     states[i].Level = stateMatches[i].Groups["lvl"].Value;
                 }
-                if (stateMatches[i].Groups["state"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["state"].Value) && int.TryParse(stateMatches[i].Groups["state"].Value, out int stateValue))
+                if (stateMatches[i].Groups["state"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["state"].Value) && int.TryParse(stateMatches[i].Groups["state"].Value, out var stateValue))
                 {
-                    UowState state = statesPerProgram[program][stateValue];
+                    var state = statesPerProgram[program][stateValue];
                     state.StateValue = states[i].StateValue = stateValue;
                     if (!statesInManual.ContainsKey(stateValue))
                     {
@@ -351,7 +384,20 @@ internal static class XmlSplitterHelpers
                     states[i].StateName = state.StateName;
                     states[i].Remark = state.Remark;
                 }
-                states[i].XPath = string.Join('|', xpaths);
+                continue;
+
+                void SiblingCountIncrement()
+                {
+                    if (siblingCount.Contains(states[i].TagName!) && siblingCount[states[i].TagName!] is int count)
+                    {
+                        // increment siblingCount[states[i].TagName!] as int
+                        siblingCount[states[i].TagName!] = count + 1;
+                    }
+                    else
+                    {
+                        siblingCount.Add(states[i].TagName!, 1);
+                    }
+                }
             }
             return states;
         }
@@ -361,6 +407,29 @@ internal static class XmlSplitterHelpers
             return null;
         }
     }
+
+    /// <summary>
+    /// Calculates the parent XPath using the element stack.
+    /// </summary>
+    /// <param name="elementStack">The stack of element-names and their corresponding sibling counts.</param>
+    /// <returns>The XPath to the parent element.</returns>
+    private static string CalculateParentPath(Stack<OrderedDictionary> elementStack)
+    {
+        StringBuilder builder = new();
+        // iterate through the stack without popping elements off; take only the last key-value pair
+        // of the ordered dictionary to form the xpath. The key corresponds to the tag name and the value
+        // corresponds to the sibling number in the xpath.
+        foreach (var orderedDictionary in elementStack)
+        {
+            var tagName = orderedDictionary.Keys.Cast<string>().Last();
+            if (orderedDictionary[tagName] is string count)
+            {
+                builder.Insert(0, $"/{tagName}[{count}]");
+            }
+        }
+        return builder.ToString();
+    }
+
     /// <summary>
     /// Browses for file.
     /// </summary>
@@ -369,23 +438,14 @@ internal static class XmlSplitterHelpers
     /// <returns>Returns the file path. May be an empty string if no file is chosen.</returns>
     internal static string BrowseForFile(string startingPath, string? filter = null)
     {
-        using OpenFileDialog openFileDialog = new()
-        {
-            InitialDirectory = Path.GetDirectoryName(startingPath)
-        };
+        using OpenFileDialog openFileDialog = new();
+        openFileDialog.InitialDirectory = Path.GetDirectoryName(startingPath);
         if (!string.IsNullOrEmpty(filter))
         {
             openFileDialog.Filter = filter;
         }
-        DialogResult result = openFileDialog.ShowDialog();
-        if (result == DialogResult.OK)
-        {
-            return openFileDialog.FileName;
-        }
-        else
-        {
-            return string.Empty;
-        }
+        var result = openFileDialog.ShowDialog();
+        return result == DialogResult.OK ? openFileDialog.FileName : string.Empty;
     }
 
     /// <summary>
@@ -396,9 +456,9 @@ internal static class XmlSplitterHelpers
     /// <returns>Returns <c>true</c> if the user confirms, <c>false</c> otherwise.</returns>
     internal static bool ShowConfirmationBox(string message, string caption)
     {
-        MessageBoxButtons button = MessageBoxButtons.YesNo;
-        MessageBoxIcon icon = MessageBoxIcon.Question;
-        DialogResult result = MessageBox.Show(message, caption, button, icon);
+        var button = MessageBoxButtons.YesNo;
+        var icon = MessageBoxIcon.Question;
+        var result = MessageBox.Show(message, caption, button, icon);
         return result == DialogResult.Yes;
     }
 
@@ -410,8 +470,8 @@ internal static class XmlSplitterHelpers
     /// <returns></returns>
     internal static void ShowWarningBox(string message, string? caption)
     {
-        MessageBoxButtons button = MessageBoxButtons.OK;
-        MessageBoxIcon icon = MessageBoxIcon.Warning;
+        var button = MessageBoxButtons.OK;
+        var icon = MessageBoxIcon.Warning;
         _ = MessageBox.Show(message, caption, button, icon);
     }
 
