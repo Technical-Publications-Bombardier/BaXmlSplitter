@@ -1,15 +1,12 @@
-﻿using System;
+﻿using BaXmlSplitter.Properties;
+using F23.StringSimilarity;
 using System.Collections;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Management.Automation;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using BaXmlSplitter.Properties;
-using F23.StringSimilarity;
 
 namespace BaXmlSplitter;
 
@@ -19,30 +16,30 @@ namespace BaXmlSplitter;
 internal static class XmlSplitterHelpers
 {
     /// <summary>The default output directory.</summary>
-    internal const string DEFAULT_OUTPUT_DIR = "WIP";
+    internal const string DefaultOutputDir = "WIP";
     /// <summary>The timestamp format.</summary>
-    internal const string TIMESTAMP_FORMAT = "HH:mm:ss.fffffff";
+    internal const string TimestampFormat = "HH:mm:ss.fffffff";
     /// <summary>The CSDB programs.</summary>
-    internal static readonly string[] PROGRAMS = Enum.GetNames<CsdbProgram>();
+    internal static readonly string[] Programs = Enum.GetNames<CsdbProgram>();
     /// <summary>The regular expression timeout.</summary>
-    internal static readonly TimeSpan TIMEOUT = TimeSpan.FromSeconds(15);
+    internal static readonly TimeSpan Timeout = TimeSpan.FromSeconds(15);
     /// <summary>The regular expression options.</summary>
-    internal const RegexOptions RE_OPTIONS = RegexOptions.Compiled | RegexOptions.Multiline;
+    internal const RegexOptions ReOptions = RegexOptions.Compiled | RegexOptions.Multiline;
     /// <summary>The UOW states file parsing regular expression pattern.</summary>
-    internal const string UOW_PATTERN = @"(?<tabs>\t*)(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = ""(?<state>[^""]*)""\)$";
+    internal const string UowPattern = """(?<tabs>\t*)(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = "(?<state>[^"]*)"\)$""";
     /// <summary>The UOW states file regular expression
     /// object.</summary>
-    internal static readonly Regex UOW_REGEX = new(UOW_PATTERN, RE_OPTIONS, TIMEOUT);
+    internal static readonly Regex UowRegex = new(UowPattern, ReOptions, Timeout);
     /// <summary>The XML filename pattern.</summary>
-    internal const string XML_FILENAME_PATTERN = @"([\w_-]+[\d-]{8,}).*";
+    internal const string XmlFilenamePattern = @"([\w_-]+[\d-]{8,}).*";
     /// <summary>The XML filename regular expression pattern.</summary>
-    internal static readonly Regex XML_FILENAME_RE = new(XML_FILENAME_PATTERN, RE_OPTIONS, TIMEOUT);
+    internal static readonly Regex XmlFilenameRe = new(XmlFilenamePattern, ReOptions, Timeout);
     /// <summary>The newline strings for Unix and Windows systems.</summary>
-    internal static readonly string[] NEWLINES = ["\r\n", "\n"];
+    internal static readonly string[] Newlines = ["\r\n", "\n"];
     /// <summary>
     /// The xpath separators
     /// </summary>
-    internal static readonly string[] XPATH_SEPARATORS = ["|", " or "];
+    internal static readonly string[] XpathSeparators = ["|", " or "];
     /// <summary>
     /// The <see cref="F23.StringSimilarity.Jaccard"/> object for performing string similarity calculations.
     /// </summary>
@@ -87,22 +84,27 @@ internal static class XmlSplitterHelpers
         /// <summary>
         /// The <c>B_IFM</c> program for instrument flight manuals
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         B_IFM,
         /// <summary>
         /// The <c>CH604PROD</c> program for Challenger 6XX maintenance manuals
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         CH604PROD,
         /// <summary>
         /// The <c>CTALPROD</c> program for Challenger 3XX maintenance manuals
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         CTALPROD,
         /// <summary>
         /// The <c>GXPROD</c> program for Global and Global Express maintenance manuals
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         GXPROD,
         /// <summary>
         /// The <c>LJ4045PROD</c> program for Learjet 40/45 maintenance manuals
         /// </summary>
+        // ReSharper disable once InconsistentNaming
         LJ4045PROD
     };
 
@@ -140,19 +142,19 @@ internal static class XmlSplitterHelpers
         /// <summary>
         /// The null character
         /// </summary>
-        NUL = (char)0,
+        Nul = (char)0,
         /// <summary>
         /// The backspace character
         /// </summary>
-        BS = (char)8,
+        Bs = (char)8,
         /// <summary>
         /// The carriage return character
         /// </summary>
-        CR = (char)13,
+        Cr = (char)13,
         /// <summary>
         /// The substitute character
         /// </summary>
-        SUB = (char)26
+        Sub = (char)26
     }
     /// <summary>
     /// Determines whether [is control character] [the specified character ch].
@@ -163,7 +165,7 @@ internal static class XmlSplitterHelpers
     /// </returns>
     public static bool IsControlChar(int ch)
     {
-        return ch is > (int)ControlChars.NUL and < (int)ControlChars.BS or > (int)ControlChars.CR and < (int)ControlChars.SUB;
+        return ch is > (int)ControlChars.Nul and < (int)ControlChars.Bs or > (int)ControlChars.Cr and < (int)ControlChars.Sub;
     }
     #endregion BinaryCheck
     /// <summary>
@@ -184,7 +186,7 @@ internal static class XmlSplitterHelpers
     internal static Dictionary<CsdbProgram, Dictionary<string, string[]>>? DeserializeCheckoutItems()
     {
         dynamic deserializedCheckoutUowItems = PSSerializer.Deserialize(Resources.CheckoutItems);
-        Dictionary<CsdbProgram, Dictionary<string, string[]>> programCheckoutItems = new(PROGRAMS.Length);
+        Dictionary<CsdbProgram, Dictionary<string, string[]>> programCheckoutItems = new(Programs.Length);
         foreach (var program in Enum.GetNames<CsdbProgram>())
         {
             ICollection docnbrs = deserializedCheckoutUowItems[program].Keys;
@@ -220,7 +222,7 @@ internal static class XmlSplitterHelpers
                 UowState uowState = new(StateValue: stateValue, StateName: stateNameAndRemark.statename, Remark: stateNameAndRemark.remark);
                 states.Add(stateValue, uowState);
             }
-            statesPerProgram.Add((CsdbProgram)Enum.Parse(typeof(CsdbProgram), program), states);
+            statesPerProgram.Add(Enum.Parse<CsdbProgram>(program), states);
         }
         return statesPerProgram;
     }
@@ -295,7 +297,7 @@ internal static class XmlSplitterHelpers
     /// <returns>The docnbr (string) implied by the first line of the UOW states file content.</returns>
     internal static string GetUowStatesDocnbr(ref string content)
     {
-        return content.Split(NEWLINES, StringSplitOptions.None)[0];
+        return content.Split(Newlines, StringSplitOptions.None)[0];
     }
     /// <summary>
     /// Parses the content of the units-of-work states file.
@@ -316,10 +318,10 @@ internal static class XmlSplitterHelpers
         statesInManual = [];
         logMessages = [];
         var tabIndentation = 0;
-        if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(programStr) && statesPerProgram is not null && (CsdbProgram)Enum.Parse(typeof(CsdbProgram), programStr) is var program)
+        if (!string.IsNullOrEmpty(uowContent) && UowRegex.IsMatch(uowContent) && !string.IsNullOrEmpty(programStr) && statesPerProgram is not null && Enum.Parse<CsdbProgram>(programStr) is var program)
         {
             foundDocnbr = GetUowStatesDocnbr(ref uowContent);
-            var stateMatches = UOW_REGEX.Matches(uowContent);
+            var stateMatches = UowRegex.Matches(uowContent);
             if (stateMatches.Count == 0)
             {
                 logMessages.Add(new LogMessage($"Invalid UOW file '{uowStatesFile}' chosen", Severity.Error));

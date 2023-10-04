@@ -62,13 +62,11 @@ namespace BaXmlSplitter
 
         public XmlNode[]? SelectNodesByCheckout(string xpath, string[] checkoutNames)
         {
-            List<XmlNode> selectedNodes = [];
-            if (SelectNodes(xpath) is not { } nodes) return selectedNodes.ToArray();
-            HashSet<XmlNode> notAlreadySeenNodes = new(nodes.Count);
-            HashSet<XmlNode> notAlreadySeenAncestors = new(nodes.Count);
+            HashSet<XmlNode> selectedNodes = [];
+            if (SelectNodes(xpath) is not { } nodes) return [.. selectedNodes];
             for (var i = 0; i < nodes.Count; i++)
             {
-                if (nodes[i] is null || nodes[i] is not { } node || !notAlreadySeenNodes.Add(node)) continue;
+                if (nodes[i] is null || nodes[i] is not { } node || selectedNodes.Contains(node)) continue;
                 if (checkoutNames.Contains(node.Name, StringComparer.OrdinalIgnoreCase))
                 {
                     selectedNodes.Add(node);
@@ -76,15 +74,15 @@ namespace BaXmlSplitter
             }
             for (var i = 0; i < nodes.Count; i++)
             {
-                if (nodes[i] is null || nodes[i] is not { } node || !notAlreadySeenAncestors.Add(node)) continue;
+                if (nodes[i] is null || nodes[i] is not { } node || selectedNodes.Contains(node)) continue;
                 if (node.ParentNode is not { } ancestor) continue;
                 while (ancestor.Name is { } ancestorName && !checkoutNames.Contains(ancestorName, StringComparer.OrdinalIgnoreCase) && ancestor.ParentNode is { } greatAncestor)
                 {
                     ancestor = greatAncestor;
                 }
-                if (notAlreadySeenAncestors.Add(ancestor) && checkoutNames.Contains(ancestor.Name, StringComparer.OrdinalIgnoreCase))
+                if (checkoutNames.Contains(ancestor.Name, StringComparer.OrdinalIgnoreCase))
                 {
-                    selectedNodes.Add(ancestor);
+                    _ = selectedNodes.Add(ancestor);
                 }
             }
             return [.. selectedNodes];

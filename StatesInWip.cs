@@ -2,12 +2,12 @@
 {
     internal partial class SelectStates : Form
     {
-        private readonly UowState[] _allStates;
+        private readonly UowState[] allStates;
         public UowState[]? SelectedStates { get; set; }
         public SelectStates(ListViewItem[] items, UowState[] allStates)
         {
             InitializeComponent();
-            _allStates = allStates;
+            this.allStates = allStates;
             AcceptButton = okButton;
             CancelButton = cancelButton;
             statesListView.Items.AddRange(items);
@@ -35,7 +35,7 @@
         private void OkButton_Click(object sender, EventArgs e)
         {
             var indices = statesListView.CheckedItems.Cast<ListViewItem>().Where(item => int.TryParse(item.SubItems[0].Text, out var value)).Select(item => int.Parse(item.SubItems[0].Text)).Cast<int>();
-            SelectedStates = _allStates.Where((UowState stateFromAll) => stateFromAll.StateValue is { } stateValue && indices.Contains(stateValue)).Cast<UowState>().ToArray();
+            SelectedStates = allStates.Where((UowState stateFromAll) => stateFromAll.StateValue is { } stateValue && indices.Contains(stateValue)).Cast<UowState>().ToArray();
             DialogResult = DialogResult.OK;
             Close();
         }

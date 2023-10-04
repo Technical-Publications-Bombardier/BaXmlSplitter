@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Xml;
 
 namespace BaXmlSplitter
@@ -51,15 +50,15 @@ namespace BaXmlSplitter
             /// <summary>
             /// Comma-separated values
             /// </summary>
-            CSV,
+            Csv,
             /// <summary>
             /// Tab-separated values
             /// </summary>
-            TSV,
+            Tsv,
             /// <summary>
             /// Extensible mark-up language
             /// </summary>
-            XML
+            Xml
         }
 
         /// <summary>
@@ -72,11 +71,11 @@ namespace BaXmlSplitter
         {
             switch (outFormat)
             {
-                case ReportFormat.CSV:
-                case ReportFormat.TSV:
+                case ReportFormat.Csv:
+                case ReportFormat.Tsv:
                     {
                         using StreamWriter writer = new(outPath);
-                        var separator = outFormat == ReportFormat.CSV ? ',' : '\t';
+                        var separator = outFormat == ReportFormat.Csv ? ',' : '\t';
                         writer.WriteLine(string.Join(separator, Fields));
                         foreach (var line in this.Select(entry => string.Join(separator, new string[] { entry.CheckoutParentNumber.ToString(), entry.CheckoutParent.Name, entry.CheckoutParent.Attributes?["key"]?.Value ?? "&nbsp;", entry.CheckoutParent.OuterXml, entry.NodeNumber.ToString(), entry.UowNode.Name, entry.UowNode.Attributes?["key"]?.Value ?? "&nbsp;", entry.KeyedParent.OuterXml, entry.FullXPath, entry.FilenameOfSplit })))
                         {
@@ -84,7 +83,7 @@ namespace BaXmlSplitter
                         }
                         break;
                     }
-                case ReportFormat.XML:
+                case ReportFormat.Xml:
                     {
                         XmlDocument xmlReport = new();
                         var root = xmlReport.CreateElement("XmlSplitReport");
@@ -170,11 +169,11 @@ namespace BaXmlSplitter
                             var state = xmlReport.CreateElement("State");
                             _ = xmlEntry.AppendChild(state);
                             var stateValue = xmlReport.CreateElement("Value");
-                            stateValue.InnerText = entry.UowState.StateValue.ToString() is { } stateValueStr ? stateValueStr : "&nbsp;";
+                            stateValue.InnerText = entry.UowState.StateValue.ToString() ?? "&nbsp;";
                             var stateName = xmlReport.CreateElement("StateName");
-                            stateName.InnerText = entry.UowState.StateName is { } stateNameStr ? stateNameStr : "&nbsp;";
+                            stateName.InnerText = entry.UowState.StateName ?? "&nbsp;";
                             var stateRemark = xmlReport.CreateElement("Remark");
-                            stateRemark.InnerText = entry.UowState.Remark is { } remarkStr ? remarkStr : "&nbsp;";
+                            stateRemark.InnerText = entry.UowState.Remark ?? "&nbsp;";
                             foreach (var statePartial in new XmlElement[] { stateValue, stateName, stateRemark })
                             {
                                 _ = state.AppendChild(statePartial);
@@ -223,14 +222,14 @@ namespace BaXmlSplitter
         /// <value>
         /// The keyed parent.
         /// </value>
-        public XmlNode KeyedParent { get => NodeToTag(_keyedParent); set => _keyedParent = value; }
+        public XmlNode KeyedParent { get => NodeToTag(keyedParent); set => keyedParent = value; }
         /// <summary>
         /// Gets or sets the checkout parent.
         /// </summary>
         /// <value>
         /// The checkout parent.
         /// </value>
-        public XmlNode CheckoutParent { get => NodeToTag(_checkoutParent); set => _checkoutParent = value; }
+        public XmlNode CheckoutParent { get => NodeToTag(checkoutParent); set => checkoutParent = value; }
         /// <summary>
         /// The uow node
         /// </summary>
@@ -250,11 +249,11 @@ namespace BaXmlSplitter
         /// <summary>
         /// The keyed parent
         /// </summary>
-        private XmlNode _keyedParent;
+        private XmlNode keyedParent;
         /// <summary>
         /// The checkout parent
         /// </summary>
-        private XmlNode _checkoutParent;
+        private XmlNode checkoutParent;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlSplitReportEntry"/> class.
@@ -272,8 +271,8 @@ namespace BaXmlSplitter
             CheckoutParentNumber = checkoutParentNumber;
             NodeNumber = nodeNumber;
             UowNode = uowNode;
-            _checkoutParent = CheckoutParent = checkoutParent;
-            _keyedParent = KeyedParent = keyedParentTag;
+            this.checkoutParent = CheckoutParent = checkoutParent;
+            keyedParent = KeyedParent = keyedParentTag;
             FullXPath = fullXPath;
             FilenameOfSplit = filenameOfSplit;
             UowState = uowState;
