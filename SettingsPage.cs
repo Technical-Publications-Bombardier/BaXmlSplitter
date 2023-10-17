@@ -93,6 +93,9 @@ namespace BaXmlSplitter
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SettingsPage"/> class.
+        /// </summary>
         public SettingsPage()
         {
             InitializeComponent();
@@ -100,7 +103,13 @@ namespace BaXmlSplitter
             hashiCorpClientSecretTextBox.Text = HashiCorpClientSecret;
         }
 
-        private void HashiCorpClientSecretSet(object sender, EventArgs e)
+        /// <summary>
+        /// The HashiCorp client secret text field handler.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void HashiCorpClientSecretHandler(object sender, EventArgs e)
         {
             try
             {
@@ -113,6 +122,12 @@ namespace BaXmlSplitter
             }
         }
 
+        /// <summary>
+        /// Handles the Click event of the OkSettings control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
         private void OkSettings_Click(object sender, EventArgs e)
         {
             // apply settings and close the form
@@ -120,17 +135,35 @@ namespace BaXmlSplitter
             Close();
         }
 
+        /// <summary>
+        /// Handles the Click event of the ApplySettings control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
         private void ApplySettings_Click(object sender, EventArgs e)
         {
-            HashiCorpClientSecretSet(sender, e);
+            HashiCorpClientSecretHandler(sender, e);
             Settings.Default.Save();
         }
 
+        /// <summary>
+        /// Handles the Click event of the CancelSettings control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
         private void CancelSettings_Click(object sender, EventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// Handles the Click event of the ShowHashiCorpClientSecret control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
         private void ShowHashiCorpClientSecret_Click(object sender, EventArgs e)
         {
             hashiCorpClientSecretTextBox.UseSystemPasswordChar = !hashiCorpClientSecretTextBox.UseSystemPasswordChar;
