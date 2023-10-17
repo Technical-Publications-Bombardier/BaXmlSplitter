@@ -18,7 +18,9 @@ internal static class XmlSplitterHelpers
     /// <summary>The default output directory.</summary>
     internal const string DefaultOutputDir = "WIP";
     /// <summary>The timestamp format.</summary>
-    internal const string TimestampFormat = "HH:mm:ss.fffffff";
+    internal const string LogTimestampFormat = "HH:mm:ss.fffffff";
+    /// <summary>The report timestamp format</summary>
+    internal const string ReportTimestampFormat = "yyyy - MM - dd - HH - mm - ss - fffffff";
     /// <summary>The CSDB programs.</summary>
     internal static readonly string[] Programs = Enum.GetNames<CsdbProgram>();
     /// <summary>The regular expression timeout.</summary>
@@ -46,36 +48,10 @@ internal static class XmlSplitterHelpers
     internal static readonly Jaccard Jaccard = new(k: 2);
     /// <summary>
     /// <para>The priority queue for automatically ordering string similarity results.</para>
-    /// <para>This will be used for finding closest matching manual name in the <see cref="XmlSplitter.checkoutItems"/> keys for each manual type in the <see cref="XmlSplitter.manualFromDocnbr"/> dictionary.</para>
+    /// <para>This will be used for finding the closest matching manual name in the <see cref="XmlSplitter.checkoutItems"/> keys for each manual type in the <see cref="XmlSplitter.manualFromDocnbr"/> dictionary.</para>
     /// </summary>
     internal static readonly PriorityQueue<string, double> BestMatch = new();
 
-    /// <summary>
-    /// Font families loaded by <see cref="XmlSplitter.LoadFonts"/>.
-    /// </summary>
-    internal enum FontFamilies
-    {
-        /// <summary>
-        /// The 72 font
-        /// </summary>
-        _72,
-        /// <summary>
-        /// The 72 black font
-        /// </summary>
-        _72_Black,
-        /// <summary>
-        /// The 72 condensed font
-        /// </summary>
-        _72_Condensed,
-        /// <summary>
-        /// The 72 light font
-        /// </summary>
-        _72_Light,
-        /// <summary>
-        /// The 72 monospace font
-        /// </summary>
-        _72_Monospace
-    };
     /// <summary>
     /// The CSDB CsdbProgram.
     /// </summary>
@@ -185,7 +161,7 @@ internal static class XmlSplitterHelpers
     /// <returns>Returns a Dictionary that maps <see cref="CsdbProgram" /> to a Dictionary where the key is the manual name and the value is an array of the element names eligible for checkout.</returns>
     internal static Dictionary<CsdbProgram, Dictionary<string, string[]>>? DeserializeCheckoutItems()
     {
-        dynamic deserializedCheckoutUowItems = PSSerializer.Deserialize(Resources.CheckoutItems);
+        dynamic deserializedCheckoutUowItems = PSSerializer.Deserialize(Properties.Resources.CheckoutItems);
         Dictionary<CsdbProgram, Dictionary<string, string[]>> programCheckoutItems = new(Programs.Length);
         foreach (var program in Enum.GetNames<CsdbProgram>())
         {
@@ -209,7 +185,7 @@ internal static class XmlSplitterHelpers
     /// <returns>Returns a dictionary that maps <see cref="CsdbProgram"/> to a Dictionary where the key is the state value (int) and the value is the details of the work state as a <see cref="UowState"/> object.</returns>
     internal static Dictionary<CsdbProgram, Dictionary<int, UowState>>? DeserializeStates()
     {
-        dynamic deserializedStatesPerProgram = PSSerializer.Deserialize(Resources.StatesPerProgramXml);
+        dynamic deserializedStatesPerProgram = PSSerializer.Deserialize(Properties.Resources.StatesPerProgramXml);
         ICollection programs = deserializedStatesPerProgram.Keys;
         Dictionary<CsdbProgram, Dictionary<int, UowState>> statesPerProgram = new(programs.Count);
         foreach (var program in programs.Cast<string>())
@@ -232,7 +208,7 @@ internal static class XmlSplitterHelpers
     /// <returns>Returns a dictionary that maps <see cref="CsdbProgram"/> to a Dictionary where the key is the docnbr (string) and the value is the manual type (string).</returns>
     internal static Dictionary<CsdbProgram, Dictionary<string, string>>? DeserializeDocnbrManualFromProgram()
     {
-        dynamic deserializedDocnbrManualFromProgram = PSSerializer.Deserialize(Resources.DocnbrManualFromProgram);
+        dynamic deserializedDocnbrManualFromProgram = PSSerializer.Deserialize(Properties.Resources.DocnbrManualFromProgram);
         ICollection programs = deserializedDocnbrManualFromProgram.Keys;
         Dictionary<CsdbProgram, Dictionary<string, string>> docnbrManualFromProgram = new(programs.Count);
         foreach (var program in programs.Cast<string>())
@@ -358,11 +334,15 @@ internal static class XmlSplitterHelpers
                     Debug.WriteLine($"Tabs group was null at count {i}", "Error");
                 }
                 var parentPath = CalculateParentPath(elementStack);
+#pragma warning disable CA1308
                 states[i].XPath = $"/{parentPath}/{states[i].TagName}[{siblingCount[states[i].TagName!]}]".ToLowerInvariant();
+#pragma warning restore CA1308
                 if (stateMatches[i].Groups["key"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["key"].Value))
                 {
                     states[i].Key = stateMatches[i].Groups["key"].Value;
+#pragma warning disable CA1308
                     states[i].XPath = $"{states[i].XPath}[contains(@key,'{states[i].Key}') or contains(@key,'{states[i].Key?.ToLowerInvariant()}')]";
+#pragma warning restore CA1308
                 }
                 if (stateMatches[i].Groups["rs"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["rs"].Value))
                 {
@@ -438,7 +418,7 @@ internal static class XmlSplitterHelpers
     /// </summary>
     /// <param name="startingPath">The starting path.</param>
     /// <param name="filter">The filter.</param>
-    /// <returns>Returns the file path. May be an empty string if no file is chosen.</returns>
+    /// <returns>Returns the file path. It may be an empty string if no file is chosen.</returns>
     internal static string BrowseForFile(string startingPath, string? filter = null)
     {
         using OpenFileDialog openFileDialog = new();
@@ -459,8 +439,8 @@ internal static class XmlSplitterHelpers
     /// <returns>Returns <c>true</c> if the user confirms, <c>false</c> otherwise.</returns>
     internal static bool ShowConfirmationBox(string message, string caption)
     {
-        var button = MessageBoxButtons.YesNo;
-        var icon = MessageBoxIcon.Question;
+        const MessageBoxButtons button = MessageBoxButtons.YesNo;
+        const MessageBoxIcon icon = MessageBoxIcon.Question;
         var result = MessageBox.Show(message, caption, button, icon);
         return result == DialogResult.Yes;
     }
@@ -473,8 +453,8 @@ internal static class XmlSplitterHelpers
     /// <returns></returns>
     internal static void ShowWarningBox(string message, string? caption)
     {
-        var button = MessageBoxButtons.OK;
-        var icon = MessageBoxIcon.Warning;
+        const MessageBoxButtons button = MessageBoxButtons.OK;
+        const MessageBoxIcon icon = MessageBoxIcon.Warning;
         _ = MessageBox.Show(message, caption, button, icon);
     }
 

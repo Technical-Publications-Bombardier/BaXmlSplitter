@@ -191,6 +191,53 @@ namespace BaXmlSplitter.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 8x7oEJ6Mbd52zStVCld8O/nO7ilB1ji56jWcVJH0VpQ=.
+        /// </summary>
+        internal static string Entropy {
+            get {
+                return ResourceManager.GetString("Entropy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap EyeClosed {
+            get {
+                object obj = ResourceManager.GetObject("EyeClosed", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap EyeOpen {
+            get {
+                object obj = ResourceManager.GetObject("EyeOpen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2D0E843FB0699B647B58110594B06E6057D1D07BAC0465F5FFC496A553A1DF8C.
+        /// </summary>
+        internal static string HashiCorpClientSecretExpectedHash {
+            get {
+                return ResourceManager.GetString("HashiCorpClientSecretExpectedHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {&quot;client_id&quot;:&quot;9N55dmcf9CIiawUqaFMfO4f69sqHjM9N&quot;,&quot;ajs_aid&quot;:&quot;ecc2be89-04a6-472b-8adc-3624d3dc6a0b&quot;,&quot;user_id&quot;:&quot;e253f5ef-566d-458f-bf5a-a8b772f749f0&quot;,&quot;org_id&quot;:&quot;84ff43ee-a407-43cf-be28-3342f32fb62c&quot;,&quot;proj_id&quot;:&quot;93a0ec93-839f-4b93-84a3-51d10c796d8a&quot;,&quot;app_name&quot;:&quot;BaXmlSplitter&quot;}.
+        /// </summary>
+        internal static string HashiCorpIdentity {
+            get {
+                return ResourceManager.GetString("HashiCorpIdentity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon Icon {

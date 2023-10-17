@@ -1,0 +1,2378 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.Dictionary`2[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Management.Automation.PSObject, System.Management.Automation, Version=7.4.0.5, Culture=neutral, PublicKeyToken=31bf3856ad364e35]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</T>
+      <T>System.Object</T>
+    </TN>
+    <DCT>
+      <En>
+        <S N="Key">B_IFM</S>
+        <Obj N="Value" RefId="1">
+          <TN RefId="1">
+            <T>System.Collections.Generic.Dictionary`2[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Management.Automation.PSObject, System.Management.Automation, Version=7.4.0.5, Culture=neutral, PublicKeyToken=31bf3856ad364e35]]</T>
+            <T>System.Object</T>
+          </TN>
+          <DCT>
+            <En>
+              <I32 N="Key">0</I32>
+              <Obj N="Value" RefId="2">
+                <TN RefId="2">
+                  <T>Selected.System.Management.Automation.PSCustomObject</T>
+                  <T>System.Management.Automation.PSCustomObject</T>
+                  <T>System.Object</T>
+                </TN>
+                <MS>
+                  <S N="statename">Undefined</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">1</I32>
+              <Obj N="Value" RefId="3">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Revision</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">2</I32>
+              <Obj N="Value" RefId="4">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Official</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">3</I32>
+              <Obj N="Value" RefId="5">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Obsolete</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-1</I32>
+              <Obj N="Value" RefId="6">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Rev TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-2</I32>
+              <Obj N="Value" RefId="7">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Official TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-3</I32>
+              <Obj N="Value" RefId="8">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Obsolete TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">4</I32>
+              <Obj N="Value" RefId="9">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Approved4Pub</S>
+                  <S N="remark">UOW Approved for Publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">5</I32>
+              <Obj N="Value" RefId="10">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">InProgress</S>
+                  <S N="remark">Enable to edit in ArborText</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">6</I32>
+              <Obj N="Value" RefId="11">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">rsInProgress</S>
+                  <S N="remark">Edit for RS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">7</I32>
+              <Obj N="Value" RefId="12">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">EffectLinked</S>
+                  <S N="remark">Link Tags replaced with live links to Eff Pool Items</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">8</I32>
+              <Obj N="Value" RefId="13">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">EffItemInRev</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">200</I32>
+              <Obj N="Value" RefId="14">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">00 Init Done</S>
+                  <S N="remark">Man Rev ready for GenPageData</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">199</I32>
+              <Obj N="Value" RefId="15">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Ready4ManRev</S>
+                  <S N="remark">TSN &amp; REVDATE set, ready for assembly</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">201</I32>
+              <Obj N="Value" RefId="16">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">01 PD Done</S>
+                  <S N="remark">PageData Done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">204</I32>
+              <Obj N="Value" RefId="17">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">04 TOC Done</S>
+                  <S N="remark">TOC Done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">208</I32>
+              <Obj N="Value" RefId="18">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">08 LEP Done</S>
+                  <S N="remark">LEP Done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">209</I32>
+              <Obj N="Value" RefId="19">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">09 XMIT Done</S>
+                  <S N="remark">Transmittal Done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">210</I32>
+              <Obj N="Value" RefId="20">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">10 Rev Done</S>
+                  <S N="remark">Revision Done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">9</I32>
+              <Obj N="Value" RefId="21">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">InitRev Done</S>
+                  <S N="remark">EFF State</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">10</I32>
+              <Obj N="Value" RefId="22">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Processing</S>
+                  <S N="remark">EFF State</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">202</I32>
+              <Obj N="Value" RefId="23">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Rev Done</S>
+                  <S N="remark">EFF State</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">11</I32>
+              <Obj N="Value" RefId="24">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">copyforRS</S>
+                  <S N="remark">When copied for RS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">12</I32>
+              <Obj N="Value" RefId="25">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">RS-EffLinked</S>
+                  <S N="remark">Link tags replaced with live links in RS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">13</I32>
+              <Obj N="Value" RefId="26">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Copy-EffLink</S>
+                  <S N="remark">Link tags replaced with live links in Copy for RS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">14</I32>
+              <Obj N="Value" RefId="27">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Sub4Approval</S>
+                  <S N="remark">RS Submitted for Authority Approval</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">15</I32>
+              <Obj N="Value" RefId="28">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SubCopy4App</S>
+                  <S N="remark">RS Copy Submitted for Authority Approval</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">16</I32>
+              <Obj N="Value" RefId="29">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">AuthApproved</S>
+                  <S N="remark">Approved by Authority</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">17</I32>
+              <Obj N="Value" RefId="30">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">AuthAppCopy</S>
+                  <S N="remark">Copy for RS approved by authority</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">18</I32>
+              <Obj N="Value" RefId="31">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Approval</S>
+                  <S N="remark">Graphics Pool management</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">19</I32>
+              <Obj N="Value" RefId="32">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GPSinProgrss</S>
+                  <S N="remark">For Contractors</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">20</I32>
+              <Obj N="Value" RefId="33">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">ReviewGPS</S>
+                  <S N="remark">For Contractors</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">21</I32>
+              <Obj N="Value" RefId="34">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">HTPinProgrss</S>
+                  <S N="remark">To unlink effect</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">22</I32>
+              <Obj N="Value" RefId="35">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">ReviewHTP</S>
+                  <S N="remark">For Contractors</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">23</I32>
+              <Obj N="Value" RefId="36">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">HTPlinked</S>
+                </MS>
+              </Obj>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+      <En>
+        <S N="Key">CH604PROD</S>
+        <Obj N="Value" RefId="37">
+          <TNRef RefId="1" />
+          <DCT>
+            <En>
+              <I32 N="Key">0</I32>
+              <Obj N="Value" RefId="38">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Undefined</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">1</I32>
+              <Obj N="Value" RefId="39">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Revision</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">2</I32>
+              <Obj N="Value" RefId="40">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Official</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">3</I32>
+              <Obj N="Value" RefId="41">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Obsolete</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-1</I32>
+              <Obj N="Value" RefId="42">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Rev TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-2</I32>
+              <Obj N="Value" RefId="43">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Official TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-3</I32>
+              <Obj N="Value" RefId="44">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Obsolete TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">8</I32>
+              <Obj N="Value" RefId="45">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">PBinProgress</S>
+                  <S N="remark">Work unit available to writer</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">9</I32>
+              <Obj N="Value" RefId="46">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Approved4Pub</S>
+                  <S N="remark">Workunit approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">11</I32>
+              <Obj N="Value" RefId="47">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">PmRecUpdated</S>
+                  <S N="remark">Perm Rec changed only</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">16</I32>
+              <Obj N="Value" RefId="48">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">AtValidation</S>
+                  <S N="remark">Data being validated: do not publish</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">15</I32>
+              <Obj N="Value" RefId="49">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GHSI Linked</S>
+                  <S N="remark">GHSI linked to AMM, ARM and SDS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">17</I32>
+              <Obj N="Value" RefId="50">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GHSIinProgrs</S>
+                  <S N="remark">GHSI available to writer</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">18</I32>
+              <Obj N="Value" RefId="51">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GHSIapproved</S>
+                  <S N="remark">GHSI unit approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">19</I32>
+              <Obj N="Value" RefId="52">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SMTASKlinked</S>
+                  <S N="remark">TLMC/MPD linked to SMLIST</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">20</I32>
+              <Obj N="Value" RefId="53">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SMTASKapprov</S>
+                  <S N="remark">TLMC/MPD approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">21</I32>
+              <Obj N="Value" RefId="54">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SMTASKinProg</S>
+                  <S N="remark">TLMC/MPD available to writer</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">4</I32>
+              <Obj N="Value" RefId="55">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Ready4ManRev</S>
+                  <S N="remark">Ready For Manual Revision</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">5</I32>
+              <Obj N="Value" RefId="56">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Rev Done</S>
+                  <S N="remark">Manual Revision Complete</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">6</I32>
+              <Obj N="Value" RefId="57">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">InitRev Done</S>
+                  <S N="remark">Init Revision Complete</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">7</I32>
+              <Obj N="Value" RefId="58">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Processing</S>
+                  <S N="remark">Publishing in progress</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">10</I32>
+              <Obj N="Value" RefId="59">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Approval</S>
+                  <S N="remark">Graphics Pool Management</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">22</I32>
+              <Obj N="Value" RefId="60">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">In SAP</S>
+                  <S N="remark">Figure sent to SAP</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">12</I32>
+              <Obj N="Value" RefId="61">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">CapInProgrss</S>
+                  <S N="remark">Work unit available to CAP Writers</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">13</I32>
+              <Obj N="Value" RefId="62">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BaSMEreview</S>
+                  <S N="remark">For review by BA SME</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">14</I32>
+              <Obj N="Value" RefId="63">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">CapSMEreview</S>
+                  <S N="remark">For review by CAP SME</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">23</I32>
+              <Obj N="Value" RefId="64">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">TRIinProgrss</S>
+                  <S N="remark">For Triad sub-contractor</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">24</I32>
+              <Obj N="Value" RefId="65">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-TRI</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">25</I32>
+              <Obj N="Value" RefId="66">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SonoInProg</S>
+                  <S N="remark">For Sonovision</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">26</I32>
+              <Obj N="Value" RefId="67">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-Sono</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">27</I32>
+              <Obj N="Value" RefId="68">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GPSinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">28</I32>
+              <Obj N="Value" RefId="69">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-GPS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">29</I32>
+              <Obj N="Value" RefId="70">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-Shorts</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">30</I32>
+              <Obj N="Value" RefId="71">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">ShortsinProg</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">31</I32>
+              <Obj N="Value" RefId="72">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">PendingOff</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">32</I32>
+              <Obj N="Value" RefId="73">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">DataLink</S>
+                  <S N="remark">To use when linking to another source</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">33</I32>
+              <Obj N="Value" RefId="74">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SOC Locked</S>
+                </MS>
+              </Obj>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+      <En>
+        <S N="Key">CTALPROD</S>
+        <Obj N="Value" RefId="75">
+          <TNRef RefId="1" />
+          <DCT>
+            <En>
+              <I32 N="Key">0</I32>
+              <Obj N="Value" RefId="76">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Undefined</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">1</I32>
+              <Obj N="Value" RefId="77">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Revision</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">2</I32>
+              <Obj N="Value" RefId="78">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Official</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">3</I32>
+              <Obj N="Value" RefId="79">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Obsolete</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-1</I32>
+              <Obj N="Value" RefId="80">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Rev TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-2</I32>
+              <Obj N="Value" RefId="81">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Official TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-3</I32>
+              <Obj N="Value" RefId="82">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Obsolete TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">4</I32>
+              <Obj N="Value" RefId="83">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Approved4Pub</S>
+                  <S N="remark">Work unit approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">5</I32>
+              <Obj N="Value" RefId="84">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">pbInProgress</S>
+                  <S N="remark">Enable to Edit In Arbortext</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">6</I32>
+              <Obj N="Value" RefId="85">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">TRinProgress</S>
+                  <S N="remark">TR to edit in Arbortext</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">7</I32>
+              <Obj N="Value" RefId="86">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">TRapprov4Pub</S>
+                  <S N="remark">TR approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">199</I32>
+              <Obj N="Value" RefId="87">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Ready4ManRev</S>
+                  <S N="remark">TSN &amp; REVDATE set, ready for assembly</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">200</I32>
+              <Obj N="Value" RefId="88">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">00 Init Done</S>
+                  <S N="remark">Man Rev ready for GenPageData</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">201</I32>
+              <Obj N="Value" RefId="89">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">01 PD Done</S>
+                  <S N="remark">PageData Done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">204</I32>
+              <Obj N="Value" RefId="90">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">04 TOC Done</S>
+                  <S N="remark">TOC Done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">208</I32>
+              <Obj N="Value" RefId="91">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">08 LEP Done</S>
+                  <S N="remark">LEP Done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">209</I32>
+              <Obj N="Value" RefId="92">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">09 XMIT Done</S>
+                  <S N="remark">Transmittal Done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">210</I32>
+              <Obj N="Value" RefId="93">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">10 Rev Done</S>
+                  <S N="remark">Revision Done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">8</I32>
+              <Obj N="Value" RefId="94">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Sub4Rev</S>
+                  <S N="remark">Waiting for Approval from Reg.Aut.</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">9</I32>
+              <Obj N="Value" RefId="95">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SubtaskLink</S>
+                  <S N="remark">SUBTASK are livelink to AMM</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">10</I32>
+              <Obj N="Value" RefId="96">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SMTASKlinked</S>
+                  <S N="remark">SMTASKs are linked from SMLIST</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">11</I32>
+              <Obj N="Value" RefId="97">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SMTASKinProg</S>
+                  <S N="remark">Add or Delete SMTASKs</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">12</I32>
+              <Obj N="Value" RefId="98">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SMTASKapprov</S>
+                  <S N="remark">SMtasks approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">13</I32>
+              <Obj N="Value" RefId="99">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">IndexUpdated</S>
+                  <S N="remark">Index is updated for this object</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">14</I32>
+              <Obj N="Value" RefId="100">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Approval</S>
+                  <S N="remark">Graphics Pool management</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">15</I32>
+              <Obj N="Value" RefId="101">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">InitRevDone</S>
+                  <S N="remark">init rev done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">16</I32>
+              <Obj N="Value" RefId="102">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Processing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">17</I32>
+              <Obj N="Value" RefId="103">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">RevDone</S>
+                  <S N="remark">revision of manual is done</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">18</I32>
+              <Obj N="Value" RefId="104">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Rev Done</S>
+                  <S N="remark">Manual Revision Complete</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">20</I32>
+              <Obj N="Value" RefId="105">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GHSI Linked</S>
+                  <S N="remark">GHSI linked to AMM, ARM and SDS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">21</I32>
+              <Obj N="Value" RefId="106">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GHSIinProgrs</S>
+                  <S N="remark">GHSI available to writer</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">22</I32>
+              <Obj N="Value" RefId="107">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GHSIapproved</S>
+                  <S N="remark">GHSI unit approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">19</I32>
+              <Obj N="Value" RefId="108">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">In SAP</S>
+                  <S N="remark">Figure sent to SAP</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">23</I32>
+              <Obj N="Value" RefId="109">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">CapInProgrss</S>
+                  <S N="remark">Work unit available to CAP Writers</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">24</I32>
+              <Obj N="Value" RefId="110">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">CapSMEreview</S>
+                  <S N="remark">For review by CAP SME</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">25</I32>
+              <Obj N="Value" RefId="111">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BaSMEreview</S>
+                  <S N="remark">For review by BA SME</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">26</I32>
+              <Obj N="Value" RefId="112">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SonoInProg</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">31</I32>
+              <Obj N="Value" RefId="113">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-INT</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">27</I32>
+              <Obj N="Value" RefId="114">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-Sono</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">28</I32>
+              <Obj N="Value" RefId="115">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">IMinProgress</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">29</I32>
+              <Obj N="Value" RefId="116">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-IM</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">30</I32>
+              <Obj N="Value" RefId="117">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">INTinProgrss</S>
+                  <S N="remark">For Intertechnique sub-contractor</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">32</I32>
+              <Obj N="Value" RefId="118">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">PmRecUpdated</S>
+                  <S N="remark">Perm Rec changed only</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">33</I32>
+              <Obj N="Value" RefId="119">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">TRIinProgrss</S>
+                  <S N="remark">For Triad sub-contractor</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">34</I32>
+              <Obj N="Value" RefId="120">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-TRI</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">35</I32>
+              <Obj N="Value" RefId="121">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">LACinProgrss</S>
+                  <S N="remark">For LAC supplier</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">36</I32>
+              <Obj N="Value" RefId="122">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-LAC</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">37</I32>
+              <Obj N="Value" RefId="123">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">AtValidation</S>
+                  <S N="remark">Data being validated: do not publish</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">38</I32>
+              <Obj N="Value" RefId="124">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-DWY</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">39</I32>
+              <Obj N="Value" RefId="125">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">DWYinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">40</I32>
+              <Obj N="Value" RefId="126">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-MHI</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">41</I32>
+              <Obj N="Value" RefId="127">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">MHIinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">42</I32>
+              <Obj N="Value" RefId="128">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-PKA</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">43</I32>
+              <Obj N="Value" RefId="129">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">PKAinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">44</I32>
+              <Obj N="Value" RefId="130">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-WK</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">45</I32>
+              <Obj N="Value" RefId="131">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">WKinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">46</I32>
+              <Obj N="Value" RefId="132">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-AE</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">47</I32>
+              <Obj N="Value" RefId="133">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-RCC</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">48</I32>
+              <Obj N="Value" RefId="134">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">AEinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">202</I32>
+              <Obj N="Value" RefId="135">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">RCCinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">49</I32>
+              <Obj N="Value" RefId="136">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-HES</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">50</I32>
+              <Obj N="Value" RefId="137">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-MOG</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">51</I32>
+              <Obj N="Value" RefId="138">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-ECE</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">52</I32>
+              <Obj N="Value" RefId="139">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-BRS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">53</I32>
+              <Obj N="Value" RefId="140">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">HESinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">54</I32>
+              <Obj N="Value" RefId="141">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">ECEinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">55</I32>
+              <Obj N="Value" RefId="142">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BRSinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">56</I32>
+              <Obj N="Value" RefId="143">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">MOGinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">57</I32>
+              <Obj N="Value" RefId="144">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-AID</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">58</I32>
+              <Obj N="Value" RefId="145">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-BFG</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">59</I32>
+              <Obj N="Value" RefId="146">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-HE</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">60</I32>
+              <Obj N="Value" RefId="147">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">AIDinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">61</I32>
+              <Obj N="Value" RefId="148">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BFGinprogrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">62</I32>
+              <Obj N="Value" RefId="149">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">HEinProgress</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">63</I32>
+              <Obj N="Value" RefId="150">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-SH</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">64</I32>
+              <Obj N="Value" RefId="151">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">PendingOff</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">65</I32>
+              <Obj N="Value" RefId="152">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SOC Locked</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">66</I32>
+              <Obj N="Value" RefId="153">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-SPRT</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">67</I32>
+              <Obj N="Value" RefId="154">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SPRTinProgrs</S>
+                </MS>
+              </Obj>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+      <En>
+        <S N="Key">LJ4045PROD</S>
+        <Obj N="Value" RefId="155">
+          <TNRef RefId="1" />
+          <DCT>
+            <En>
+              <I32 N="Key">0</I32>
+              <Obj N="Value" RefId="156">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Undefined</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">1</I32>
+              <Obj N="Value" RefId="157">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Revision</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">2</I32>
+              <Obj N="Value" RefId="158">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Official</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">3</I32>
+              <Obj N="Value" RefId="159">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Obsolete</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-1</I32>
+              <Obj N="Value" RefId="160">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Rev TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-2</I32>
+              <Obj N="Value" RefId="161">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Official TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-3</I32>
+              <Obj N="Value" RefId="162">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Obsolete TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">4</I32>
+              <Obj N="Value" RefId="163">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Approved4Pub</S>
+                  <S N="remark">Work unit approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">5</I32>
+              <Obj N="Value" RefId="164">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Approval</S>
+                  <S N="remark">Graphics Pool management</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">6</I32>
+              <Obj N="Value" RefId="165">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">In SAP</S>
+                  <S N="remark">Figure sent to SAP</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">7</I32>
+              <Obj N="Value" RefId="166">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Ready4ManRev</S>
+                  <S N="remark">Ready For Manual Revision</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">8</I32>
+              <Obj N="Value" RefId="167">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Rev Done</S>
+                  <S N="remark">Manual Revision Complete</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">9</I32>
+              <Obj N="Value" RefId="168">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">InitRev Done</S>
+                  <S N="remark">Init Revision Complete</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">10</I32>
+              <Obj N="Value" RefId="169">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Processing</S>
+                  <S N="remark">Publishing in progress</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">11</I32>
+              <Obj N="Value" RefId="170">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Holding</S>
+                  <S N="remark">Not ready to be worked</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">12</I32>
+              <Obj N="Value" RefId="171">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">pbInProgress</S>
+                  <S N="remark">Enable to Edit In Arbortext</S>
+                </MS>
+              </Obj>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+      <En>
+        <S N="Key">GXPROD</S>
+        <Obj N="Value" RefId="172">
+          <TNRef RefId="1" />
+          <DCT>
+            <En>
+              <I32 N="Key">0</I32>
+              <Obj N="Value" RefId="173">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Undefined</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">1</I32>
+              <Obj N="Value" RefId="174">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Revision</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">2</I32>
+              <Obj N="Value" RefId="175">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Official</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">3</I32>
+              <Obj N="Value" RefId="176">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Obsolete</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-1</I32>
+              <Obj N="Value" RefId="177">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Rev TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-2</I32>
+              <Obj N="Value" RefId="178">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Official TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">-3</I32>
+              <Obj N="Value" RefId="179">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Obsolete TN</S>
+                  <S N="remark">Reserved Life*CDM state value</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">4</I32>
+              <Obj N="Value" RefId="180">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Ready4ManRev</S>
+                  <S N="remark">Ready For Manual Revision</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">5</I32>
+              <Obj N="Value" RefId="181">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Rev Done</S>
+                  <S N="remark">Manual Revision Complete</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">6</I32>
+              <Obj N="Value" RefId="182">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">InitRev Done</S>
+                  <S N="remark">Init Revision Complete</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">7</I32>
+              <Obj N="Value" RefId="183">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Processing</S>
+                  <S N="remark">Publishing in progress</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">8</I32>
+              <Obj N="Value" RefId="184">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">PBinProgress</S>
+                  <S N="remark">Work unit available to writer</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">9</I32>
+              <Obj N="Value" RefId="185">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Approved4Pub</S>
+                  <S N="remark">Workunit approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">10</I32>
+              <Obj N="Value" RefId="186">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">For Approval</S>
+                  <S N="remark">Graphics Pool Management</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">11</I32>
+              <Obj N="Value" RefId="187">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">PmRecUpdated</S>
+                  <S N="remark">Perm Rec changed only</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">12</I32>
+              <Obj N="Value" RefId="188">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SubtaskLink</S>
+                  <S N="remark">SUBTASKs are linked to AMM</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">13</I32>
+              <Obj N="Value" RefId="189">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">DataLink</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">14</I32>
+              <Obj N="Value" RefId="190">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">DataUnlink</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">15</I32>
+              <Obj N="Value" RefId="191">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GHSI Linked</S>
+                  <S N="remark">GHSI linked to AMM, ARM and SDS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">16</I32>
+              <Obj N="Value" RefId="192">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">AtValidation</S>
+                  <S N="remark">Data being validated: do not publish</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">17</I32>
+              <Obj N="Value" RefId="193">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GHSIinProgrs</S>
+                  <S N="remark">GHSI available to writer</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">18</I32>
+              <Obj N="Value" RefId="194">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">GHSIapproved</S>
+                  <S N="remark">GHSI unit approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">19</I32>
+              <Obj N="Value" RefId="195">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SMTASKlinked</S>
+                  <S N="remark">TLMC/MPD linked to SMLIST</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">20</I32>
+              <Obj N="Value" RefId="196">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SMTASKapprov</S>
+                  <S N="remark">TLMC/MPD approved for publishing</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">21</I32>
+              <Obj N="Value" RefId="197">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SMTASKinProg</S>
+                  <S N="remark">TLMC/MPD available to writer</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">22</I32>
+              <Obj N="Value" RefId="198">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">In SAP</S>
+                  <S N="remark">Figure has been sent to SAP</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">23</I32>
+              <Obj N="Value" RefId="199">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">CapInProgrss</S>
+                  <S N="remark">Work unit available to CAP Writers</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">24</I32>
+              <Obj N="Value" RefId="200">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">CapSMEreview</S>
+                  <S N="remark">For review by CAP SME</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">25</I32>
+              <Obj N="Value" RefId="201">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BaSMEreview</S>
+                  <S N="remark">For review by BA SME</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">26</I32>
+              <Obj N="Value" RefId="202">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SonoInProg</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">27</I32>
+              <Obj N="Value" RefId="203">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-Sono</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">28</I32>
+              <Obj N="Value" RefId="204">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">IMinProgress</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">29</I32>
+              <Obj N="Value" RefId="205">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-IM</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">30</I32>
+              <Obj N="Value" RefId="206">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">TRIinProgrss</S>
+                  <S N="remark">For Triad sub-contractor</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">31</I32>
+              <Obj N="Value" RefId="207">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-TRI</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">32</I32>
+              <Obj N="Value" RefId="208">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">LTSinProgrss</S>
+                  <S N="remark">LIEBHERR supplier</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">33</I32>
+              <Obj N="Value" RefId="209">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-LTS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">34</I32>
+              <Obj N="Value" RefId="210">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-DWY</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">35</I32>
+              <Obj N="Value" RefId="211">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">DWYinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">36</I32>
+              <Obj N="Value" RefId="212">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-MHI</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">37</I32>
+              <Obj N="Value" RefId="213">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">MHIinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">38</I32>
+              <Obj N="Value" RefId="214">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-BRR</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">39</I32>
+              <Obj N="Value" RefId="215">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BRRinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">40</I32>
+              <Obj N="Value" RefId="216">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-RSM</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">41</I32>
+              <Obj N="Value" RefId="217">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">RSMinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">42</I32>
+              <Obj N="Value" RefId="218">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-WK</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">43</I32>
+              <Obj N="Value" RefId="219">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">WKinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">44</I32>
+              <Obj N="Value" RefId="220">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-PK</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">45</I32>
+              <Obj N="Value" RefId="221">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">PKinProgress</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">46</I32>
+              <Obj N="Value" RefId="222">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-HSC</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">47</I32>
+              <Obj N="Value" RefId="223">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">HSCinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">48</I32>
+              <Obj N="Value" RefId="224">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-RCC</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">49</I32>
+              <Obj N="Value" RefId="225">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">RCCinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">50</I32>
+              <Obj N="Value" RefId="226">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-HW</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">51</I32>
+              <Obj N="Value" RefId="227">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-AE</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">52</I32>
+              <Obj N="Value" RefId="228">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-ABX</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">53</I32>
+              <Obj N="Value" RefId="229">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">AEinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">54</I32>
+              <Obj N="Value" RefId="230">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">HWinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">55</I32>
+              <Obj N="Value" RefId="231">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">ABXinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">56</I32>
+              <Obj N="Value" RefId="232">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-HE</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">57</I32>
+              <Obj N="Value" RefId="233">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">HEinprogrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">58</I32>
+              <Obj N="Value" RefId="234">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">MHIinprogrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">59</I32>
+              <Obj N="Value" RefId="235">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-LPS</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">60</I32>
+              <Obj N="Value" RefId="236">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">LPSinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">61</I32>
+              <Obj N="Value" RefId="237">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-SH</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">62</I32>
+              <Obj N="Value" RefId="238">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-SXT</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">63</I32>
+              <Obj N="Value" RefId="239">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SXTinProgrss</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">64</I32>
+              <Obj N="Value" RefId="240">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">Pending</S>
+                  <S N="remark">In a waiting mode</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">65</I32>
+              <Obj N="Value" RefId="241">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">ApproveNewP</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">66</I32>
+              <Obj N="Value" RefId="242">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SOC Locked</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">67</I32>
+              <Obj N="Value" RefId="243">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">BAQA-SPRT</S>
+                </MS>
+              </Obj>
+            </En>
+            <En>
+              <I32 N="Key">68</I32>
+              <Obj N="Value" RefId="244">
+                <TNRef RefId="2" />
+                <MS>
+                  <S N="statename">SPRTinProgrs</S>
+                </MS>
+              </Obj>
+            </En>
+          </DCT>
+        </Obj>
+      </En>
+    </DCT>
+  </Obj>
+  <!--$CsdbProgram = 'B_IFM', 'CH604PROD', 'CTALPROD', 'LJ4045PROD', 'GXPROD'
+$query = @'
+SELECT DISTINCT
+    StateValue,
+    StateName,
+    Remark
+FROM
+    FiniteStateMachineState
+'@
+$statesPerProgram = [System.Collections.Generic.Dictionary[string, pscustomobject]]::new($CsdbProgram.Count)
+foreach ($Program in $CsdbProgram) {
+    $connectionInfo = $dbConnections.connections.info | Where-Object -FilterScript { $_.serviceName -match ($Program -replace '_').Substring(0, 2) } | Select-Object -First 1
+    $sqlClOut = Write-Output "SET SQLFORMAT JSON`n$query" | SQLcl -S "***REMOVED***@$($connectionInfo.hostname):$($connectionInfo.port)/$($connectionInfo.serviceName)" | Join-String -Separator $([Environment]::NewLine)
+    $sqlOutErrSplit = $sqlClOut | Select-String -Pattern '(?ms)(?<json>{.*})(?<err>.*)' | Select-Object -ExpandProperty Matches
+    $sqlOut = $sqlOutErrSplit.Groups['json'].Value | ConvertFrom-Json
+    $states = $sqlOut.results.items
+    $stateNames = [System.Collections.Generic.Dictionary[int, pscustomobject]]::new($states.Count)
+    foreach ($statevalue in $states.statevalue) {
+        $stateNames.Add([int]::Parse($statevalue), ($states | Where-Object { $_.statevalue -eq $statevalue } | Select-Object -ExcludeProperty statevalue))
+    }
+    $statesPerProgram.Add($Program, $stateNames)
+}-->
+</Objs>

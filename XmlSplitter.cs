@@ -1,7 +1,5 @@
-﻿using BaXmlSplitter.Properties;
-using System.Diagnostics;
-using System.Drawing.Text;
-using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -11,18 +9,13 @@ namespace BaXmlSplitter
 {
     /// <summary>
     ///  The main form for the XML splitting tool.
-    ///  TODO: Allow full automation.
+    ///  TODO: Allow full automation 
+    ///     TODO: by allocating states in-progress from SME's.
+    ///  TODO: Verify that the states loaded provide full coverage for all UOW in the XML.
     /// </summary>
     /// <seealso cref="Form" />
     public partial class XmlSplitter : Form
     {
-        [LibraryImport("gdi32.dll")]
-        internal static partial IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont,
-            IntPtr pdv, in uint pcFonts);
-
-        /// <summary>The font collection
-        /// for the splitter user-interface.</summary>
-        private readonly PrivateFontCollection fonts = new();
         /// <summary>The log file path
         /// for the XML splitting.</summary>
         private readonly string logFile;
@@ -37,7 +30,7 @@ namespace BaXmlSplitter
         /// The path to the source XML file on which the split will be performed.
         /// </summary>
         private string? xmlSourceFile;
-        private string? XmlSourceFileBaseName => XmlSplitterHelpers.XmlFilenameRe.Replace(Path.GetFileNameWithoutExtension(xmlSourceFile ?? string.Empty), m => Regex.Replace(m.Groups[1].Value, "[_-]$", string.Empty));
+        private string? XmlSourceFileBaseName => XmlSplitterHelpers.XmlFilenameRe.Replace(Path.GetFileNameWithoutExtension(xmlSourceFile ?? string.Empty), m => TerminusChars().Replace(m.Groups[1].Value, string.Empty));
 
         /// <summary>The string content of the XML file on which the split will be performed. This is 
         /// loaded into memory as soon as the XML is selected.</summary>
@@ -74,41 +67,6 @@ namespace BaXmlSplitter
         private IEnumerable<UowState>? fullyQualifiedSelectedStates;
 
         /// <summary>
-        /// Loads the fonts.
-        /// </summary>
-        /// <returns></returns>
-        private void LoadFonts()
-        {
-            uint discard = 0;
-            byte[][] seventyTwoFonts =
-            [
-                Resources._72_Black,
-                Resources._72_Bold,
-                Resources._72_BoldItalic,
-                Resources._72_Condensed,
-                Resources._72_CondensedBold,
-                Resources._72_Italic,
-                Resources._72_Light,
-                Resources._72_Monospace_Bd,
-                Resources._72_Monospace_Rg,
-                Resources._72_Regular
-            ];
-            foreach (var font in seventyTwoFonts)
-            {
-                var data = Marshal.AllocCoTaskMem(font.Length);
-                try
-                {
-                    Marshal.Copy(font, 0, data, font.Length);
-                    _ = AddFontMemResourceEx(data, (uint)font.Length, IntPtr.Zero, in discard);
-                    fonts.AddMemoryFont(data, font.Length);
-                }
-                finally
-                {
-                    Marshal.FreeCoTaskMem(data);
-                }
-            }
-        }
-        /// <summary>
         /// Initializes a new instance of the <see cref="XmlSplitter"/> class.
         /// </summary>
         public XmlSplitter()
@@ -141,11 +99,10 @@ namespace BaXmlSplitter
             CheckExecuteSplitIsReady(sender, e);  // just disable execButton on load
             await Task.Run(() =>
             {
-                LoadFonts();
                 statesPerProgram = XmlSplitterHelpers.DeserializeStates();
                 checkoutItems = XmlSplitterHelpers.DeserializeCheckoutItems();
                 manualFromDocnbr = XmlSplitterHelpers.DeserializeDocnbrManualFromProgram();
-            });
+            }).ConfigureAwait(true);
             WriteLog("Finished initializing.");
         }
 
@@ -172,7 +129,7 @@ namespace BaXmlSplitter
 
             void LogDelegate()
             {
-                var timestamped = string.Format("{0}:\t{1}", DateTime.Now.ToString(XmlSplitterHelpers.TimestampFormat), message + (noNewLine ? "" : Environment.NewLine));
+                var timestamped = string.Format(CultureInfo.InvariantCulture, "{0}:\t{1}", DateTime.Now.ToString(XmlSplitterHelpers.LogTimestampFormat, CultureInfo.InvariantCulture), message + (noNewLine ? "" : Environment.NewLine));
                 if (!skipFile)
                 {
                     try
@@ -330,9 +287,9 @@ namespace BaXmlSplitter
                         outDirTextBox.Text = Path.Combine(container, XmlSplitterHelpers.DefaultOutputDir);
                         OutDirTextBox_TextChanged(sender, e);
                     }
-                    WriteLog(string.Format("Reading XML file '{0}'", Path.GetFileName(xmlSourceFile)));
+                    WriteLog(string.Format(CultureInfo.InvariantCulture, "Reading XML file '{0}'", Path.GetFileName(xmlSourceFile)));
                     //TextFileChosen(out xmlContent, xmlSelectTextBox.Text, xmlSelectTextBox, "XML");
-                    xmlContent = await File.ReadAllTextAsync(xmlSourceFile);
+                    xmlContent = await File.ReadAllTextAsync(xmlSourceFile).ConfigureAwait(true);
                     if (string.IsNullOrEmpty(xmlContent) && new FileInfo(xmlSourceFile).Length > 0)
                     {
                         WriteLog("Unable to read XML file. Please check that the file is available and not locked by another process.", Severity.Error);
@@ -363,7 +320,7 @@ namespace BaXmlSplitter
             uowTextBox.Select(uowTextBox.Text.Length, 0);
             try
             {
-                if (File.Exists(uowTextBox.Text) && (!XmlSplitterHelpers.IsBinary(uowTextBox.Text) || XmlSplitterHelpers.ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", uowTextBox.Text), string.Format("File '{0}' is not text", Path.GetFileName(uowTextBox.Text)))))
+                if (File.Exists(uowTextBox.Text) && (!XmlSplitterHelpers.IsBinary(uowTextBox.Text) || XmlSplitterHelpers.ShowConfirmationBox(string.Format(CultureInfo.InvariantCulture, "The file at '{0}' appears to be a binary file, not text. Continue?", uowTextBox.Text), string.Format(CultureInfo.InvariantCulture, "File '{0}' is not text", Path.GetFileName(uowTextBox.Text)))))
                 {
 
                     if (!string.IsNullOrEmpty(uowStatesFile) && uowStatesFile == uowTextBox.Text)
@@ -372,7 +329,7 @@ namespace BaXmlSplitter
                     }
                     uowStatesFile = uowTextBox.Text;
                     WriteLog($"Reading UOW file '{Path.GetFileName(uowStatesFile)}'");
-                    uowContent = await File.ReadAllTextAsync(uowStatesFile);
+                    uowContent = await File.ReadAllTextAsync(uowStatesFile).ConfigureAwait(true);
                     xpath = string.Empty;
                     XPathTextBox_TextChanged(sender, e);
                     if (string.IsNullOrEmpty(uowContent) && new FileInfo(uowStatesFile).Length > 0)
@@ -404,29 +361,39 @@ namespace BaXmlSplitter
         private void OutDirTextBox_TextChanged(object sender, EventArgs e)
         {
             outDirTextBox.Select(outDirTextBox.Text.Length, 0);
-            if (outputDir != outDirTextBox.Text)
+            if (outputDir == outDirTextBox.Text) return;
+            // if the out dir does not exist, set outDirWillBeCreated.Visible to true
+            try
             {
-                // if the out dir does not exist, set outDirWillBeCreated.Visible to true
-                try
+                outputDir = outDirTextBox.Text;
+                outDirWillBeCreated.SuspendLayout();
+                if (!Directory.Exists(outputDir))
                 {
-                    outputDir = outDirTextBox.Text;
-                    outDirWillBeCreated.SuspendLayout();
-                    if (!Directory.Exists(outputDir))
-                    {
-                        outDirWillBeCreated.Enabled = outDirWillBeCreated.Visible = true;
-                        WriteLog("Output directory will be created.");
-                    }
-                    else
-                    {
-                        outDirWillBeCreated.Enabled = outDirWillBeCreated.Visible = false;
-                    }
-                    outDirWillBeCreated.ResumeLayout();
-                    WriteLog($"Selected units of work will be written to {outputDir}");
+                    outDirWillBeCreated.Enabled = outDirWillBeCreated.Visible = true;
+                    WriteLog("Output directory will be created.");
                 }
-                catch (Exception exception)
+                else
                 {
-                    WriteLog(exception.Message, Severity.Error);
+                    outDirWillBeCreated.Enabled = outDirWillBeCreated.Visible = false;
                 }
+                outDirWillBeCreated.ResumeLayout();
+                WriteLog($"Selected units of work will be written to {outputDir}");
+            }
+            catch (Exception exception)
+            {
+                WriteLog(exception.Message, Severity.Error);
+            }
+            if (Path.GetDirectoryName(outputDir) is { } outputDirPath && Path.GetDirectoryName(outputDirPath) is { } outputDirParent && Path.GetFileNameWithoutExtension(outputDirPath) is { } wipDirLeafBase)
+            {
+                wipFolderWatcher.Path = outputDirParent;
+                wipFolderWatcher.Filter = wipDirLeafBase;
+                wipFolderWatcher.EnableRaisingEvents = true;
+            }
+            else
+            {
+                wipFolderWatcher.Path = string.Empty;
+                wipFolderWatcher.Filter = string.Empty;
+                wipFolderWatcher.EnableRaisingEvents = false;
             }
         }
         /// <summary>
@@ -550,11 +517,11 @@ namespace BaXmlSplitter
             {
 
 
-                await Task.Run(() => xml.LoadXml(xmlContent));
+                await Task.Run(() => xml.LoadXml(xmlContent)).ConfigureAwait(true);
 
                 if (string.IsNullOrEmpty(xpath))
                 {
-                    var logMessages = await Task.Run(() => ProcessUowStates(sender, e));
+                    var logMessages = await Task.Run(() => ProcessUowStates(sender, e)).ConfigureAwait(true);
                     foreach (var logMessage in logMessages)
                     {
                         WriteLog(logMessage.Message, logMessage.Severity);
@@ -585,12 +552,12 @@ namespace BaXmlSplitter
                         }
 
                         checkoutElementNames = checkoutItems[ofPrograms][XmlSplitterHelpers.BestMatch.Dequeue()];
-                        nodes = await Task.Run(() => xml.SelectNodesByCheckout(xpath, checkoutElementNames));
+                        nodes = await Task.Run(() => xml.SelectNodesByCheckout(xpath, checkoutElementNames)).ConfigureAwait(true);
                     }
                     else
                     {
                         WriteLog($"Not using checkout element names on {Path.GetFileName(xmlSourceFile)}. Using unmodified XPath query.");
-                        if (await Task.Run(() => xml.SelectNodes(xpath)) is { } nodeList)
+                        if (await Task.Run(() => xml.SelectNodes(xpath)).ConfigureAwait(true) is { } nodeList)
                         {
                             nodes = nodeList.Cast<XmlNode>().ToArray();
                         }
@@ -600,15 +567,15 @@ namespace BaXmlSplitter
                         WriteLog($"Splitting XML file '{Path.GetFileName(xmlSourceFile)}' into {nodes.Length} fragments");
                         report = [];
                         StringBuilder htmlReportBuilder = new();
-                        _ = htmlReportBuilder.Append($"""
-                                                  <!DOCTYPE html>
-                                                  <html lang="en">
-                                                  <head>
-                                                      <meta charset="UTF-8">
-                                                      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                                      <title>Report on Splitting {XmlSourceFileBaseName}</title>
-                                                      <style>
-                                                  """);
+                        _ = htmlReportBuilder.Append(CultureInfo.InvariantCulture, $"""
+                             <!DOCTYPE html>
+                             <html lang="en">
+                             <head>
+                                 <meta charset="UTF-8">
+                                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                 <title>Report on Splitting {XmlSourceFileBaseName}</title>
+                                 <style>
+                             """);
                         _ = htmlReportBuilder.Append("""
                                                          * {
                                                              font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;
@@ -670,36 +637,36 @@ namespace BaXmlSplitter
                                                      </style>
                                                  </head>
                                                  """);
-                        var dateTimeNow = DateTime.Now.ToString("yyyy - MM - dd - HH - mm - ss - fffffff");
+                        var dateTimeNow = DateTime.Now.ToString(XmlSplitterHelpers.ReportTimestampFormat, CultureInfo.InvariantCulture);
                         var reportBaseFilename = $"{XmlSourceFileBaseName}SplittingReport - {dateTimeNow}";
                         var splittingReportFilenames = Enum.GetNames<XmlSplitReport.ReportFormat>().Select(format => $"{reportBaseFilename}.{format.ToLowerInvariant()}").ToArray();
-                        _ = htmlReportBuilder.Append($"""
-                                                  <body>
-                                                      <p>The source XML, '{Path.GetFileName(xmlSourceFile)}', was split into {nodes.Length} unit of work nodes.</p>
-                                                      <p>The complete splitting report is written as {string.Join(", ", Enum.GetNames<XmlSplitReport.ReportFormat>())} in the WIP package with the following file names:</p>
-                                                      <ul>
-                                                          {string.Join(Environment.NewLine, splittingReportFilenames.Select(filename => $"<li><see href=\"{new Uri(Path.Combine(outputDir, filename)).AbsoluteUri}\">{filename}</a></li>").ToArray())}
-                                                      </ul>
-                                                      <p>Below is the full HTML report of the XML splitting results:</p>
-                                                      <table>
-                                                          <caption><p>Table showing the details on each node that was split from the source XML.</p><aside aria-label="Information note">The tag of the parent is the <em>most recent containing XML node</em> having a <code>key</code> attribute; or, where there is no such <code>key</code>-bearing node, the root node for the document is indicated. For brevity, the parent tag is represented as a self-closing tag without inner XML.</aside><aside aria-label="Information note">"Node" in this context refers to the unit of work as an <see href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmlnode?view=net-8.0"><code>XmlNode</code></a> that was split off from the source <see href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmldocument?view=net-8.0"><code>XmlDocument</code></a>.</aside></caption>
-                                                          <colgroup><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /></colgroup>
-                                                          <tr>
-                                                              <th>Checkout Parent Number</th>
-                                                              <th>Checkout Parent Element's Name</th>
-                                                              <th>Checkout Parent's 'Key' Value</th>
-                                                              <th>Checkout Parent's Opening Tag</th>
-                                                              <th>UOW Node Number</th>
-                                                              <th>UOW Node Element's Name</th>
-                                                              <th>UOW Node's 'Key' Value</th>
-                                                              <th>Key-bearing Parent's Opening Tag</th>
-                                                              <th>Full XPath to UOW Node</th>
-                                                              <th>Filename of Split</th>
-                                                              <th>UOW State Value</th>
-                                                              <th>UOW State Name</th>
-                                                              <th>UOW State Remark</th>
-                                                          </tr>
-                                                  """);
+                        _ = htmlReportBuilder.Append(CultureInfo.InvariantCulture, $"""
+                             <body>
+                                 <p>The source XML, '{Path.GetFileName(xmlSourceFile)}', was split into {nodes.Length} unit of work nodes.</p>
+                                 <p>The complete splitting report is written as {string.Join(", ", Enum.GetNames<XmlSplitReport.ReportFormat>())} in the WIP package with the following file names:</p>
+                                 <ul>
+                                     {string.Join(Environment.NewLine, splittingReportFilenames.Select(filename => $"<li><see href=\"{new Uri(Path.Combine(outputDir, filename)).AbsoluteUri}\">{filename}</a></li>").ToArray())}
+                                 </ul>
+                                 <p>Below is the full HTML report of the XML splitting results:</p>
+                                 <table>
+                                     <caption><p>Table showing the details on each node that was split from the source XML.</p><aside aria-label="Information note">The tag of the parent is the <em>most recent containing XML node</em> having a <code>key</code> attribute; or, where there is no such <code>key</code>-bearing node, the root node for the document is indicated. For brevity, the parent tag is represented as a self-closing tag without inner XML.</aside><aside aria-label="Information note">"Node" in this context refers to the unit of work as an <see href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmlnode?view=net-8.0"><code>XmlNode</code></a> that was split off from the source <see href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmldocument?view=net-8.0"><code>XmlDocument</code></a>.</aside></caption>
+                                     <colgroup><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /><col /></colgroup>
+                                     <tr>
+                                         <th>Checkout Parent Number</th>
+                                         <th>Checkout Parent Element's Name</th>
+                                         <th>Checkout Parent's 'Key' Value</th>
+                                         <th>Checkout Parent's Opening Tag</th>
+                                         <th>UOW Node Number</th>
+                                         <th>UOW Node Element's Name</th>
+                                         <th>UOW Node's 'Key' Value</th>
+                                         <th>Key-bearing Parent's Opening Tag</th>
+                                         <th>Full XPath to UOW Node</th>
+                                         <th>Filename of Split</th>
+                                         <th>UOW State Value</th>
+                                         <th>UOW State Name</th>
+                                         <th>UOW State Remark</th>
+                                     </tr>
+                             """);
                         if (fullyQualifiedSelectedStates.ToArray() is not { } sourceStates) return;
                         Dictionary<XmlNode, List<(UowState, XmlNode)>> childrenPerCheckoutItem = new(nodes.Length);
                         for (var i = 0; i < sourceStates.Length; i++)
@@ -738,12 +705,12 @@ namespace BaXmlSplitter
                             {
                                 ResolveEntities = false
                             };
-                            _ = await Task.Run(() => xmlFragment.AppendChild(xmlFragment.ImportNode(nodes[i], true)));
+                            _ = await Task.Run(() => xmlFragment.AppendChild(xmlFragment.ImportNode(nodes[i], true))).ConfigureAwait(true);
                             if (nodes[i].Attributes?["key"]?.Value is { } key)
                             {
                                 var outPath = Path.Combine(outputDir, $"{XmlSourceFileBaseName}-{key}.xml");
                                 // write the fragment to the outPath
-                                await Task.Run(() => xmlFragment.Save(outPath));
+                                await Task.Run(() => xmlFragment.Save(outPath)).ConfigureAwait(true);
                                 WriteLog($"Wrote fragment to '{outPath}'");
                                 if (!childrenPerCheckoutItem.TryGetValue(nodes[i], out var children))
                                 {
@@ -760,25 +727,25 @@ namespace BaXmlSplitter
                                     _ = htmlReportBuilder.Append("<tr>");
                                     if (j == 0)
                                     {
-                                        _ = htmlReportBuilder.Append($"""
-                                                                          <!-- Checkout Parent Number --><td rowspan='{numChildren}'>{reportEntry.CheckoutParentNumber}</td>
-                                                                          <!-- Checkout Parent Name --><td rowspan='{numChildren}'>{reportEntry.CheckoutParent.Name}</td>
-                                                                          <!-- Checkout's 'Key' Value --><td rowspan='{numChildren}'>{reportEntry.CheckoutParent.Attributes?["key"]?.Value ?? "&nbsp;"}</td>
-                                                                          <!-- Checkout Parent Tag --><td rowspan='{numChildren}'><code>{HttpUtility.HtmlEncode(reportEntry.CheckoutParent.OuterXml)}</code></td>
-                                                                      """);
+                                        _ = htmlReportBuilder.Append(CultureInfo.InvariantCulture, $"""
+                                                 <!-- Checkout Parent Number --><td rowspan='{numChildren}'>{reportEntry.CheckoutParentNumber}</td>
+                                                 <!-- Checkout Parent Name --><td rowspan='{numChildren}'>{reportEntry.CheckoutParent.Name}</td>
+                                                 <!-- Checkout's 'Key' Value --><td rowspan='{numChildren}'>{reportEntry.CheckoutParent.Attributes?["key"]?.Value ?? "&nbsp;"}</td>
+                                                 <!-- Checkout Parent Tag --><td rowspan='{numChildren}'><code>{HttpUtility.HtmlEncode(reportEntry.CheckoutParent.OuterXml)}</code></td>
+                                             """);
                                     }
-                                    _ = htmlReportBuilder.Append($"""
-                                                                      <!-- Node Number --><td>{reportEntry.NodeNumber}</td>
-                                                                      <!-- Node Element Name --><td>{reportEntry.UowNode.Name}</td>
-                                                                      <!-- Node's 'Key' Value --><td>{(curNode.Attributes?["key"]?.Value ?? "&nbsp;")}</td>
-                                                                      <!-- Key-bearing Parent's Tag --><td><code>{HttpUtility.HtmlEncode(reportEntry.KeyedParent.OuterXml)}</code></td>
-                                                                      <!-- Full XPath --><td><code>{HttpUtility.HtmlEncode(reportEntry.FullXPath)}</code></td>
-                                                                      <!-- Filename of Split --><td>{reportEntry.FilenameOfSplit}</td>
-                                                                      <!-- ETPS UOW State Value --><td>{reportEntry.UowState.StateValue}</td>
-                                                                      <!-- ETPS UOW State Name --><td>{reportEntry.UowState.StateName}</td>
-                                                                      <!-- ETPS UOW State Remark --><td>{(string.IsNullOrEmpty(reportEntry.UowState.Remark) ? "&nbsp;" : HttpUtility.HtmlEncode(reportEntry.UowState.Remark))}</td>
-                                                                  </tr>
-                                                                  """);
+                                    _ = htmlReportBuilder.Append(CultureInfo.InvariantCulture, $"""
+                                             <!-- Node Number --><td>{reportEntry.NodeNumber}</td>
+                                             <!-- Node Element Name --><td>{reportEntry.UowNode.Name}</td>
+                                             <!-- Node's 'Key' Value --><td>{(curNode.Attributes?["key"]?.Value ?? "&nbsp;")}</td>
+                                             <!-- Key-bearing Parent's Tag --><td><code>{HttpUtility.HtmlEncode(reportEntry.KeyedParent.OuterXml)}</code></td>
+                                             <!-- Full XPath --><td><code>{HttpUtility.HtmlEncode(reportEntry.FullXPath)}</code></td>
+                                             <!-- Filename of Split --><td>{reportEntry.FilenameOfSplit}</td>
+                                             <!-- ETPS UOW State Value --><td>{reportEntry.UowState.StateValue}</td>
+                                             <!-- ETPS UOW State Name --><td>{reportEntry.UowState.StateName}</td>
+                                             <!-- ETPS UOW State Remark --><td>{(string.IsNullOrEmpty(reportEntry.UowState.Remark) ? "&nbsp;" : HttpUtility.HtmlEncode(reportEntry.UowState.Remark))}</td>
+                                         </tr>
+                                         """);
                                     var keyedParentIsCheckoutParent = reportEntry.KeyedParent.OuterXml == reportEntry.CheckoutParent.OuterXml;
                                     var keyedParentIsUowNode = reportEntry.KeyedParent.Attributes?["key"]?.Value is not null && reportEntry.KeyedParent.Attributes?["key"]?.Value == reportEntry.UowNode.Attributes?["key"]?.Value && reportEntry.KeyedParent.Name == reportEntry.UowNode.Name;
                                     if (keyedParentIsCheckoutParent && keyedParentIsUowNode)
@@ -800,12 +767,12 @@ namespace BaXmlSplitter
                                 WriteLog($"Unable to get 'key' attribute from node #{nodeNum} ({nodes[i].Name}) on UOW #{i + 1}. Skipping.", Severity.Warning);
                             }
                         }
-                        _ = htmlReportBuilder.Append($"</table><p>{string.Join(' ', additionalMessages)}</p></body></html>");
+                        _ = htmlReportBuilder.Append(CultureInfo.InvariantCulture, $"</table><p>{string.Join(' ', additionalMessages)}</p></body></html>");
                         splittingReportHtml = htmlReportBuilder.ToString();
                         WriteLog("Done splitting XML file. Showing results report.");
-                        await Task.Run(() => GenerateOtherReports(reportBaseFilename));
+                        await Task.Run(() => GenerateOtherReports(reportBaseFilename)).ConfigureAwait(true);
                         // display the report in the default browser
-                        await Task.Run(DisplayHtmlReport);
+                        await Task.Run(DisplayHtmlReport).ConfigureAwait(false);
                     }
 
                 }
@@ -993,7 +960,7 @@ namespace BaXmlSplitter
                 {
                     Font = Font,
                     StartPosition = FormStartPosition.CenterParent,
-                    Icon = Resources.Icon
+                    Icon = Properties.Resources.Icon
                 };
                 _ = dialog.ShowDialog();
                 if (dialog.DialogResult != DialogResult.OK) return [.. logMessages];
@@ -1072,5 +1039,14 @@ namespace BaXmlSplitter
             toolTip.Hide(stepsPanel);
         }
 
+        private void OptionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // show the settings page
+            using var settingsPage = new SettingsPage();
+            settingsPage.ShowDialog();
+        }
+
+        [GeneratedRegex("[_-]$")]
+        private static partial Regex TerminusChars();
     }
 }

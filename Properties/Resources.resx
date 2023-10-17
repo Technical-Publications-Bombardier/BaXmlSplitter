@@ -3503,7 +3503,25 @@ foreach($Program in 'GXPROD','CH604PROD','CTALPROD','LJ4045PROD'){
     $sqlClOut = Write-Output "SET SQLFORMAT JSON`n$query" | SQLcl -S "***REMOVED***/${DbProgram}" | Join-String -Separator "`r`n"; if ([string]::IsNullOrEmpty($sqlClOut)) { Write-Warning -Message "No data found for 'IFM' with docnbr '$docnbr' in 'B_IFM'" }; try { $splitOut = $sqlClOut | Select-String -Pattern '(?ms)(?&lt;json&gt;{.*})(?&lt;err&gt;.*)'; $jsonPart = $splitOut.Matches.Groups | Where-Object -Property Name -EQ 'json' | Select-Object -ExpandProperty Value; $errPart = $splitOut.Matches.Groups | Where-Object -Property Name -EQ 'err' | ForEach-Object { $_.Value.Trim() }; $sqlClObj = $jsonPart | ConvertFrom-Json; $VerboseMessage = "JSON part: $sqlClObj"; if ($null -eq $sqlClObj -and $null -ne $errPart) { Write-Warning -Message $errPart }else { $VerboseMessage = "SQLcl output: $sqlClOut" } } catch { Write-Warning -Message "Malformed query result for 'IFM' with docnbr '$docnbr' in 'B_IFM'" }; if ($null -ne $sqlClObj.results -and $null -ne $sqlClObj.results.items -and $null -ne $sqlClObj.results.items.manual) { $sqlClObj.results.items | ForEach-Object { if(-not $docnbrManualFromProgram[$Program].TryAdd($_.docnbr,$_.manual)){ $_ } } }
 }</comment>
   </data>
+  <data name="Entropy" xml:space="preserve">
+    <value>8x7oEJ6Mbd52zStVCld8O/nO7ilB1ji56jWcVJH0VpQ=</value>
+    <comment>Random value for protected data</comment>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="EyeClosed" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\EyeClosed.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="EyeOpen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\EyeOpen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="HashiCorpClientSecretExpectedHash" xml:space="preserve">
+    <value>2D0E843FB0699B647B58110594B06E6057D1D07BAC0465F5FFC496A553A1DF8C</value>
+    <comment>$memoryStream = [System.IO.MemoryStream]::new($([System.Text.Encoding]::UTF8.GetBytes((Get-Clipboard)))) &amp;&amp; Get-FileHash -InputStream $memoryStream -Algorithm SHA256</comment>
+  </data>
+  <data name="HashiCorpIdentity" xml:space="preserve">
+    <value>{"client_id":"9N55dmcf9CIiawUqaFMfO4f69sqHjM9N","ajs_aid":"ecc2be89-04a6-472b-8adc-3624d3dc6a0b","user_id":"e253f5ef-566d-458f-bf5a-a8b772f749f0","org_id":"84ff43ee-a407-43cf-be28-3342f32fb62c","proj_id":"93a0ec93-839f-4b93-84a3-51d10c796d8a","app_name":"BaXmlSplitter"}</value>
+    <comment>Public (non-secret) connection details for HashiCorp Cloud Vault.</comment>
+  </data>
   <data name="Icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
