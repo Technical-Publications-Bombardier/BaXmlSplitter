@@ -7,6 +7,7 @@ namespace BaXmlSplitter
     [ToolboxBitmap(typeof(CheckBox))]
     internal class GlyphableCheckbox : CheckBox
     {
+        private const int DefaultImageSize = 16;
         private Image checkmarkGlyph;
         public Image CheckmarkGlyph
         {
@@ -30,7 +31,13 @@ namespace BaXmlSplitter
             }
         }
 
-        public GlyphableCheckbox(Image checkmark, Image uncheckmark)
+        internal GlyphableCheckbox()
+        {
+            checkmarkGlyph = CheckmarkGlyph = new Bitmap(DefaultImageSize, DefaultImageSize);
+            unCheckmarkGlyph = UnCheckmarkGlyph = new Bitmap(DefaultImageSize, DefaultImageSize);
+        }
+
+        internal GlyphableCheckbox(Image checkmark, Image uncheckmark)
         {
             checkmarkGlyph = CheckmarkGlyph = checkmark;
             unCheckmarkGlyph = UnCheckmarkGlyph = uncheckmark;
