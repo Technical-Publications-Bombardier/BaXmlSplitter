@@ -49,14 +49,7 @@ namespace BaXmlSplitter
             {
                 pevent.Graphics.Clear(Parent.BackColor);
             }
-            if (Checked)
-            {
-                pevent.Graphics.DrawImage(CheckmarkGlyph, new Rectangle(0, 0, Width, Height));
-            }
-            else
-            {
-                pevent.Graphics.DrawImage(UnCheckmarkGlyph, new Rectangle(0, 0, Width, Height));
-            }
+            pevent.Graphics.DrawImage(Checked ? CheckmarkGlyph : UnCheckmarkGlyph, new Rectangle(0, 0, Width, Height));
         }
         protected override void Dispose(bool disposing)
         {
@@ -80,7 +73,7 @@ namespace BaXmlSplitter
         protected override void OnPaintAdornments(PaintEventArgs pe)
         {
             base.OnPaintAdornments(pe);
-            GlyphableCheckbox checkbox = (GlyphableCheckbox)Control;
+            var checkbox = (GlyphableCheckbox)Control;
             ArgumentNullException.ThrowIfNull(pe, nameof(pe));
             if (checkbox.Checked)
             {

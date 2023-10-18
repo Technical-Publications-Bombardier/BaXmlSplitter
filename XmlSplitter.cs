@@ -102,7 +102,7 @@ namespace BaXmlSplitter
                 statesPerProgram = XmlSplitterHelpers.DeserializeStates();
                 checkoutItems = XmlSplitterHelpers.DeserializeCheckoutItems();
                 manualFromDocnbr = XmlSplitterHelpers.DeserializeDocnbrManualFromProgram();
-            }).ConfigureAwait(true);
+            }).ConfigureAwait(false);
             WriteLog("Finished initializing.");
         }
 
@@ -289,7 +289,7 @@ namespace BaXmlSplitter
                     }
                     WriteLog(string.Format(CultureInfo.InvariantCulture, "Reading XML file '{0}'", Path.GetFileName(xmlSourceFile)));
                     //TextFileChosen(out xmlContent, xmlSelectTextBox.Text, xmlSelectTextBox, "XML");
-                    xmlContent = await File.ReadAllTextAsync(xmlSourceFile).ConfigureAwait(true);
+                    xmlContent = await File.ReadAllTextAsync(xmlSourceFile).ConfigureAwait(false);
                     if (string.IsNullOrEmpty(xmlContent) && new FileInfo(xmlSourceFile).Length > 0)
                     {
                         WriteLog("Unable to read XML file. Please check that the file is available and not locked by another process.", Severity.Error);
@@ -329,7 +329,7 @@ namespace BaXmlSplitter
                     }
                     uowStatesFile = uowTextBox.Text;
                     WriteLog($"Reading UOW file '{Path.GetFileName(uowStatesFile)}'");
-                    uowContent = await File.ReadAllTextAsync(uowStatesFile).ConfigureAwait(true);
+                    uowContent = await File.ReadAllTextAsync(uowStatesFile).ConfigureAwait(false);
                     xpath = string.Empty;
                     XPathTextBox_TextChanged(sender, e);
                     if (string.IsNullOrEmpty(uowContent) && new FileInfo(uowStatesFile).Length > 0)
@@ -517,11 +517,11 @@ namespace BaXmlSplitter
             {
 
 
-                await Task.Run(() => xml.LoadXml(xmlContent)).ConfigureAwait(true);
+                await Task.Run(() => xml.LoadXml(xmlContent)).ConfigureAwait(false);
 
                 if (string.IsNullOrEmpty(xpath))
                 {
-                    var logMessages = await Task.Run(() => ProcessUowStates(sender, e)).ConfigureAwait(true);
+                    var logMessages = await Task.Run(() => ProcessUowStates(sender, e)).ConfigureAwait(false);
                     foreach (var logMessage in logMessages)
                     {
                         WriteLog(logMessage.Message, logMessage.Severity);
@@ -552,12 +552,12 @@ namespace BaXmlSplitter
                         }
 
                         checkoutElementNames = checkoutItems[ofPrograms][XmlSplitterHelpers.BestMatch.Dequeue()];
-                        nodes = await Task.Run(() => xml.SelectNodesByCheckout(xpath, checkoutElementNames)).ConfigureAwait(true);
+                        nodes = await Task.Run(() => xml.SelectNodesByCheckout(xpath, checkoutElementNames)).ConfigureAwait(false);
                     }
                     else
                     {
                         WriteLog($"Not using checkout element names on {Path.GetFileName(xmlSourceFile)}. Using unmodified XPath query.");
-                        if (await Task.Run(() => xml.SelectNodes(xpath)).ConfigureAwait(true) is { } nodeList)
+                        if (await Task.Run(() => xml.SelectNodes(xpath)).ConfigureAwait(false) is { } nodeList)
                         {
                             nodes = nodeList.Cast<XmlNode>().ToArray();
                         }
@@ -705,12 +705,12 @@ namespace BaXmlSplitter
                             {
                                 ResolveEntities = false
                             };
-                            _ = await Task.Run(() => xmlFragment.AppendChild(xmlFragment.ImportNode(nodes[i], true))).ConfigureAwait(true);
+                            _ = await Task.Run(() => xmlFragment.AppendChild(xmlFragment.ImportNode(nodes[i], true))).ConfigureAwait(false);
                             if (nodes[i].Attributes?["key"]?.Value is { } key)
                             {
                                 var outPath = Path.Combine(outputDir, $"{XmlSourceFileBaseName}-{key}.xml");
                                 // write the fragment to the outPath
-                                await Task.Run(() => xmlFragment.Save(outPath)).ConfigureAwait(true);
+                                await Task.Run(() => xmlFragment.Save(outPath)).ConfigureAwait(false);
                                 WriteLog($"Wrote fragment to '{outPath}'");
                                 if (!childrenPerCheckoutItem.TryGetValue(nodes[i], out var children))
                                 {
@@ -770,7 +770,7 @@ namespace BaXmlSplitter
                         _ = htmlReportBuilder.Append(CultureInfo.InvariantCulture, $"</table><p>{string.Join(' ', additionalMessages)}</p></body></html>");
                         splittingReportHtml = htmlReportBuilder.ToString();
                         WriteLog("Done splitting XML file. Showing results report.");
-                        await Task.Run(() => GenerateOtherReports(reportBaseFilename)).ConfigureAwait(true);
+                        await Task.Run(() => GenerateOtherReports(reportBaseFilename)).ConfigureAwait(false);
                         // display the report in the default browser
                         await Task.Run(DisplayHtmlReport).ConfigureAwait(false);
                     }

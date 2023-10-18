@@ -61,102 +61,12 @@ namespace BaXmlSplitter.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static byte[] _72_Black {
+        internal static System.Drawing.Bitmap arrows {
             get {
-                object obj = ResourceManager.GetObject("_72_Black", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] _72_Bold {
-            get {
-                object obj = ResourceManager.GetObject("_72_Bold", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] _72_BoldItalic {
-            get {
-                object obj = ResourceManager.GetObject("_72_BoldItalic", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] _72_Condensed {
-            get {
-                object obj = ResourceManager.GetObject("_72_Condensed", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] _72_CondensedBold {
-            get {
-                object obj = ResourceManager.GetObject("_72_CondensedBold", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] _72_Italic {
-            get {
-                object obj = ResourceManager.GetObject("_72_Italic", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] _72_Light {
-            get {
-                object obj = ResourceManager.GetObject("_72_Light", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] _72_Monospace_Bd {
-            get {
-                object obj = ResourceManager.GetObject("_72_Monospace_Bd", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] _72_Monospace_Rg {
-            get {
-                object obj = ResourceManager.GetObject("_72_Monospace_Rg", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] _72_Regular {
-            get {
-                object obj = ResourceManager.GetObject("_72_Regular", resourceCulture);
-                return ((byte[])(obj));
+                object obj = ResourceManager.GetObject("arrows", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -170,11 +80,29 @@ namespace BaXmlSplitter.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A09A0E1E9E7FEB5A2A649418D547BF3DDB9259C6B32FF8809C3A5657E7C30A67.
+        /// </summary>
+        internal static string AzureSecretExpectedHash {
+            get {
+                return ResourceManager.GetString("AzureSecretExpectedHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to BaXmlSplitter.
         /// </summary>
         internal static string AzureServicePrincipal {
             get {
                 return ResourceManager.GetString("AzureServicePrincipal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A1A76B2D2BE05A0FAA0CBC01C024C0A6EA299CC89B7641EE431F970181B10878.
+        /// </summary>
+        internal static string BaOraConnectionStringExpectedHash {
+            get {
+                return ResourceManager.GetString("BaOraConnectionStringExpectedHash", resourceCulture);
             }
         }
         
@@ -247,11 +175,12 @@ namespace BaXmlSplitter.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {&quot;client_id&quot;:&quot;9N55dmcf9CIiawUqaFMfO4f69sqHjM9N&quot;,&quot;ajs_aid&quot;:&quot;ecc2be89-04a6-472b-8adc-3624d3dc6a0b&quot;,&quot;user_id&quot;:&quot;e253f5ef-566d-458f-bf5a-a8b772f749f0&quot;,&quot;org_id&quot;:&quot;84ff43ee-a407-43cf-be28-3342f32fb62c&quot;,&quot;proj_id&quot;:&quot;93a0ec93-839f-4b93-84a3-51d10c796d8a&quot;,&quot;app_name&quot;:&quot;BaXmlSplitter&quot;}.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static string HashiCorpIdentity {
+        internal static byte[] HashiCorpIdentity {
             get {
-                return ResourceManager.GetString("HashiCorpIdentity", resourceCulture);
+                object obj = ResourceManager.GetObject("HashiCorpIdentity", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -271,9 +200,27 @@ namespace BaXmlSplitter.Properties {
         ///    &lt;TN RefId=&quot;0&quot;&gt;
         ///      &lt;T&gt;System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.Dictionary`2[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Management.Automation.PSObject, System.Management.Automation, Version=7.4.0.5, C [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string StatesPerProgramXml {
+        internal static string StatesPerProgram {
             get {
-                return ResourceManager.GetString("StatesPerProgramXml", resourceCulture);
+                return ResourceManager.GetString("StatesPerProgram", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1502C7FE00BCF6E9A4312C34338080D462CE14B841087929A75C16EBA21B659F.
+        /// </summary>
+        internal static string StorageAccountKeyOneExpectedHash {
+            get {
+                return ResourceManager.GetString("StorageAccountKeyOneExpectedHash", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 18876E1A9946F6965B2BDCB503996EF5C253C2C3E281174558C86C67910561E1.
+        /// </summary>
+        internal static string StorageAccountKeyTwoExpectedHash {
+            get {
+                return ResourceManager.GetString("StorageAccountKeyTwoExpectedHash", resourceCulture);
             }
         }
     }

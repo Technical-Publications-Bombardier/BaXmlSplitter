@@ -1,5 +1,4 @@
-﻿using BaXmlSplitter.Properties;
-using F23.StringSimilarity;
+﻿using F23.StringSimilarity;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -38,10 +37,6 @@ internal static class XmlSplitterHelpers
     internal static readonly Regex XmlFilenameRe = new(XmlFilenamePattern, ReOptions, Timeout);
     /// <summary>The newline strings for Unix and Windows systems.</summary>
     internal static readonly string[] Newlines = ["\r\n", "\n"];
-    /// <summary>
-    /// The xpath separators
-    /// </summary>
-    internal static readonly string[] XpathSeparators = ["|", " or "];
     /// <summary>
     /// The <see cref="F23.StringSimilarity.Jaccard"/> object for performing string similarity calculations.
     /// </summary>
@@ -159,14 +154,14 @@ internal static class XmlSplitterHelpers
     ///   </span>
     /// </summary>
     /// <returns>Returns a Dictionary that maps <see cref="CsdbProgram" /> to a Dictionary where the key is the manual name and the value is an array of the element names eligible for checkout.</returns>
-    internal static Dictionary<CsdbProgram, Dictionary<string, string[]>>? DeserializeCheckoutItems()
+    internal static Dictionary<CsdbProgram, Dictionary<string, string[]>> DeserializeCheckoutItems()
     {
         dynamic deserializedCheckoutUowItems = PSSerializer.Deserialize(Properties.Resources.CheckoutItems);
         Dictionary<CsdbProgram, Dictionary<string, string[]>> programCheckoutItems = new(Programs.Length);
         foreach (var program in Enum.GetNames<CsdbProgram>())
         {
             ICollection docnbrs = deserializedCheckoutUowItems[program].Keys;
-            Dictionary<string, string[]>? checkoutUowItems = new(docnbrs.Count);
+            Dictionary<string, string[]> checkoutUowItems = new(docnbrs.Count);
             foreach (string docnbr in docnbrs)
             {
                 var deserializedUowNames = deserializedCheckoutUowItems[program][docnbr];
@@ -183,9 +178,9 @@ internal static class XmlSplitterHelpers
     /// Deserializes the UOW states from PowerShell CLI XML.
     /// </summary>
     /// <returns>Returns a dictionary that maps <see cref="CsdbProgram"/> to a Dictionary where the key is the state value (int) and the value is the details of the work state as a <see cref="UowState"/> object.</returns>
-    internal static Dictionary<CsdbProgram, Dictionary<int, UowState>>? DeserializeStates()
+    internal static Dictionary<CsdbProgram, Dictionary<int, UowState>> DeserializeStates()
     {
-        dynamic deserializedStatesPerProgram = PSSerializer.Deserialize(Properties.Resources.StatesPerProgramXml);
+        dynamic deserializedStatesPerProgram = PSSerializer.Deserialize(Properties.Resources.StatesPerProgram);
         ICollection programs = deserializedStatesPerProgram.Keys;
         Dictionary<CsdbProgram, Dictionary<int, UowState>> statesPerProgram = new(programs.Count);
         foreach (var program in programs.Cast<string>())
@@ -206,7 +201,7 @@ internal static class XmlSplitterHelpers
     /// Deserializes the Dictionary to get the manual type from the docnbr per program.
     /// </summary>
     /// <returns>Returns a dictionary that maps <see cref="CsdbProgram"/> to a Dictionary where the key is the docnbr (string) and the value is the manual type (string).</returns>
-    internal static Dictionary<CsdbProgram, Dictionary<string, string>>? DeserializeDocnbrManualFromProgram()
+    internal static Dictionary<CsdbProgram, Dictionary<string, string>> DeserializeDocnbrManualFromProgram()
     {
         dynamic deserializedDocnbrManualFromProgram = PSSerializer.Deserialize(Properties.Resources.DocnbrManualFromProgram);
         ICollection programs = deserializedDocnbrManualFromProgram.Keys;
