@@ -763,7 +763,7 @@ namespace BaXmlSplitter
                                         _ = htmlReportBuilder.Append($"""
                                                 <!-- Checkout Parent Number --><td rowspan='{numChildren}'>{reportEntry.CheckoutParentNumber}</td>
                                                 <!-- Checkout Parent Name --><td rowspan='{numChildren}'>{reportEntry.CheckoutParent.Name}</td>
-                                                <!-- Checkout's 'Key' Value --><td>{reportEntry.CheckoutParent.Attributes?["key"]?.Value ?? "&nbsp;"}</td>
+                                                <!-- Checkout's 'Key' Value --><td rowspan='{numChildren}'>{reportEntry.CheckoutParent.Attributes?["key"]?.Value ?? "&nbsp;"}</td>
                                                 <!-- Checkout Parent Tag --><td rowspan='{numChildren}'><code>{HttpUtility.HtmlEncode(reportEntry.CheckoutParent.OuterXml)}</code></td>
                                             """);
                                     }
@@ -1026,28 +1026,30 @@ namespace BaXmlSplitter
         {
             if (!execButton.Enabled)
             {
-                StringBuilder toolTipSb = new("Before executing the split");
+                string toolTipText = new("Before executing the split");
+                toolTip.ToolTipTitle = "Not ready";
                 if (!XmlIsSelected())
                 {
-                    _ = toolTipSb.AppendJoin(", ", "Select XML file");
+                    toolTipText += ", Select XML file";
                 }
                 if (!UowIsSelected())
                 {
-                    _ = toolTipSb.AppendJoin(", ", "Select UOW states file");
+                    toolTipText += ", Select UOW states file";
                 }
                 if (!OutDirIsSelected())
                 {
-                    _ = toolTipSb.AppendJoin(", ", "Select an output directory");
+                    toolTipText += ", Select an output directory";
                 }
                 if (!ProgramIsSelected())
                 {
-                    _ = toolTipSb.AppendJoin(", ", "Select a program");
+                    toolTipText += ", Select a program";
                 }
-                toolTip.SetToolTip(stepsPanel, toolTipSb.ToString());
+                toolTip.SetToolTip(stepsPanel, toolTipText);
             }
             else
             {
                 toolTip.ToolTipIcon = ToolTipIcon.None;
+                toolTip.ToolTipTitle = "Ready";
                 toolTip.SetToolTip(execButton, "Execute split");
             }
         }
