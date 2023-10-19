@@ -510,6 +510,12 @@ namespace BaXmlSplitter
                             <style>
                         """);
                         _ = htmlReportBuilder.Append("""
+                                * {
+                                    font-family: Aptos, Aptos_EmbeddedFont, Aptos_MSFontService, Calibri, Helvetica, sans-serif;
+                                }
+                                code {
+                                    font-family: "Aptos Mono", Aptos_EmbeddedFont, Aptos_MSFontService, monospace;
+                                }
                                 table,
                                 th,
                                 td {
