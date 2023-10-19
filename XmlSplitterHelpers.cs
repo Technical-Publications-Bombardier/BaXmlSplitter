@@ -4,6 +4,7 @@ using System.Collections;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Xml;
+using F23.StringSimilarity;
 
 internal static class XmlSplitterHelpers
 {
@@ -18,6 +19,8 @@ internal static class XmlSplitterHelpers
     internal static readonly Regex XML_FILENAME_RE = new(XML_FILENAME_PATTERN, RE_OPTIONS, TIMEOUT);
     internal static readonly string[] NEWLINES = ["\r\n", "\n"];
     internal static readonly string[] XPATH_SEPARATORS = ["|", " or "];
+    internal static readonly Jaccard jaccard = new(k: 2);
+    internal static readonly PriorityQueue<string, double> bestMatch = new();
 
     internal enum FontFamilies
     {
@@ -88,26 +91,6 @@ internal static class XmlSplitterHelpers
         }
         return __programCheckoutItems;
     }
-    internal static Dictionary<Programs, Dictionary<string, string>>? DeserializeDocnbrsPerCheckoutItem()
-    {
-        dynamic deserializedDocnbrsPerCheckoutItem = PSSerializer.Deserialize(Resources.LookupDocnbr);
-        Dictionary<Programs, Dictionary<string, string>> __lookupCheckoutPerDocnbrPerProgram = new(PROGRAMS.Length);
-        foreach (string program in Enum.GetNames<Programs>())
-        {
-            ICollection docnbrs = deserializedDocnbrsPerCheckoutItem[program].Keys;
-            Dictionary<string, string>? docnbrsPerCheckoutItem = new(docnbrs.Count);
-            foreach (string docnbr in docnbrs)
-            {
-                dynamic deserializedCheckoutItem = deserializedDocnbrsPerCheckoutItem[program][docnbr];
-                if (deserializedCheckoutItem is string checkoutItem)
-                {
-                    docnbrsPerCheckoutItem.Add(docnbr, checkoutItem);
-                }
-            }
-            __lookupCheckoutPerDocnbrPerProgram.Add(Enum.Parse<Programs>(program), docnbrsPerCheckoutItem);
-        }
-        return __lookupCheckoutPerDocnbrPerProgram;
-    }
     internal static Dictionary<Programs, Dictionary<int, UowState>>? DeserializeStates()
     {
         dynamic deserializedStatesPerProgram = PSSerializer.Deserialize(Resources.StatesPerProgramXml);
@@ -126,6 +109,24 @@ internal static class XmlSplitterHelpers
             __statesPerProgram.Add((Programs)Enum.Parse(typeof(Programs), program), states);
         }
         return __statesPerProgram;
+    }
+    internal static Dictionary<Programs, Dictionary<string, string>>? DeserializeDocnbrManualFromProgram()
+    {
+        dynamic deserializedDocnbrManualFromProgram = PSSerializer.Deserialize(Resources.DocnbrManualFromProgram);
+        ICollection programs = deserializedDocnbrManualFromProgram.Keys;
+        Dictionary<Programs, Dictionary<string, string>> __docnbrManualFromProgram = new(programs.Count);
+        foreach (string program in programs.Cast<string>())
+        {
+            dynamic manualFromDocnbr = deserializedDocnbrManualFromProgram[program];
+            Dictionary<string, string> __manualFromDocnbr = new(manualFromDocnbr.Count);
+            foreach (string docnbr in manualFromDocnbr.Keys)
+            {
+                dynamic manual = manualFromDocnbr[docnbr];
+                __manualFromDocnbr.Add(docnbr, manual);
+            }
+            __docnbrManualFromProgram.Add((Programs)Enum.Parse(typeof(Programs), program), __manualFromDocnbr);
+        }
+        return __docnbrManualFromProgram;
     }
     /// <summary>
     /// Determines whether the specified parent is descendant.
