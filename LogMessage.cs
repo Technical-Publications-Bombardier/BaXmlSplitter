@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata;
-
-namespace BaXmlSplitter
+﻿namespace BaXmlSplitter
 {
     internal enum Severity
     {
