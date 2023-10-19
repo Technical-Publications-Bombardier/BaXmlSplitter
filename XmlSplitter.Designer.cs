@@ -86,6 +86,7 @@ namespace BaXmlSplitter
             xmlSelectTextBox.Size = new Size(402, 25);
             xmlSelectTextBox.TabIndex = 0;
             xmlSelectTextBox.TextChanged += XmlSelectTextBox_TextChanged;
+            xmlSelectTextBox.TextChanged += CheckExecuteSplitIsReady;
             // 
             // xmlSelectLabel
             // 
@@ -129,6 +130,7 @@ namespace BaXmlSplitter
             uowTextBox.Size = new Size(402, 25);
             uowTextBox.TabIndex = 2;
             uowTextBox.TextChanged += UowStatesTextBox_TextChanged;
+            uowTextBox.TextChanged += CheckExecuteSplitIsReady;
             // 
             // uowLabel
             // 
@@ -203,6 +205,7 @@ namespace BaXmlSplitter
             programsComboBox.TextUpdate += ProgramGroupBox;
             programsComboBox.DropDownClosed += ProgramGroupBox;
             programsComboBox.TextChanged += ProgramGroupBox;
+            programGroupBox.TextChanged += CheckExecuteSplitIsReady;
             programsComboBox.Leave += ProgramGroupBox;
             programsComboBox.Validated += ProgramGroupBox;
             // 
@@ -257,6 +260,7 @@ namespace BaXmlSplitter
             outDirTextBox.Size = new Size(402, 25);
             outDirTextBox.TabIndex = 4;
             outDirTextBox.TextChanged += OutDirTextBox_TextChanged;
+            outDirTextBox.TextChanged += CheckExecuteSplitIsReady;
             // 
             // dirOutLabel
             // 
@@ -304,6 +308,7 @@ namespace BaXmlSplitter
             xpathTextBox.Size = new Size(534, 158);
             xpathTextBox.TabIndex = 1;
             xpathTextBox.TextChanged += XPathTextBox_TextChanged;
+            xpathTextBox.TextChanged += CheckExecuteSplitIsReady;
             // 
             // xpathLabel
             // 

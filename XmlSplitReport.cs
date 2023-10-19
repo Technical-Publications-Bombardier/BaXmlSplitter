@@ -3,16 +3,16 @@ using System.Xml;
 
 namespace BaXmlSplitter
 {
-    internal class XmlSplitReport
+    internal class XmlSplitReport(int capacity = XmlSplitReport.DEFAULT_CAPACITY)
     {
-        private XmlSplitReportEntry[] _entries = new XmlSplitReportEntry[DEFAULT_CAPACITY];
+        private XmlSplitReportEntry[] _entries = new XmlSplitReportEntry[capacity];
         private XmlSplitReportEntry[] Entries { get => _entries.Take(lastIndex).ToArray(); set => _entries = value; }
         private string[] AdditionalElementNames => Entries.Select(entry => entry.KeyedParentTag.Name).Distinct().ToArray();
         private Dictionary<string, string[]> AdditionalAttributeNamesPerElement
         {
             get
             {
-                Dictionary<string, string[]> builder = new();
+                Dictionary<string, string[]> builder = [];
                 foreach (string elementName in AdditionalElementNames)
                 {
                     builder.Add(elementName, Entries.Where(entry => entry.KeyedParentTag.Name == elementName).SelectMany(entry => entry.KeyedParentTag.Attributes!.Cast<XmlAttribute>().Select(attrib => attrib.Name)).Distinct().ToArray());
@@ -22,7 +22,7 @@ namespace BaXmlSplitter
         }
         private int lastIndex = 0;
         private const int DEFAULT_CAPACITY = 10;
-        private static readonly string[] FIELDS = new string[] { "NodeNumber", "NodeElementName", "KeyValue", "KeyedParentTag", "FullXPath", "FilenameOfSplit" };
+        private static readonly string[] FIELDS = ["NodeNumber", "NodeElementName", "KeyValue", "KeyedParentTag", "FullXPath", "FilenameOfSplit"];
 
         internal enum ReportFormat
         {
@@ -34,11 +34,6 @@ namespace BaXmlSplitter
         {
 
         }
-        public XmlSplitReport(int capacity = DEFAULT_CAPACITY)
-        {
-            _entries = new XmlSplitReportEntry[capacity];
-        }
-
 
         public void Add(XmlSplitReportEntry entry)
         {
@@ -77,8 +72,10 @@ namespace BaXmlSplitter
                                   Key CDATA #REQUIRED>
                         <!ELEMENT NodeName (#PCDATA)>
                         """;
-                        dtd += $"<!ELEMENT ParentTag ({string.Join('|', AdditionalElementNames)})>";
-                        dtd += string.Join(Environment.NewLine, AdditionalElementNames.Select(name => { string[] attlist = AdditionalAttributeNamesPerElement[name]; return $"<!ELEMENT {name} EMPTY>{Environment.NewLine}<!ATTLIST {name}{Environment.NewLine}{string.Join(Environment.NewLine + "\t", attlist.Select(attribute => $"{attribute} CDATA #IMPLIED").ToArray())}>"; }).ToArray());
+                        dtd += Environment.NewLine;
+                        dtd += $"<!ELEMENT ParentTag ({(AdditionalElementNames.Length > 0 ? string.Join('|', AdditionalElementNames) : "EMPTY")})>";
+                        dtd += Environment.NewLine;
+                        dtd += AdditionalAttributeNamesPerElement.Count > 0 ? string.Join(Environment.NewLine, AdditionalElementNames.Select(name => { string[] attlist = AdditionalAttributeNamesPerElement[name]; return $"<!ELEMENT {name} EMPTY>{Environment.NewLine}<!ATTLIST {name}{Environment.NewLine}\t{string.Join(Environment.NewLine + "\t", attlist.Select(attribute => $"{attribute} CDATA #IMPLIED").ToArray())}>{Environment.NewLine}"; }).ToArray()) : string.Empty;
                         dtd += """
                         <!ELEMENT XPath (#PCDATA)>
                         <!ELEMENT Filename (#PCDATA)>

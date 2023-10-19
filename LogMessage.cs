@@ -10,15 +10,9 @@ namespace BaXmlSplitter
         Fatal
     };
 
-    internal class LogMessage
+    internal class LogMessage(string message, Severity severity = Severity.Hint)
     {
-        public string Message { get; set; }
-        public Severity Severity { get; set; }
-
-        public LogMessage(string message, Severity severity = Severity.Hint)
-        {
-            Message = message;
-            Severity = severity;
-        }
+        public string Message { get; set; } = message;
+        public Severity Severity { get; set; } = severity;
     }
 }
