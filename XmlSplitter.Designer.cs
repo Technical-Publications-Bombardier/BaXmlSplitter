@@ -69,7 +69,7 @@ namespace BaXmlSplitter
             xmlSelectBox.Controls.Add(xmlSelectTextBox);
             xmlSelectBox.Controls.Add(xmlSelectLabel);
             xmlSelectBox.Controls.Add(xmlButton);
-            xmlSelectBox.Font = new Font("72", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            xmlSelectBox.Font = new Font("72", 11.25F, FontStyle.Bold);
             xmlSelectBox.Location = new Point(0, 3);
             xmlSelectBox.Name = "xmlSelectBox";
             xmlSelectBox.Size = new Size(489, 100);
@@ -90,7 +90,7 @@ namespace BaXmlSplitter
             // xmlSelectLabel
             // 
             xmlSelectLabel.AutoSize = true;
-            xmlSelectLabel.Font = new Font("72", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            xmlSelectLabel.Font = new Font("72", 11.25F);
             xmlSelectLabel.Location = new Point(6, 21);
             xmlSelectLabel.Name = "xmlSelectLabel";
             xmlSelectLabel.Size = new Size(200, 17);
@@ -112,7 +112,7 @@ namespace BaXmlSplitter
             uowSelectBox.Controls.Add(uowTextBox);
             uowSelectBox.Controls.Add(uowLabel);
             uowSelectBox.Controls.Add(uowButton);
-            uowSelectBox.Font = new Font("72", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            uowSelectBox.Font = new Font("72", 11.25F, FontStyle.Bold);
             uowSelectBox.Location = new Point(0, 109);
             uowSelectBox.Name = "uowSelectBox";
             uowSelectBox.Size = new Size(489, 100);
@@ -133,7 +133,7 @@ namespace BaXmlSplitter
             // uowLabel
             // 
             uowLabel.AutoSize = true;
-            uowLabel.Font = new Font("72", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            uowLabel.Font = new Font("72", 11.25F);
             uowLabel.Location = new Point(6, 21);
             uowLabel.Name = "uowLabel";
             uowLabel.Size = new Size(206, 17);
@@ -166,7 +166,7 @@ namespace BaXmlSplitter
             // 
             programGroupBox.Controls.Add(programLabel);
             programGroupBox.Controls.Add(programsComboBox);
-            programGroupBox.Font = new Font("72", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            programGroupBox.Font = new Font("72", 11.25F, FontStyle.Bold);
             programGroupBox.Location = new Point(0, 321);
             programGroupBox.Name = "programGroupBox";
             programGroupBox.Size = new Size(489, 83);
@@ -178,7 +178,7 @@ namespace BaXmlSplitter
             // programLabel
             // 
             programLabel.AutoSize = true;
-            programLabel.Font = new Font("72", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            programLabel.Font = new Font("72", 11.25F);
             programLabel.Location = new Point(6, 21);
             programLabel.Name = "programLabel";
             programLabel.Size = new Size(110, 17);
@@ -209,7 +209,7 @@ namespace BaXmlSplitter
             // execButton
             // 
             execButton.Dock = DockStyle.Bottom;
-            execButton.Font = new Font("72", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            execButton.Font = new Font("72", 11.25F, FontStyle.Bold);
             execButton.Location = new Point(0, 416);
             execButton.Name = "execButton";
             execButton.Size = new Size(489, 32);
@@ -224,7 +224,7 @@ namespace BaXmlSplitter
             outputBox.Controls.Add(outDirTextBox);
             outputBox.Controls.Add(dirOutLabel);
             outputBox.Controls.Add(outDirButton);
-            outputBox.Font = new Font("72", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            outputBox.Font = new Font("72", 11.25F, FontStyle.Bold);
             outputBox.Location = new Point(0, 215);
             outputBox.Name = "outputBox";
             outputBox.Size = new Size(489, 100);
@@ -238,7 +238,7 @@ namespace BaXmlSplitter
             outDirWillBeCreated.AccessibleName = "Will be created";
             outDirWillBeCreated.AccessibleRole = AccessibleRole.StaticText;
             outDirWillBeCreated.AutoSize = true;
-            outDirWillBeCreated.Font = new Font("72", 11.25F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
+            outDirWillBeCreated.Font = new Font("72", 11.25F, FontStyle.Bold | FontStyle.Italic);
             outDirWillBeCreated.ForeColor = Color.ForestGreen;
             outDirWillBeCreated.LiveSetting = System.Windows.Forms.Automation.AutomationLiveSetting.Polite;
             outDirWillBeCreated.Location = new Point(6, 69);
@@ -261,7 +261,7 @@ namespace BaXmlSplitter
             // dirOutLabel
             // 
             dirOutLabel.AutoSize = true;
-            dirOutLabel.Font = new Font("72", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            dirOutLabel.Font = new Font("72", 11.25F);
             dirOutLabel.Location = new Point(6, 21);
             dirOutLabel.Name = "dirOutLabel";
             dirOutLabel.Size = new Size(160, 17);
@@ -282,7 +282,7 @@ namespace BaXmlSplitter
             // 
             xpathGroupBox.Controls.Add(xpathTextBox);
             xpathGroupBox.Controls.Add(xpathLabel);
-            xpathGroupBox.Font = new Font("72", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            xpathGroupBox.Font = new Font("72", 11.25F, FontStyle.Bold);
             xpathGroupBox.Location = new Point(506, 12);
             xpathGroupBox.Name = "xpathGroupBox";
             xpathGroupBox.Size = new Size(552, 209);
@@ -308,7 +308,7 @@ namespace BaXmlSplitter
             // xpathLabel
             // 
             xpathLabel.AutoSize = true;
-            xpathLabel.Font = new Font("72", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            xpathLabel.Font = new Font("72", 11.25F);
             xpathLabel.Location = new Point(6, 21);
             xpathLabel.Name = "xpathLabel";
             xpathLabel.Size = new Size(505, 17);
@@ -318,7 +318,7 @@ namespace BaXmlSplitter
             // logGroupBox
             // 
             logGroupBox.Controls.Add(logTextBox);
-            logGroupBox.Font = new Font("72", 11.25F, FontStyle.Bold, GraphicsUnit.Point);
+            logGroupBox.Font = new Font("72", 11.25F, FontStyle.Bold);
             logGroupBox.Location = new Point(518, 227);
             logGroupBox.Name = "logGroupBox";
             logGroupBox.Size = new Size(534, 230);
@@ -332,7 +332,7 @@ namespace BaXmlSplitter
             logTextBox.AccessibleName = "Output log";
             logTextBox.AccessibleRole = AccessibleRole.Text;
             logTextBox.BackColor = SystemColors.Desktop;
-            logTextBox.Font = new Font("72 Monospace", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            logTextBox.Font = new Font("72 Monospace", 11.25F);
             logTextBox.ForeColor = Color.Lime;
             logTextBox.Location = new Point(-6, 24);
             logTextBox.Name = "logTextBox";
@@ -352,7 +352,7 @@ namespace BaXmlSplitter
             Controls.Add(logGroupBox);
             Controls.Add(xpathGroupBox);
             Controls.Add(stepsPanel);
-            Font = new Font("72", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Font = new Font("72", 11.25F);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;

@@ -18,11 +18,13 @@ namespace BaXmlSplitter
     public partial class XmlSplitter : Form
     {
         [System.Runtime.InteropServices.LibraryImport("gdi32.dll")]
-        private static partial IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont,
+        internal static partial IntPtr AddFontMemResourceEx(IntPtr pbFont, uint cbFont,
             IntPtr pdv, in uint pcFonts);
+
         private PrivateFontCollection fonts = new();
         private string logFile;
         private string? splittingReportHtml;
+        private XmlSplitReport? report;
         private string? xmlSourceFile;
         private string? xmlContent;
         private BaXmlDocument xml = new()
@@ -35,44 +37,8 @@ namespace BaXmlSplitter
         private string? xpath;
         private Dictionary<string, Dictionary<int, UowState>>? statesPerProgram;
         private string? Program;
-        private const string DEFAULT_OUTPUT_DIR = "WIP";
-        private static readonly string[] PROGRAMS = new string[] { "B_IFM", "CH604PROD", "CTALPROD", "LJ4045PROD", "GXPROD" };
-        private static readonly TimeSpan TIMEOUT = TimeSpan.FromSeconds(15);
-        private const string UOW_PATTERN = @"\t*(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = ""(?<state>[^""]*)""\)$";
-        private static readonly Regex UOW_REGEX = new(UOW_PATTERN, RegexOptions.Compiled | RegexOptions.Multiline, TIMEOUT);
-        private const string TIMESTAMP_FORMAT = "HH:mm:ss.fffffff";
-        private static readonly string[] NEWLINE = new[] { "\r\n", "\n" };
-        public static bool IsBinary(string path)
-        {
-            FileInfo fi = new(path);
-            long length = fi.Length;
-            if (length == 0) return false;
+        private IEnumerable<UowState>? fullyQualifiedSelectedStates;
 
-            using StreamReader stream = new(path);
-            int ch;
-            while ((ch = stream.Read()) != -1)
-            {
-                if (IsControlChar(ch))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public static bool IsControlChar(int ch)
-        {
-            return (ch > ((int)ControlChars.NUL) && ch < ((int)ControlChars.BS))
-                || (ch > ((int)ControlChars.CR) && ch < ((int)ControlChars.SUB));
-        }
-
-        enum ControlChars
-        {
-            NUL = (char)0 /** Null character */,
-            BS = (char)8 /** Backspace character */,
-            CR = (char)13 /** Carriage return character */,
-            SUB = (char)26 /** Substitute character */
-        }
         private void LoadFonts()
         {
             uint dummy = 0;
@@ -100,105 +66,19 @@ namespace BaXmlSplitter
             WriteLog($"Started XML splitting tool with real time log at '{logFile}'");
         }
 
-        internal static Dictionary<string, Dictionary<int, UowState>>? DeSerializeStates()
-        {
-            dynamic deSerializedStatesPerProgram = PSSerializer.Deserialize(Resources.StatesPerProgramXml);
-            ICollection Programs = deSerializedStatesPerProgram.Keys;
-            Dictionary<string, Dictionary<int, UowState>> __statesPerProgram = new(Programs.Count);
-            foreach (var Program in Programs)
-            {
-                dynamic stateNames = deSerializedStatesPerProgram[Program];
-                if (stateNames == null)
-                {
-                    continue;
-                }
-                var states = new Dictionary<int, UowState>(stateNames.Count);
-                foreach (int StateValue in stateNames.Keys)
-                {
-                    dynamic stateNameAndRemark = stateNames[StateValue];
-                    if (stateNameAndRemark == null)
-                    {
-                        continue;
-                    }
-                    UowState uowState = new(value: StateValue, name: stateNameAndRemark.statename, remark: stateNameAndRemark.remark);
-                    states.Add(StateValue, uowState);
-                }
-                __statesPerProgram.Add((string)Program, states);
-            }
-            return __statesPerProgram;
-        }
-
-        internal static UowState[]? ParseUowContent(string? uowContent, string? Program, Dictionary<string, Dictionary<int, UowState>>? statesPerProgram, string? uowStatesFile, out List<LogMessage> logMessages, out Hashtable statesInManual, out string foundDoctype)
-        {
-            UowState[] states;
-            statesInManual = new();
-            logMessages = new();
-            if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(Program) && statesPerProgram != null && statesPerProgram[Program] != null)
-            {
-                foundDoctype = uowContent.Split(NEWLINE, StringSplitOptions.None)[0];
-                var stateMatches = UOW_REGEX.Matches(uowContent);
-                if (stateMatches.Count == 0)
-                {
-                    logMessages.Add(new LogMessage($"Invalid UOW file '{uowStatesFile}' chosen", Severity.Error));
-                    return null;
-                }
-                states = new UowState[stateMatches.Count];
-                for (int i = 0; i < stateMatches.Count; i++)
-                {
-                    states[i] = new(tag: stateMatches[i].Groups["tag"].Value);
-                    string[] xpaths = new string[] { $"//{states[i].TagName}", $"//{states[i].TagName?.ToLowerInvariant()}" };
-
-                    if (stateMatches[i].Groups["key"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["key"].Value))
-                    {
-                        states[i].Key = stateMatches[i].Groups["key"].Value;
-                        xpaths = xpaths.Select(xpath => $"{xpath}[contains(@key,'{states[i].Key}') or contains(@key,'{states[i].Key?.ToLowerInvariant()}')]").ToArray();
-                    }
-                    if (stateMatches[i].Groups["rs"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["rs"].Value))
-                    {
-                        states[i].Resource = stateMatches[i].Groups["rs"].Value;
-                    }
-                    if (stateMatches[i].Groups["title"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["title"].Value))
-                    {
-                        states[i].Title = stateMatches[i].Groups["title"].Value;
-                    }
-                    if (stateMatches[i].Groups["lvl"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["lvl"].Value))
-                    {
-                        states[i].Level = stateMatches[i].Groups["lvl"].Value;
-                    }
-                    if (stateMatches[i].Groups["state"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["state"].Value) && int.TryParse(stateMatches[i].Groups["state"].Value, out int stateValue))
-                    {
-                        var state = statesPerProgram[Program][stateValue];
-                        state.StateValue = states[i].StateValue = stateValue;
-                        if (!statesInManual.ContainsKey(stateValue))
-                        {
-                            statesInManual.Add(stateValue, state);
-                        }
-                        states[i].StateName = state.StateName;
-                        states[i].Remark = state.Remark;
-                    }
-                    states[i].XPath = string.Join('|', xpaths);
-                }
-                return states;
-            }
-            else
-            {
-                foundDoctype = "";
-                return null;
-            }
-        }
         private async void XmlSplitter_Load(object sender, EventArgs e)
         {
             await Task.Run(() =>
             {
                 LoadFonts();
-                statesPerProgram = DeSerializeStates();
+                statesPerProgram = XmlSplitterHelpers.DeSerializeStates();
             });
             WriteLog("Finished initializing.");
         }
 
         private void WriteLog(string message, Severity severity = Severity.Hint, bool NoNewLine = false, bool SkipFile = false)
         {
-            string timestamped = string.Format("{0}:\t{1}", DateTime.Now.ToString(TIMESTAMP_FORMAT), message + (NoNewLine ? "" : Environment.NewLine));
+            string timestamped = string.Format("{0}:\t{1}", DateTime.Now.ToString(XmlSplitterHelpers.TIMESTAMP_FORMAT), message + (NoNewLine ? "" : Environment.NewLine));
             if (!SkipFile)
             {
                 try
@@ -240,55 +120,27 @@ namespace BaXmlSplitter
             if (logTextBox.InvokeRequired)
             {
                 logTextBox.Invoke(logDelegate);
-            } else
+            }
+            else
             {
                 logDelegate();
             }
         }
 
-        private static string BrowseForFile(string? filter = null)
-        {
-            using OpenFileDialog openFileDialog = new();
-            if (!string.IsNullOrEmpty(filter))
-            {
-                openFileDialog.Filter = filter;
-            }
-            var result = openFileDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                return openFileDialog.FileName;
-            }
-            else
-            {
-                return string.Empty;
-            }
-        }
-
-        private static void ShowWarningBox(string message, string? caption)
-        {
-            MessageBoxButtons button = MessageBoxButtons.OK;
-            MessageBoxIcon icon = MessageBoxIcon.Warning;
-            _ = MessageBox.Show(message, caption, button, icon);
-        }
-
-        private static bool ShowConfirmationBox(string message, string caption)
-        {
-            MessageBoxButtons button = MessageBoxButtons.YesNo;
-            MessageBoxIcon icon = MessageBoxIcon.Question;
-            var result = MessageBox.Show(message, caption, button, icon);
-            return result == DialogResult.Yes;
-        }
-
         private void BrowseXml(object sender, EventArgs e)
         {
-            string filename = BrowseForFile("Flight or maintenance manual|*.xml");
+            string filename = XmlSplitterHelpers.BrowseForFile(filter: "Flight or maintenance manual|*.xml", startingPath: xmlSelectTextBox.Text);
             xmlSelectTextBox.Text = filename;
             XmlSelectTextBox_TextChanged(sender, e);
         }
 
         private void BrowseUow(object sender, EventArgs e)
         {
-            string filename = BrowseForFile("UOW states file|*.*");
+            string filename = XmlSplitterHelpers.BrowseForFile(filter: "UOW states file|*.*", startingPath: uowTextBox.Text);
+            while (Path.GetExtension(filename).Equals(".xml", StringComparison.OrdinalIgnoreCase) && !XmlSplitterHelpers.ShowConfirmationBox($"The chosen UOW states file {Path.GetFileName(filename)} appears to be an XML file, not a file generated by the $LAUNCH tool in Unix. Proceed anyway?", "XML chosen as UOW states file"))
+            {
+                filename = XmlSplitterHelpers.BrowseForFile(filter: "UOW states file|*.*", startingPath: uowTextBox.Text);
+            }
             uowTextBox.Text = filename;
             UowStatesTextBox_TextChanged(sender, e);
         }
@@ -330,7 +182,7 @@ namespace BaXmlSplitter
                 var container = Path.GetDirectoryName(xmlSourceFile);
                 if (container != null)
                 {
-                    outDirTextBox.Text = Path.Combine(container, DEFAULT_OUTPUT_DIR);
+                    outDirTextBox.Text = Path.Combine(container, XmlSplitterHelpers.DEFAULT_OUTPUT_DIR);
                     OutDirTextBox_TextChanged(sender, e);
                 }
                 WriteLog(string.Format("Reading XML file '{0}'", Path.GetFileName(xmlSourceFile)));
@@ -349,7 +201,7 @@ namespace BaXmlSplitter
         private async void UowStatesTextBox_TextChanged(object sender, EventArgs e)
         {
             uowTextBox.Select(uowTextBox.Text.Length, 0);
-            if (!string.IsNullOrWhiteSpace(uowTextBox.Text) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(uowTextBox.Text.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute) && File.Exists(uowTextBox.Text) && (!IsBinary(uowTextBox.Text) || ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", uowTextBox.Text), string.Format("File '{0}' is not text", (new FileInfo(uowTextBox.Text)).Name))))
+            if (!string.IsNullOrWhiteSpace(uowTextBox.Text) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(uowTextBox.Text.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute) && File.Exists(uowTextBox.Text) && (!XmlSplitterHelpers.IsBinary(uowTextBox.Text) || XmlSplitterHelpers.ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", uowTextBox.Text), string.Format("File '{0}' is not text", (new FileInfo(uowTextBox.Text)).Name))))
             {
 
                 if (!string.IsNullOrEmpty(uowStatesFile) && uowStatesFile == uowTextBox.Text)
@@ -397,25 +249,25 @@ namespace BaXmlSplitter
         {
             if (string.IsNullOrEmpty(uowTextBox.Text) && string.IsNullOrEmpty(uowContent))
             {
-                ShowWarningBox("Please select a UOW states file before executing the split.", "Cannot proceed: No UOW states provided.");
+                XmlSplitterHelpers.ShowWarningBox("Please select a UOW states file before executing the split.", "Cannot proceed: No UOW states provided.");
                 WriteLog("Prematurely attempted to begin splitting prior to specifying UOW states", Severity.Warning);
                 return;
             }
             if (string.IsNullOrEmpty(Program) && string.IsNullOrEmpty(programsComboBox.Text))
             {
-                ShowWarningBox("Please select a program before executing the split.", "Cannot proceed: No program specified.");
+                XmlSplitterHelpers.ShowWarningBox("Please select a program before executing the split.", "Cannot proceed: No program specified.");
                 WriteLog("Prematurely attempted to begin splitting prior to specifying program", Severity.Warning);
                 return;
             }
             if (xmlSourceFile == null && string.IsNullOrEmpty(xmlContent))
             {
-                ShowWarningBox("Please select an XML file before executing the split.", "Cannot proceed: No XML file provided.");
+                XmlSplitterHelpers.ShowWarningBox("Please select an XML file before executing the split.", "Cannot proceed: No XML file provided.");
                 WriteLog("Prematurely attempted to begin splitting prior to specifying XML file", Severity.Warning);
                 return;
             }
             if (string.IsNullOrEmpty(outputDir))
             {
-                ShowWarningBox("Please select an output directory before executing the split.", "Cannot proceed: No output directory provided.");
+                XmlSplitterHelpers.ShowWarningBox("Please select an output directory before executing the split.", "Cannot proceed: No output directory provided.");
                 WriteLog("Prematurely attempted to begin splitting prior to specifying output directory", Severity.Warning);
                 return;
             }
@@ -428,7 +280,7 @@ namespace BaXmlSplitter
                 }
                 catch (Exception ex)
                 {
-                    ShowWarningBox(string.Format("Unable to create output directory '{0}': {1}", outputDir, ex.Message), "Cannot proceed: Unable to create output directory.");
+                    XmlSplitterHelpers.ShowWarningBox(string.Format("Unable to create output directory '{0}': {1}", outputDir, ex.Message), "Cannot proceed: Unable to create output directory.");
                     WriteLog(string.Format("Unable to create output directory '{0}': {1}", outputDir, ex.Message), Severity.Fatal);
                     return;
                 }
@@ -463,20 +315,23 @@ namespace BaXmlSplitter
                         WriteLog(logMessage.Message, logMessage.Severity);
                         if (logMessage.Severity > Severity.Hint)
                         {
-                            ShowWarningBox(logMessage.Message, Enum.GetName(logMessage.Severity));
+                            XmlSplitterHelpers.ShowWarningBox(logMessage.Message, Enum.GetName(logMessage.Severity));
                         }
                     }
                 }
-                if (string.IsNullOrEmpty(xpath))
+                if (string.IsNullOrEmpty(xpath) || fullyQualifiedSelectedStates == null)
                 {
-                    WriteLog("Stopping split. No XPath.", Severity.Error);
+                    WriteLog("Stopping split. No units of work selected.", Severity.Error);
                 }
                 else
                 {
                     var nodes = await Task.Run(() => xml.SelectNodes(xpath));
-                    WriteLog(string.Format("Splitting XML file '{0}' into {1} fragments", Path.GetFileName(xmlSourceFile), nodes?.Count));
-                    StringBuilder htmlReportBuilder = new();
-                    _ = htmlReportBuilder.Append($"""
+                    if (nodes != null && nodes.Count > 0)
+                    {
+                        WriteLog(string.Format("Splitting XML file '{0}' into {1} fragments", Path.GetFileName(xmlSourceFile), nodes.Count));
+                        report = new(capacity: nodes.Count);
+                        StringBuilder htmlReportBuilder = new();
+                        _ = htmlReportBuilder.Append($"""
                         <!DOCTYPE html>
                         <html lang="en">
                         <head>
@@ -485,7 +340,7 @@ namespace BaXmlSplitter
                             <title>Report on Splitting {Path.GetFileNameWithoutExtension(xmlSourceFile)}</title>
                             <style>
                         """);
-                    _ = htmlReportBuilder.Append("""
+                        _ = htmlReportBuilder.Append("""
                                 table,
                                 th,
                                 td {
@@ -520,22 +375,40 @@ namespace BaXmlSplitter
                                     content: "ⓘ";
                                     font-weight: bold;
                                     font-size: 1.5em;
+                                    display: inline-block;
                                     width: 1.3em;
-                                    position: relative;
-                                    float: left;
+                                    line-height: 0.9em;
                                     color: #2196F3;
+                                    text-shadow: 1px 1px 4px black;
+                                }
+                                pre {
+                                    display: block;
+                                    background: black;
+                                    color: aliceblue;
+                                    padding: 0.75em;
+                                    min-height: 4vh;
                                 }
                             </style>
                         </head>
                         """);
-                    _ = htmlReportBuilder.Append($"""
+                        /*
+                         * Regex uppercaseXPathRe = new(@"//([^a-z\[]+)\[contains\(@key,'([^'a-z]+)'\)", RegexOptions.Compiled);
+                         * string[] xpathPartials = xpath.Split(XmlSplitterHelpers.XPATH_SEPARATORS, StringSplitOptions.None).Where(x => x.Contains("//") && uppercaseXPathRe.IsMatch(x)).Select(partial => partial + "]").ToArray();
+                         */
+                        string dateTimeNow = DateTime.Now.ToString("yyyy - MM - dd - HH - mm - ss - fffffff");
+                        string reportBaseFilename = $"{Path.GetFileNameWithoutExtension(xmlSourceFile)}SplittingReport - {dateTimeNow}";
+                        string[] splittingReportFilenames = Enum.GetNames<XmlSplitReport.ReportFormat>().Select(format => $"{reportBaseFilename}.{format.ToLowerInvariant()}").ToArray();
+                        _ = htmlReportBuilder.Append($"""
                         <body>
-                            <p>The source XML, '{Path.GetFileName(xmlSourceFile)}', was split into {nodes?.Count} units of work using the XPath query below:</p>
-                            <pre><code>{xpath}</code></pre>
-                            <p> This is the full report of the XML splitting results:</p>
+                            <p>The source XML, '{Path.GetFileName(xmlSourceFile)}', was split into {nodes.Count} unit of work nodes.</p>
+                            <p>The complete splitting report is written as {string.Join(", ", Enum.GetNames<XmlSplitReport.ReportFormat>())} in the WIP package with the following file names:</p>
+                            <ul>
+                                {string.Join(Environment.NewLine, splittingReportFilenames.Select(filename => $"<li>{filename}</li>").ToArray())}
+                            </ul>
+                            <p>Below is the full HTML report of the XML splitting results:</p>
                             <table>
-                                <caption><p>Table showing the details on each node that was split from the source XML.</p><aside>The opening tag of the parent is built from the parent's name and its attribute name-value pairs. It may be slightly different than how it appears in the original XML.</aside><aside>Note also that "Node" in this context refers to the unit of work as XML element that was split off from the source XML.</aside></caption>
-                                <colgroup><col /><col /><col /><col /><col /><col /></colgroup>
+                                <caption><p>Table showing the details on each node that was split from the source XML.</p><aside aria-label="Information note">The opening tag of the parent is built from the parent's name and its attribute name-value pairs. It may be slightly different than how it appears in the original XML.</aside><aside aria-label="Information note">Note also that "Node" in this context refers to the unit of work as XML element that was split off from the source XML.</aside></caption>
+                                <colgroup><col /><col /><col /><col /><col /><col /><col /><col /><col /></colgroup>
                                 <tr>
                                     <th>Node Number</th>
                                     <th>Node Element Name</th>
@@ -543,64 +416,92 @@ namespace BaXmlSplitter
                                     <th>Immediate Parent Opening Tag</th>
                                     <th>Full XPath</th>
                                     <th>Filename of Split</th>
+                                    <th>UOW State Value</th>
+                                    <th>UOW State Name</th>
+                                    <th>UOW State Remark</th>
                                 </tr>
                         """);
-
-                    for (int i = 0; i < nodes?.Count; i++)
-                    {
-                        progressBar.Value = (int)(100 * (i + 1) / nodes.Count);
-                        BaXmlDocument xmlFragment = new()
+                        if (fullyQualifiedSelectedStates.ToArray() is UowState[] sourceStates)
                         {
-                            ResolveEntities = false
-                        };
-                        if (nodes[i] == null)
-                        {
-                            continue;
-                        }
-
-                        _ = await Task.Run(() => xmlFragment.AppendChild(xmlFragment.ImportNode(nodes[i]!, true)));
-                        var key = nodes[i]?.Attributes?["key"]?.Value;
-                        if (!string.IsNullOrEmpty(key))
-                        {
-                            var outPath = Path.Combine(outDirTextBox.Text, string.Format("{0}-{1}.xml", Path.GetFileNameWithoutExtension(xmlSourceFile), key));
-                            // write the fragment to the outPath
-                            await Task.Run(() => xmlFragment.Save(outPath));
-                            WriteLog(string.Format("Wrote fragment to '{0}'", outPath), Severity.Hint);
-                            _ = htmlReportBuilder.AppendFormat(@"<tr><!-- Node Number --><td>{0}</td>", i + 1);
-                            _ = htmlReportBuilder.AppendFormat(@"<!-- Node Element Name --><td>{0}</td>", nodes[i]!.Name);
-                            _ = htmlReportBuilder.AppendFormat(@"<!-- 'Key' Value --><td>{0}</td>", key);
-                            XmlNode? parent = nodes[i]!.ParentNode;
-                            string parentTag = String.Empty;
-                            if (parent != null && parent.Attributes != null)
+                            HashSet<XmlNode> notSeenNodes = new(nodes.Count);
+                            int nodeNum = 1;
+                            for (int i = 0; i < sourceStates.Length; i++)
                             {
-                                parentTag = $"<{parent.Name}";
-                                foreach (XmlAttribute attrib in parent.Attributes)
+                                progressBar.Value = (int)(100 * (i + 1) / sourceStates.Length);
+                                if(sourceStates[i] is UowState curState && curState.XPath is string curXPath && xml.SelectSingleNode(curXPath) is XmlNode curNode && notSeenNodes.Add(curNode))
                                 {
-                                    parentTag += $" {attrib.Name}=\"{attrib.Value}\"";
+                                    BaXmlDocument xmlFragment = new()
+                                    {
+                                        ResolveEntities = false
+                                    };
+                                    _ = await Task.Run(() => xmlFragment.AppendChild(xmlFragment.ImportNode(curNode, true)));
+                                    if (curNode.Attributes?["key"]?.Value is string key)
+                                    {
+                                        var outPath = XmlSplitterHelpers.XML_FILENAME_RE.Replace(Path.GetFileNameWithoutExtension(xmlSourceFile), m => Regex.Replace(m.Groups[1].Value, @"[_-]$", string.Empty));
+                                        outPath = Path.Combine(outputDir, string.Format("{0}-{1}.xml", outPath, key));
+                                        // write the fragment to the outPath
+                                        await Task.Run(() => xmlFragment.Save(outPath));
+                                        WriteLog(string.Format("Wrote fragment to '{0}'", outPath), Severity.Hint);
+                                        XmlNode? parent = curNode.ParentNode;
+                                        string parentTag = String.Empty;
+                                        if (parent != null && parent.Attributes != null)
+                                        {
+                                            parentTag = $"<{parent.Name}";
+                                            foreach (XmlAttribute attrib in parent.Attributes)
+                                            {
+                                                parentTag += $" {attrib.Name}=\"{attrib.Value}\"";
+                                            }
+                                            parentTag += ">";
+                                        }
+                                        else if (parent != null)
+                                        {
+                                            parentTag = $"<{parent.Name}>";
+                                        }
+                                        XmlSplitReportEntry reportEntry = new(nodeNumber: nodeNum++, nodeElementName: curNode.Name, keyValue: key, immediateParentOpeningTag: parentTag, fullXPath: GenerateUniqueXPath(curNode), filenameOfSplit: Path.GetFileName(outPath), uowState: curState);
+                                        report.Add(reportEntry);
+                                        _ = htmlReportBuilder.AppendFormat(@"<tr><!-- Node Number --><td>{0}</td>", reportEntry.NodeNumber);
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- Node Element Name --><td>{0}</td>", reportEntry.NodeElementName);
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- 'Key' Value --><td>{0}</td>", reportEntry.KeyValue);
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- Immediate Parent Opening Tag --><td><code>{0}</code></td>", string.IsNullOrEmpty(reportEntry.ImmediateParentOpeningTag) ? "&nbsp;" : HttpUtility.HtmlEncode(reportEntry.ImmediateParentOpeningTag));
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- Full XPath --><td><code>{0}</code></td>", HttpUtility.HtmlEncode(reportEntry.FullXPath));
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- Filename of Split --><td>{0}</td>", reportEntry.FilenameOfSplit);
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- UOW State Value --><td>{0}</td>", reportEntry.UowState.StateValue);
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- UOW State Name --><td>{0}</td>", reportEntry.UowState.StateName);
+                                        _ = htmlReportBuilder.AppendFormat(@"<!-- UOW State Remark --><td>{0}</td></tr>", string.IsNullOrEmpty(reportEntry.UowState.Remark) ? "&nbsp;" : HttpUtility.HtmlEncode(reportEntry.UowState.Remark));
+                                    }
+                                    else
+                                    {
+                                        WriteLog(string.Format("Unable to get 'key' attribute from node #{0} ({1}) on UOW #{2}. Skipping.", nodeNum, curNode.Name, i + 1), Severity.Warning);
+                                    }
                                 }
-                                parentTag += ">";
                             }
-                            else if (parent != null)
-                            {
-                                parentTag = $"<{parent.Name}>";
-                            }
-                            _ = htmlReportBuilder.AppendFormat(@"<!-- Immediate Parent Opening Tag --><td><code>{0}</code></td>", string.IsNullOrEmpty(parentTag) ? "&nbsp;" : HttpUtility.HtmlEncode(parentTag));
-                            _ = htmlReportBuilder.AppendFormat(@"<!-- Full XPath --><td><code>{0}</code></td>", HttpUtility.HtmlEncode(GenerateUniqueXPath(nodes[i]!)));
-                            _ = htmlReportBuilder.AppendFormat(@"<!-- Filename of Split --><td>{0}</td></tr>", Path.GetFileName(outPath));
-                        }
-                        else
-                        {
-                            WriteLog(string.Format("Unable to get 'key' attribute from node {0}", nodes[i]!.Name), Severity.Warning);
+                            _ = htmlReportBuilder.Append("</table></body></html>");
+                            splittingReportHtml = htmlReportBuilder.ToString();
+                            WriteLog("Done splitting XML file. Showing results report.");
+                            await Task.Run(() => GenerateOtherReports(reportBaseFilename));
+                            // display the report in the default browser
+                            await Task.Run(() => DisplayHtmlReport());
+
                         }
                     }
-                    _ = htmlReportBuilder.Append("</table></body></html>");
-                    splittingReportHtml = htmlReportBuilder.ToString();
-                    // display the report in the default browser
-                    await Task.Run(() => DisplayHtmlReport());
+
                 }
                 progressBar.Visible = false;
                 stepsPanel.Controls.Remove(progressBar);
                 execButton.Visible = true;
+            }
+        }
+
+        private void GenerateOtherReports(string baseFilename)
+        {
+            if (report != null && !string.IsNullOrEmpty(outputDir))
+            {
+                foreach (XmlSplitReport.ReportFormat format in Enum.GetValuesAsUnderlyingType<XmlSplitReport.ReportFormat>())
+                {
+                    var reportFilename = Path.Combine(outputDir, $"{baseFilename}.{Enum.GetName(format)}");
+                    WriteLog($"Writing report to {reportFilename}");
+                    report.Save(reportFilename, format);
+                }
             }
         }
 
@@ -675,7 +576,7 @@ namespace BaXmlSplitter
                     {
                         if (File.Exists(path))
                         {
-                            if (Regex.IsMatch(path, ".*\\.xml$", RegexOptions.IgnoreCase))
+                            if (Path.GetExtension(path).Equals(".xml", StringComparison.OrdinalIgnoreCase))
                             {
 
                                 xmlSelectTextBox.Text = path;
@@ -683,7 +584,7 @@ namespace BaXmlSplitter
                             }
                             else
                             {
-                                if (IsBinary(path) && !ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", path), string.Format("{0} appears to be binary", Path.GetFileName(path))))
+                                if (XmlSplitterHelpers.IsBinary(path) && !XmlSplitterHelpers.ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", path), string.Format("{0} appears to be binary", Path.GetFileName(path))))
                                 {
                                     continue;
                                 }
@@ -707,27 +608,27 @@ namespace BaXmlSplitter
             {
                 new LogMessage("Parsing units of work states file")
             };
-            UowState[]? states = ParseUowContent(uowContent, Program, statesPerProgram, uowStatesFile, out List<LogMessage> parseUowLogMessages, out Hashtable statesInManual, out string impliedDoctype);
+            UowState[]? states = XmlSplitterHelpers.ParseUowContent(uowContent, Program, statesPerProgram, uowStatesFile, out List<LogMessage> parseUowLogMessages, out Hashtable statesInManual, out string impliedDocnbr);
             if (states == null)
             {
                 logMessages.Add(new LogMessage("Not ready to process unit of work states. Check that UOW states file was loaded and parsed properly.", Severity.Warning));
             }
             else
             {
-                // check that the root node name is the same as the uowStatesFileDoctype
-                if (xml.DocumentElement == null || string.IsNullOrEmpty(xml.DocumentElement.Name))
+                // check that the root node name is the same as the uowStatesFileDocnbr
+                if (xml.DocumentElement == null || string.IsNullOrEmpty(xml.DocumentElement.GetAttribute("docnbr")))
                 {
-                    logMessages.Add(new LogMessage("No root node name identifiable in XML content. Please check the XML is correct.", Severity.Error));
+                    logMessages.Add(new LogMessage("No root node docnbr identifiable in XML content. Please check the XML is correct.", Severity.Error));
                     return logMessages.ToArray();
                 }
-                else if (string.IsNullOrEmpty(impliedDoctype))
+                else if (string.IsNullOrEmpty(impliedDocnbr))
                 {
                     logMessages.Add(new LogMessage("The UOW states file was empty. Please check the UOW states file is correct.", Severity.Error));
                     return logMessages.ToArray();
                 }
-                else if (!xml.DocumentElement.Name.Equals(impliedDoctype, StringComparison.InvariantCultureIgnoreCase))
+                else if (!xml.DocumentElement.GetAttribute("docnbr").Equals(impliedDocnbr, StringComparison.OrdinalIgnoreCase))
                 {
-                    logMessages.Add(new LogMessage(string.Format("Root node name '{0}' does not match UOW states file doctype '{1}'. Please check the UOW states file is correct.", xml.DocumentElement.Name.ToUpperInvariant(), impliedDoctype.ToUpperInvariant()), Severity.Error));
+                    logMessages.Add(new LogMessage(string.Format("Root node docnbr '{0}' does not match UOW states file docnbr '{1}'. Please check the UOW states file is correct.", xml.DocumentElement.GetAttribute("docnbr").ToUpperInvariant(), impliedDocnbr.ToUpperInvariant()), Severity.Error));
                     return logMessages.ToArray();
                 }
                 logMessages.Add(new LogMessage(string.Format("Found {0} distinct work states in the manual:\n\t{1}", statesInManual.Count, string.Join("\n\t", statesInManual.Values.Cast<UowState>().Select(uow => uow.ToString())))));
@@ -745,7 +646,8 @@ namespace BaXmlSplitter
                     var selectedStates = dialog.SelectedStates;
                     if (selectedStates != null && selectedStates.Length > 0)
                     {
-                        xpathTextBox.Text = xpath = string.Join('|', states.Where((UowState state) => selectedStates.Select((UowState state) => state.StateValue).Contains(state.StateValue)).Select(state => state.XPath));
+                        fullyQualifiedSelectedStates = states.Where((UowState state) => selectedStates.Select((UowState state) => state.StateValue).Contains(state.StateValue));
+                        xpathTextBox.Text = xpath = string.Join('|', fullyQualifiedSelectedStates.Select(state => state.XPath));
                         XPathTextBox_TextChanged(sender, e);
                     }
                     else
@@ -760,7 +662,7 @@ namespace BaXmlSplitter
 
         private void ProgramGroupBox(object sender, EventArgs e)
         {
-            if ((string.IsNullOrEmpty(Program) && !string.IsNullOrEmpty(programsComboBox.Text)) || (Program != programsComboBox.Text && PROGRAMS.Contains<string>(programsComboBox.Text)))
+            if ((string.IsNullOrEmpty(Program) && !string.IsNullOrEmpty(programsComboBox.Text)) || (Program != programsComboBox.Text && XmlSplitterHelpers.PROGRAMS.Contains<string>(programsComboBox.Text)))
             {
                 Program = programsComboBox.Text;
                 WriteLog($"Program chosen for manual: {Program}");
