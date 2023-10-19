@@ -198,8 +198,13 @@ namespace BaXmlSplitter
             programsComboBox.Size = new Size(284, 25);
             programsComboBox.Sorted = true;
             programsComboBox.TabIndex = 3;
+            programsComboBox.DropDown += ProgramGroupBox;
             programsComboBox.SelectionChangeCommitted += ProgramGroupBox;
+            programsComboBox.TextUpdate += ProgramGroupBox;
             programsComboBox.DropDownClosed += ProgramGroupBox;
+            programsComboBox.TextChanged += ProgramGroupBox;
+            programsComboBox.Leave += ProgramGroupBox;
+            programsComboBox.Validated += ProgramGroupBox;
             // 
             // execButton
             // 
@@ -298,6 +303,7 @@ namespace BaXmlSplitter
             xpathTextBox.ScrollBars = ScrollBars.Vertical;
             xpathTextBox.Size = new Size(534, 158);
             xpathTextBox.TabIndex = 1;
+            xpathTextBox.TextChanged += XPathTextBox_TextChanged;
             // 
             // xpathLabel
             // 
