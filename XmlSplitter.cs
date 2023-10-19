@@ -701,13 +701,12 @@ namespace BaXmlSplitter
                                                   """);
                     if (fullyQualifiedSelectedStates.ToArray() is { } sourceStates)
                     {
-                        HashSet<XmlNode> notSeenNodes = new(sourceStates.Length);
                         Dictionary<XmlNode, List<(UowState, XmlNode)>> childrenPerCheckoutItem = new(nodes.Length);
                         for (var i = 0; i < sourceStates.Length; i++)
                         {
                             progressBar.Value = 100 * (i + 1) / sourceStates.Length;
                             var foundParent = false;
-                            if (sourceStates[i] is { XPath: { } curXPath } curState && xml.SelectSingleNode(curXPath) is { } curNode && notSeenNodes.Add(curNode))
+                            if (sourceStates[i] is { XPath: { } curXPath } curState && xml.SelectSingleNode(curXPath) is { } curNode)
                             {
                                 // find the node in nodes that is the parent of curNode
                                 foreach (var node in nodes)
@@ -746,8 +745,12 @@ namespace BaXmlSplitter
                                 // write the fragment to the outPath
                                 await Task.Run(() => xmlFragment.Save(outPath));
                                 WriteLog($"Wrote fragment to '{outPath}'");
-                                // create an entry per child on childrenPerCheckoutItem
-                                var numChildren = childrenPerCheckoutItem[nodes[i]].Count;
+                                if(!childrenPerCheckoutItem.TryGetValue(nodes[i], out var children))
+                                {
+                                    continue;
+                                }
+                                    // create an entry per child on childrenPerCheckoutItem
+                                    var numChildren = children.Count;
                                 for (var j = 0; j < numChildren; j++)
                                 {
                                     var (curState, curNode) = childrenPerCheckoutItem[nodes[i]][j];
