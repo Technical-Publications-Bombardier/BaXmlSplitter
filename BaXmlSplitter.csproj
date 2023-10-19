@@ -9,7 +9,7 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows8.0</TargetFramework>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
@@ -25,6 +25,7 @@
 		<RepositoryUrl>https://github.com/mavaddat/BaXmlSplitter</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<UseAppHost>true</UseAppHost>
+		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 		<DebugSymbols>true</DebugSymbols>
@@ -61,7 +62,8 @@
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.18.0" />
 		<PackageReference Include="F23.StringSimilarity" Version="5.1.0" />
 		<PackageReference Include="Microsoft.WSMan.Management" Version="7.4.0-preview.6" />
-		<PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.11" />
+		<PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.12" />
+		<PackageReference Include="RestSharp" Version="110.2.1-alpha.0.13" />
 		<PackageReference Include="System.Management.Automation" Version="7.4.0-preview.6" />
 	</ItemGroup>
 
@@ -70,6 +72,11 @@
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Resources\Settings.Designer.cs">
+		  <DesignTimeSharedInput>True</DesignTimeSharedInput>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>Settings.settings</DependentUpon>
 		</Compile>
 	</ItemGroup>
 
@@ -84,6 +91,10 @@
 		<None Update="Resources\icon.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
+		</None>
+		<None Update="Resources\Settings.settings">
+		  <Generator>SettingsSingleFileGenerator</Generator>
+		  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
 
