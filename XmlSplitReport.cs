@@ -3,11 +3,35 @@ using System.Xml;
 
 namespace BaXmlSplitter
 {
+    /// <summary>
+    /// The XML splitting result report in XML, CSV, and TSV.
+    /// </summary>
     internal class XmlSplitReport(int capacity = XmlSplitReport.DEFAULT_CAPACITY)
     {
+        /// <summary>
+        /// The entries
+        /// </summary>
         private XmlSplitReportEntry[] _entries = new XmlSplitReportEntry[capacity];
+        /// <summary>
+        /// Gets or sets the entries.
+        /// </summary>
+        /// <value>
+        /// The entries.
+        /// </value>
         private XmlSplitReportEntry[] Entries { get => _entries.Take(lastIndex).ToArray(); set => _entries = value; }
+        /// <summary>
+        /// Gets the parent tag names.
+        /// </summary>
+        /// <value>
+        /// The parent tag names.
+        /// </value>
         private string[] ParentTagNames => Entries.SelectMany(entry => new[] { entry.CheckoutParent.Name, entry.KeyedParent.Name }).Distinct().ToArray();
+        /// <summary>
+        /// Gets or sets the additional attribute names per element.
+        /// </summary>
+        /// <value>
+        /// The additional attribute names per element.
+        /// </value>
         private Dictionary<string, HashSet<string>> AdditionalAttributeNamesPerElement
         {
             get
@@ -23,21 +47,50 @@ namespace BaXmlSplitter
                 return builder;
             }
         }
+        /// <summary>
+        /// The last index
+        /// </summary>
         private int lastIndex = 0;
+        /// <summary>
+        /// The default capacity
+        /// </summary>
         private const int DEFAULT_CAPACITY = 10;
+        /// <summary>
+        /// The fields
+        /// </summary>
         private static readonly string[] FIELDS = ["CheckoutParentNumber", "CheckoutParentName", "CheckoutParentKey", "CheckoutParentTag", "UowNumber", "UowElementName", "UowKeyValue", "KeyedParent", "FullXPathToUow", "FilenameOfSplit"];
 
+        /// <summary>
+        /// Available report formats
+        /// </summary>
         internal enum ReportFormat
         {
+            /// <summary>
+            /// Comma-separated values
+            /// </summary>
             CSV,
+            /// <summary>
+            /// Tab-separated values
+            /// </summary>
             TSV,
+            /// <summary>
+            /// Extensible mark-up language
+            /// </summary>
             XML
         }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="XmlSplitReport"/> class.
+        /// </summary>
         public XmlSplitReport() : this(DEFAULT_CAPACITY)
         {
 
         }
 
+        /// <summary>
+        /// Adds the specified entry.
+        /// </summary>
+        /// <param name="entry">The entry.</param>
+        /// <returns></returns>
         public void Add(XmlSplitReportEntry entry)
         {
             if (lastIndex + 1 >= _entries.Length)
@@ -46,6 +99,12 @@ namespace BaXmlSplitter
             }
             _entries[lastIndex++] = entry;
         }
+        /// <summary>
+        /// Saves the specified out path.
+        /// </summary>
+        /// <param name="outPath">The out path.</param>
+        /// <param name="outFormat">The out format.</param>
+        /// <returns></returns>
         public void Save(string outPath, ReportFormat outFormat)
         {
             switch (outFormat)
@@ -167,10 +226,24 @@ namespace BaXmlSplitter
             }
         }
     }
+    /// <summary>
+    /// An entry per unit of work in the final report on splitting the source XML.
+    /// </summary>
     internal class XmlSplitReportEntry
     {
+        /// <summary>
+        /// The node number
+        /// </summary>
         public int NodeNumber;
+        /// <summary>
+        /// The checkout parent number
+        /// </summary>
         public int CheckoutParentNumber;
+        /// <summary>
+        /// Nodes to tag.
+        /// </summary>
+        /// <param name="node">The node.</param>
+        /// <returns></returns>
         private static XmlElement NodeToTag(XmlNode node)
         {
 
@@ -182,15 +255,56 @@ namespace BaXmlSplitter
             return element;
         }
 
+        /// <summary>
+        /// Gets or sets the keyed parent.
+        /// </summary>
+        /// <value>
+        /// The keyed parent.
+        /// </value>
         public XmlNode KeyedParent { get => NodeToTag(_keyedParent); set => _keyedParent = value; }
+        /// <summary>
+        /// Gets or sets the checkout parent.
+        /// </summary>
+        /// <value>
+        /// The checkout parent.
+        /// </value>
         public XmlNode CheckoutParent { get => NodeToTag(_checkoutParent); set => _checkoutParent = value; }
+        /// <summary>
+        /// The uow node
+        /// </summary>
         public XmlNode UowNode;
+        /// <summary>
+        /// The full XPath
+        /// </summary>
         public string FullXPath;
+        /// <summary>
+        /// The filename of split
+        /// </summary>
         public string FilenameOfSplit;
+        /// <summary>
+        /// The uow state
+        /// </summary>
         public UowState UowState;
+        /// <summary>
+        /// The keyed parent
+        /// </summary>
         private XmlNode _keyedParent;
+        /// <summary>
+        /// The checkout parent
+        /// </summary>
         private XmlNode _checkoutParent;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="XmlSplitReportEntry"/> class.
+        /// </summary>
+        /// <param name="checkoutParent">The checkout parent.</param>
+        /// <param name="checkoutParentNumber">The checkout parent number.</param>
+        /// <param name="nodeNumber">The node number.</param>
+        /// <param name="uowNode">The uow node.</param>
+        /// <param name="keyedParentTag">The keyed parent tag.</param>
+        /// <param name="fullXPath">The full x path.</param>
+        /// <param name="filenameOfSplit">The filename of split.</param>
+        /// <param name="uowState">State of the uow.</param>
         public XmlSplitReportEntry(XmlNode checkoutParent, int checkoutParentNumber, int nodeNumber, XmlNode uowNode, XmlNode keyedParentTag, string fullXPath, string filenameOfSplit, UowState uowState)
         {
             CheckoutParentNumber = checkoutParentNumber;

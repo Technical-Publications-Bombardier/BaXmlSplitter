@@ -391,29 +391,89 @@ namespace BaXmlSplitter
 
         #endregion
 
+        /// <summary>The XML select box</summary>
         private GroupBox xmlSelectBox;
+        /// <summary>The uow select box</summary>
         private GroupBox uowSelectBox;
+        /// <summary>The uow text box</summary>
         private TextBox uowTextBox;
+        /// <summary>The uow label</summary>
         private Label uowLabel;
+        /// <summary>The uow button</summary>
         private Button uowButton;
+        /// <summary>The XML select text box</summary>
         private TextBox xmlSelectTextBox;
+        /// <summary>
+        /// The XML select label
+        /// </summary>
         private Label xmlSelectLabel;
+        /// <summary>
+        /// The XML button
+        /// </summary>
         private Button xmlButton;
+        /// <summary>
+        /// The steps panel
+        /// </summary>
         private Panel stepsPanel;
+        /// <summary>
+        /// The output group box
+        /// </summary>
         private GroupBox outputBox;
+        /// <summary>
+        /// The out dir text box
+        /// </summary>
         private TextBox outDirTextBox;
+        /// <summary>
+        /// The dir out label
+        /// </summary>
         private Label dirOutLabel;
+        /// <summary>
+        /// The out dir button
+        /// </summary>
         private Button outDirButton;
+        /// <summary>
+        /// The out dir will be created
+        /// </summary>
         private Label outDirWillBeCreated;
+        /// <summary>
+        /// The program group box
+        /// </summary>
         private GroupBox programGroupBox;
+        /// <summary>
+        /// The program label
+        /// </summary>
         private Label programLabel;
+        /// <summary>
+        /// The programs ComboBox
+        /// </summary>
         private ComboBox programsComboBox;
+        /// <summary>
+        /// The xpath group box
+        /// </summary>
         private GroupBox xpathGroupBox;
+        /// <summary>
+        /// The xpath label
+        /// </summary>
         private Label xpathLabel;
+        /// <summary>
+        /// The xpath text box
+        /// </summary>
         private TextBox xpathTextBox;
+        /// <summary>
+        /// The log group box
+        /// </summary>
         private GroupBox logGroupBox;
+        /// <summary>
+        /// The log text box
+        /// </summary>
         private RichTextBox logTextBox;
+        /// <summary>
+        /// The tool tip
+        /// </summary>
         private ToolTip toolTip;
+        /// <summary>
+        /// The execute button
+        /// </summary>
         private Button execButton;
     }
 }
