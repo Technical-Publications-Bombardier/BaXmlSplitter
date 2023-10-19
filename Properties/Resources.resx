@@ -3458,7 +3458,7 @@ $checkoutItemsPerProgram['B_IFM'] = $checkoutItems</comment>
     &lt;/DCT&gt;
   &lt;/Obj&gt;
 &lt;/Objs&gt;</value>
-    <comment>$Programs = 'GXPROD', 'CTALPROD', 'B_IFM', 'CH604PROD', 'LJ4045PROD'
+    <comment>$CsdbProgram = 'GXPROD', 'CTALPROD', 'B_IFM', 'CH604PROD', 'LJ4045PROD'
 $query = @"
 SELECT DISTINCT
     o.objectname AS Name,
@@ -3475,7 +3475,7 @@ WHERE
     AND manual.attributename = 'MANUAL'
 ORDER BY docnbr.attributevalue
 "@
-foreach($Program in $Programs){
+foreach($Program in $CsdbProgram){
     $manualFromDocnbr = [System.Collections.Generic.Dictionary[string,string]]::new()
     $DbProgram = $dbConnections.connections.info.serviceName | Where-Object -FilterScript { $_ -match ($program -replace '_').Substring(0, 2) } | Select-Object -First 1
     $sqlClOut = Write-Output "SET SQLFORMAT JSON`n$query" | SQLcl -S "***REMOVED***/${DbProgram}" | Join-String -Separator "`r`n"; if ([string]::IsNullOrEmpty($sqlClOut)) { Write-Warning -Message "No data found for 'IFM' with docnbr '$docnbr' in 'B_IFM'" }; try { $splitOut = $sqlClOut | Select-String -Pattern '(?ms)(?&lt;json&gt;{.*})(?&lt;err&gt;.*)'; $jsonPart = $splitOut.Matches.Groups | Where-Object -Property Name -EQ 'json' | Select-Object -ExpandProperty Value; $errPart = $splitOut.Matches.Groups | Where-Object -Property Name -EQ 'err' | ForEach-Object { $_.Value.Trim() }; $sqlClObj = $jsonPart | ConvertFrom-Json; $VerboseMessage = "JSON part: $sqlClObj"; if ($null -eq $sqlClObj -and $null -ne $errPart) { Write-Warning -Message $errPart }else { $VerboseMessage = "SQLcl output: $sqlClOut" } } catch { Write-Warning -Message "Malformed query result for 'IFM' with docnbr '$docnbr' in 'B_IFM'" }; if ($null -ne $sqlClObj.results -and $null -ne $sqlClObj.results.items -and $null -ne $sqlClObj.results.items.manual) { $sqlClObj.results.items | ForEach-Object { $manualFromDocnbr.Add($_.docnbr,$_.manual) } }
@@ -5864,7 +5864,7 @@ foreach($Program in 'GXPROD','CH604PROD','CTALPROD','LJ4045PROD'){
     &lt;/DCT&gt;
   &lt;/Obj&gt;
 &lt;/Objs&gt;</value>
-    <comment>$Programs = 'B_IFM', 'CH604PROD', 'CTALPROD', 'LJ4045PROD', 'GXPROD'
+    <comment>$CsdbProgram = 'B_IFM', 'CH604PROD', 'CTALPROD', 'LJ4045PROD', 'GXPROD'
 $query = @'
 SELECT DISTINCT
     StateValue,
@@ -5873,8 +5873,8 @@ SELECT DISTINCT
 FROM
     FiniteStateMachineState
 '@
-$statesPerProgram = [System.Collections.Generic.Dictionary[string, pscustomobject]]::new($Programs.Count)
-foreach ($Program in $Programs) {
+$statesPerProgram = [System.Collections.Generic.Dictionary[string, pscustomobject]]::new($CsdbProgram.Count)
+foreach ($Program in $CsdbProgram) {
     $connectionInfo = $dbConnections.connections.info | Where-Object -FilterScript { $_.serviceName -match ($Program -replace '_').Substring(0, 2) } | Select-Object -First 1
     $sqlClOut = Write-Output "SET SQLFORMAT JSON`n$query" | SQLcl -S "***REMOVED***@$($connectionInfo.hostname):$($connectionInfo.port)/$($connectionInfo.serviceName)" | Join-String -Separator $([Environment]::NewLine)
     $sqlOutErrSplit = $sqlClOut | Select-String -Pattern '(?ms)(?&lt;json&gt;{.*})(?&lt;err&gt;.*)' | Select-Object -ExpandProperty Matches

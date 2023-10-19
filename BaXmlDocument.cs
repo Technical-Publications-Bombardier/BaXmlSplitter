@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.ObjectModel;
-using System.Xml;
+﻿using System.Xml;
 
 namespace BaXmlSplitter
 {
@@ -22,7 +20,7 @@ namespace BaXmlSplitter
                     DtdProcessing = DtdProcessing.Ignore,
                     XmlResolver = null
                 };
-                using XmlReader reader = XmlReader.Create(new StringReader(xml), settings);
+                using var reader = XmlReader.Create(new StringReader(xml), settings);
                 base.Load(reader);
             }
         }
@@ -39,7 +37,7 @@ namespace BaXmlSplitter
                     DtdProcessing = DtdProcessing.Ignore,
                     XmlResolver = null
                 };
-                using XmlReader reader = XmlReader.Create(inStream, settings);
+                using var reader = XmlReader.Create(inStream, settings);
                 base.Load(reader);
             }
         }
@@ -57,7 +55,7 @@ namespace BaXmlSplitter
                     DtdProcessing = DtdProcessing.Ignore,
                     XmlResolver = null
                 };
-                using XmlReader reader = XmlReader.Create(filename, settings);
+                using var reader = XmlReader.Create(filename, settings);
                 base.Load(reader);
             }
         }
@@ -65,26 +63,24 @@ namespace BaXmlSplitter
         public XmlNode[]? SelectNodesByCheckout(string xpath, string[] checkoutNames)
         {
             List<XmlNode> selectedNodes = [];
-            if (SelectNodes(xpath) is XmlNodeList nodes)
+            if (SelectNodes(xpath) is not { } nodes) return [.. selectedNodes];
+            HashSet<XmlNode> notAlreadySeen = new(nodes.Count);
+            for (var i = 0; i < nodes.Count; i++)
             {
-                HashSet<XmlNode> notAlreadySeen = new(nodes.Count);
-                for (int i = 0; i < nodes.Count; i++)
+                if (nodes[i] is null || nodes[i] is not { } node || !notAlreadySeen.Add(node)) continue;
+                if (checkoutNames.Contains(node.Name, StringComparer.OrdinalIgnoreCase))
                 {
-                    if (nodes[i] is not null && nodes[i] is XmlNode node && notAlreadySeen.Add(node) && !checkoutNames.Contains(node.Name, StringComparer.OrdinalIgnoreCase) && node.ParentNode is XmlNode ancestor)
-                    {
-                        while (ancestor is not null && ancestor.Name is string ancestorName && !checkoutNames.Contains(ancestorName, StringComparer.OrdinalIgnoreCase) && ancestor.ParentNode is XmlNode greatAncestor)
-                        {
-                            ancestor = greatAncestor;
-                        }
-                        if (ancestor is not null && notAlreadySeen.Add(ancestor) && checkoutNames.Contains(ancestor.Name, StringComparer.OrdinalIgnoreCase))
-                        {
-                            selectedNodes.Add(ancestor);
-                        }
-                        else
-                        {
-                            selectedNodes.Add(node);
-                        }
-                    }
+                    selectedNodes.Add(node);
+                    continue;
+                }
+                if (node.ParentNode is not { } ancestor) continue;
+                while (ancestor.Name is { } ancestorName && !checkoutNames.Contains(ancestorName, StringComparer.OrdinalIgnoreCase) && ancestor.ParentNode is { } greatAncestor)
+                {
+                    ancestor = greatAncestor;
+                }
+                if (notAlreadySeen.Add(ancestor) && checkoutNames.Contains(ancestor.Name, StringComparer.OrdinalIgnoreCase))
+                {
+                    selectedNodes.Add(ancestor);
                 }
             }
             return [.. selectedNodes];

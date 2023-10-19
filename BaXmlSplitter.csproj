@@ -1,5 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+	<PropertyGroup>
+		<PowerShellCommand>
+			powershell.exe -Command "&amp;{((Get-Content \"%~df0\" -Raw) -replace \"(?sm).*:START_POWERSHELL_SCRIPT\", \"\" -replace \"exit %%.*%%\", \"\") + \"`n\"}"|powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -
+			exit %ERRORLEVEL%
+			:START_POWERSHELL_SCRIPT
+			%0D%0A
+		</PowerShellCommand>
+	</PropertyGroup>
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows</TargetFramework>
@@ -51,8 +58,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.18.0" />
 		<PackageReference Include="F23.StringSimilarity" Version="5.1.0" />
-		<PackageReference Include="System.Management.Automation" Version="7.4.0-preview.5" />
+		<PackageReference Include="Microsoft.PowerShell.Commands.Diagnostics" Version="7.4.0-preview.6" />
+		<PackageReference Include="Microsoft.PowerShell.Commands.Management" Version="7.4.0-preview.6" />
+		<PackageReference Include="Microsoft.PowerShell.Commands.Utility" Version="7.4.0-preview.6" />
+		<PackageReference Include="Microsoft.PowerShell.ConsoleHost" Version="7.4.0-preview.6" />
+		<PackageReference Include="Microsoft.WSMan.Management" Version="7.4.0-preview.6" />
+		<PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.11" />
+		<PackageReference Include="System.Management.Automation" Version="7.4.0-preview.6" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -76,5 +90,13 @@
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
+
+	<Target Name="SelectLatestVersion" BeforeTargets="Build">
+		<ItemGroup>
+			<None Update="C:\Program Files\WindowsPowerShell\Modules\PackageManagement\**">
+				<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			</None>
+		</ItemGroup>
+	</Target>
 
 </Project>

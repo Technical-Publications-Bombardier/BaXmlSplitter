@@ -164,7 +164,7 @@ namespace BaXmlSplitter
             stepsPanel.Name = "stepsPanel";
             stepsPanel.Size = new Size(489, 448);
             stepsPanel.TabIndex = 0;
-            stepsPanel.MouseMove += mouseEnteredExecButton;
+            stepsPanel.MouseMove += MouseEnteredExecButton;
             // 
             // programGroupBox
             // 
@@ -220,10 +220,10 @@ namespace BaXmlSplitter
             execButton.Text = "Execute Splitting";
             execButton.UseVisualStyleBackColor = true;
             execButton.Click += ExecuteSplit;
-            execButton.MouseEnter += mouseEnteredExecButton;
-            execButton.MouseLeave += mouseLeftExecButton;
-            execButton.MouseHover += mouseEnteredExecButton;
-            execButton.MouseMove += mouseEnteredExecButton;
+            execButton.MouseEnter += MouseEnteredExecButton;
+            execButton.MouseLeave += MouseLeftExecButton;
+            execButton.MouseHover += MouseEnteredExecButton;
+            execButton.MouseMove += MouseEnteredExecButton;
             // 
             // outputBox
             // 
