@@ -140,31 +140,35 @@ namespace BaXmlSplitter
     internal class XmlSplitReportEntry
     {
         public int NodeNumber;
+        public int CheckoutParentNumber;
         public string NodeElementName;
         public string KeyValue;
-        public XmlNode KeyedParentTag
+        private static XmlElement NodeToTag(XmlNode node)
         {
-            get
+
+            XmlElement element = new XmlDocument().CreateElement(node.Name);
+            foreach (XmlAttribute attrib in node.Attributes!)
             {
-                XmlElement element = new XmlDocument().CreateElement(_keyedParentTag.Name);
-                foreach (XmlAttribute attrib in _keyedParentTag.Attributes!)
-                {
-                    element.SetAttribute(attrib.Name, attrib.Value);
-                }
-                return element;
+                element.SetAttribute(attrib.Name, attrib.Value);
             }
-            set => _keyedParentTag = value;
+            return element;
         }
+
+        public XmlNode KeyedParentTag { get => NodeToTag(_keyedParentTag); set => _keyedParentTag = value; }
+        public XmlNode CheckoutParent { get => NodeToTag(_checkoutParent); set => _checkoutParent = value; }
         public string FullXPath;
         public string FilenameOfSplit;
         public UowState UowState;
         private XmlNode _keyedParentTag;
+        private XmlNode _checkoutParent;
 
-        public XmlSplitReportEntry(int nodeNumber, string nodeElementName, string keyValue, XmlNode keyedParentTag, string fullXPath, string filenameOfSplit, UowState uowState)
+        public XmlSplitReportEntry(XmlNode checkoutParent, int checkoutParentNumber, int nodeNumber, string nodeElementName, string keyValue, XmlNode keyedParentTag, string fullXPath, string filenameOfSplit, UowState uowState)
         {
+            CheckoutParentNumber = checkoutParentNumber;
             NodeNumber = nodeNumber;
             NodeElementName = nodeElementName;
             KeyValue = keyValue;
+            _checkoutParent = CheckoutParent = checkoutParent;
             _keyedParentTag = KeyedParentTag = keyedParentTag;
             FullXPath = fullXPath;
             FilenameOfSplit = filenameOfSplit;

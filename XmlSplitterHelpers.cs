@@ -1,7 +1,6 @@
 ﻿using BaXmlSplitter;
 using BaXmlSplitter.Properties;
 using System.Collections;
-using System.Collections.ObjectModel;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -127,6 +126,29 @@ internal static class XmlSplitterHelpers
             __statesPerProgram.Add((Programs)Enum.Parse(typeof(Programs), program), states);
         }
         return __statesPerProgram;
+    }
+    /// <summary>
+    /// Determines whether the specified parent is descendant.
+    /// </summary>
+    /// <param name="parent">The parent.</param>
+    /// <param name="purportedChild">The node that may be a child of the parent.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified parent is descendant; otherwise, <c>false</c>.
+    /// </returns>
+    internal static bool IsDescendant(XmlNode parent, XmlNode purportedChild)
+    {
+        if (parent == purportedChild)
+        {
+            return true; // purportedChild is the same node as parent
+        }
+        else if (purportedChild.ParentNode == null)
+        {
+            return false; // purportedChild has no parent
+        }
+        else
+        {
+            return IsDescendant(parent, purportedChild.ParentNode); // recursively check parent's parent
+        }
     }
     internal static XmlNode CalculateParentTag(XmlNode curNode)
     {
