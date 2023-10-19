@@ -58,7 +58,7 @@ namespace BaXmlSplitter
                         writer.WriteLine(string.Join(separator, FIELDS));
                         foreach (XmlSplitReportEntry entry in Entries)
                         {
-                            string line = string.Join(separator, new string[] { entry.CheckoutParentNumber.ToString(), entry.CheckoutParent.Name, entry.CheckoutParent.Attributes?["key"]?.ToString() ?? "&nbsp;", entry.CheckoutParent.OuterXml, entry.NodeNumber.ToString(), entry.UowNode.Name.ToString(), entry.UowNode.Attributes?["key"]?.ToString() ?? "&nbsp;", entry.KeyedParent.OuterXml, entry.FullXPath, entry.FilenameOfSplit });
+                            string line = string.Join(separator, new string[] { entry.CheckoutParentNumber.ToString(), entry.CheckoutParent.Name, entry.CheckoutParent.Attributes?["key"]?.Value ?? "&nbsp;", entry.CheckoutParent.OuterXml, entry.NodeNumber.ToString(), entry.UowNode.Name.ToString(), entry.UowNode.Attributes?["key"]?.Value ?? "&nbsp;", entry.KeyedParent.OuterXml, entry.FullXPath, entry.FilenameOfSplit });
                             writer.WriteLine(line);
                         }
                         break;
