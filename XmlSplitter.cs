@@ -7,6 +7,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
@@ -214,25 +215,35 @@ namespace BaXmlSplitter
                     WriteLog($"Unable to write to log file at {logFile}: {e.Message}", Severity.Error, false, true);
                 }
             }
-            logTextBox.SuspendLayout();
-            switch (severity)
+            void logDelegate()
             {
-                case Severity.Hint:
-                    logTextBox.SelectionColor = Color.Lime;
-                    break;
-                case Severity.Warning:
-                    logTextBox.SelectionColor = Color.Gold;
-                    break;
-                case Severity.Error:
-                    logTextBox.SelectionColor = Color.OrangeRed;
-                    break;
-                case Severity.Fatal:
-                    logTextBox.SelectionColor = Color.Red;
-                    break;
+                logTextBox.SuspendLayout();
+                switch (severity)
+                {
+                    case Severity.Hint:
+                        logTextBox.SelectionColor = Color.Lime;
+                        break;
+                    case Severity.Warning:
+                        logTextBox.SelectionColor = Color.Gold;
+                        break;
+                    case Severity.Error:
+                        logTextBox.SelectionColor = Color.OrangeRed;
+                        break;
+                    case Severity.Fatal:
+                        logTextBox.SelectionColor = Color.Red;
+                        break;
+                }
+                logTextBox.AppendText(timestamped);
+                logTextBox.ScrollToCaret();
+                logTextBox.ResumeLayout();
             }
-            logTextBox.AppendText(timestamped);
-            logTextBox.ScrollToCaret();
-            logTextBox.ResumeLayout();
+            if (logTextBox.InvokeRequired)
+            {
+                logTextBox.Invoke(logDelegate);
+            } else
+            {
+                logDelegate();
+            }
         }
 
         private static string BrowseForFile(string? filter = null)
@@ -573,13 +584,13 @@ namespace BaXmlSplitter
                             {
                                 parentTag = $"<{parent.Name}>";
                             }
-                            _ = htmlReportBuilder.AppendFormat(@"<!-- Immediate Parent Opening Tag --><td>{0}</td>", string.IsNullOrEmpty(parentTag) ? "&nbsp;" : parentTag);
-                            _ = htmlReportBuilder.AppendFormat(@"<!-- Full XPath --><td>{0}</td>", GenerateUniqueXPath(nodes[i]!));
+                            _ = htmlReportBuilder.AppendFormat(@"<!-- Immediate Parent Opening Tag --><td><code>{0}</code></td>", string.IsNullOrEmpty(parentTag) ? "&nbsp;" : HttpUtility.HtmlEncode(parentTag));
+                            _ = htmlReportBuilder.AppendFormat(@"<!-- Full XPath --><td><code>{0}</code></td>", HttpUtility.HtmlEncode(GenerateUniqueXPath(nodes[i]!)));
                             _ = htmlReportBuilder.AppendFormat(@"<!-- Filename of Split --><td>{0}</td></tr>", Path.GetFileName(outPath));
                         }
                         else
                         {
-                            WriteLog(string.Format("Unable to get 'key' attribute from node {0}", nodes[i]!.Name), Severity.Hint);
+                            WriteLog(string.Format("Unable to get 'key' attribute from node {0}", nodes[i]!.Name), Severity.Warning);
                         }
                     }
                     _ = htmlReportBuilder.Append("</table></body></html>");
@@ -597,10 +608,11 @@ namespace BaXmlSplitter
         {
             if (string.IsNullOrEmpty(splittingReportHtml) || string.IsNullOrEmpty(xmlSourceFile))
             {
+                WriteLog("No HTML report to display.", Severity.Warning);
                 return;
             }
             string reportOutPath = Path.Combine(outDirTextBox.Text, $"Splitting{Path.GetFileNameWithoutExtension(xmlSourceFile)}Report-{DateTime.Now:yyyy-MM-dd-HH-mm-ss-fffffff}.html");
-
+            WriteLog("Displaying HTML report using default browser.");
             try
             {
                 File.WriteAllText(reportOutPath, splittingReportHtml);
