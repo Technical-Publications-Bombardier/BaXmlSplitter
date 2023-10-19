@@ -3,9 +3,9 @@ using BaXmlSplitter.Properties;
 using System.Collections;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
+using System.Windows.Forms.VisualStyles;
 using System.Xml;
-using System.Xml.Linq;
-using System.Xml.XPath;
+using System.Xml.Serialization;
 
 internal static class XmlSplitterHelpers
 {
@@ -53,20 +53,34 @@ internal static class XmlSplitterHelpers
             || (ch > ((int)ControlChars.CR) && ch < ((int)ControlChars.SUB));
     }
     #endregion BinaryCheck
-
-    internal static Dictionary<string, Dictionary<int, UowState>>? DeSerializeStates()
+    internal static Dictionary<string, string[]>? DeserializeCheckoutItems()
     {
-        dynamic deSerializedStatesPerProgram = PSSerializer.Deserialize(Resources.StatesPerProgramXml);
-        ICollection Programs = deSerializedStatesPerProgram.Keys;
-        Dictionary<string, Dictionary<int, UowState>> __statesPerProgram = new(Programs.Count);
-        foreach (var Program in Programs)
+        dynamic deserializedCheckoutUowItems = PSSerializer.Deserialize(Resources.CheckoutItems);
+        ICollection docnbrs = deserializedCheckoutUowItems.Keys;
+        Dictionary<string, string[]>? __checkoutUowItems = new(docnbrs.Count);
+        foreach (string docnbr in docnbrs)
         {
-            dynamic stateNames = deSerializedStatesPerProgram[Program];
+            dynamic deserializedUowNames = deserializedCheckoutUowItems[docnbr];
+            if (deserializedUowNames.ToArray(typeof(string)) is string[] uowNames)
+            {
+                __checkoutUowItems.Add(docnbr, value: uowNames);
+            }
+        }
+        return __checkoutUowItems;
+    }
+    internal static Dictionary<string, Dictionary<int, UowState>>? DeserializeStates()
+    {
+        dynamic deserializedStatesPerProgram = PSSerializer.Deserialize(Resources.StatesPerProgramXml);
+        ICollection programs = deserializedStatesPerProgram.Keys;
+        Dictionary<string, Dictionary<int, UowState>> __statesPerProgram = new(programs.Count);
+        foreach (string program in programs)
+        {
+            dynamic stateNames = deserializedStatesPerProgram[program];
             if (stateNames == null)
             {
                 continue;
             }
-            var states = new Dictionary<int, UowState>(stateNames.Count);
+            Dictionary<int, UowState> states = new(stateNames.Count);
             foreach (int StateValue in stateNames.Keys)
             {
                 dynamic stateNameAndRemark = stateNames[StateValue];
@@ -77,7 +91,7 @@ internal static class XmlSplitterHelpers
                 UowState uowState = new(value: StateValue, name: stateNameAndRemark.statename, remark: stateNameAndRemark.remark);
                 states.Add(StateValue, uowState);
             }
-            __statesPerProgram.Add((string)Program, states);
+            __statesPerProgram.Add(program, states);
         }
         return __statesPerProgram;
     }
@@ -112,7 +126,7 @@ internal static class XmlSplitterHelpers
         if (!string.IsNullOrEmpty(uowContent) && UOW_REGEX.IsMatch(uowContent) && !string.IsNullOrEmpty(Program) && statesPerProgram != null && statesPerProgram[Program] != null)
         {
             foundDocnbr = GetUowStatesDocnbr(ref uowContent);
-            var stateMatches = UOW_REGEX.Matches(uowContent);
+            MatchCollection stateMatches = UOW_REGEX.Matches(uowContent);
             if (stateMatches.Count == 0)
             {
                 logMessages.Add(new LogMessage($"Invalid UOW file '{uowStatesFile}' chosen", Severity.Error));
@@ -143,7 +157,7 @@ internal static class XmlSplitterHelpers
                 }
                 if (stateMatches[i].Groups["state"].Success && !string.IsNullOrWhiteSpace(stateMatches[i].Groups["state"].Value) && int.TryParse(stateMatches[i].Groups["state"].Value, out int stateValue))
                 {
-                    var state = statesPerProgram[Program][stateValue];
+                    UowState state = statesPerProgram[Program][stateValue];
                     state.StateValue = states[i].StateValue = stateValue;
                     if (!statesInManual.ContainsKey(stateValue))
                     {
@@ -172,7 +186,7 @@ internal static class XmlSplitterHelpers
         {
             openFileDialog.Filter = filter;
         }
-        var result = openFileDialog.ShowDialog();
+        DialogResult result = openFileDialog.ShowDialog();
         if (result == DialogResult.OK)
         {
             return openFileDialog.FileName;
@@ -187,7 +201,7 @@ internal static class XmlSplitterHelpers
     {
         MessageBoxButtons button = MessageBoxButtons.YesNo;
         MessageBoxIcon icon = MessageBoxIcon.Question;
-        var result = MessageBox.Show(message, caption, button, icon);
+        DialogResult result = MessageBox.Show(message, caption, button, icon);
         return result == DialogResult.Yes;
     }
 
@@ -197,4 +211,5 @@ internal static class XmlSplitterHelpers
         MessageBoxIcon icon = MessageBoxIcon.Warning;
         _ = MessageBox.Show(message, caption, button, icon);
     }
+
 }

@@ -20,12 +20,12 @@ namespace BaXmlSplitter
             }
             else
             {
-                var settings = new XmlReaderSettings
+                XmlReaderSettings settings = new()
                 {
                     DtdProcessing = DtdProcessing.Ignore,
                     XmlResolver = null
                 };
-                using var reader = XmlReader.Create(new System.IO.StringReader(xml), settings);
+                using XmlReader reader = XmlReader.Create(new System.IO.StringReader(xml), settings);
                 base.Load(reader);
             }
         }
@@ -37,12 +37,12 @@ namespace BaXmlSplitter
             }
             else
             {
-                var settings = new XmlReaderSettings
+                XmlReaderSettings settings = new()
                 {
                     DtdProcessing = DtdProcessing.Ignore,
                     XmlResolver = null
                 };
-                using var reader = XmlReader.Create(inStream, settings);
+                using XmlReader reader = XmlReader.Create(inStream, settings);
                 base.Load(reader);
             }
         }
@@ -55,12 +55,12 @@ namespace BaXmlSplitter
             }
             else
             {
-                var settings = new XmlReaderSettings
+                XmlReaderSettings settings = new()
                 {
                     DtdProcessing = DtdProcessing.Ignore,
                     XmlResolver = null
                 };
-                using var reader = XmlReader.Create(filename, settings);
+                using XmlReader reader = XmlReader.Create(filename, settings);
                 base.Load(reader);
             }
         }

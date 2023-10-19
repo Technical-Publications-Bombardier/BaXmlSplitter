@@ -49,7 +49,7 @@ namespace BaXmlSplitter
         }
         private void OkButton_Click(object sender, EventArgs e)
         {
-            var indices = statesListView.CheckedItems.Cast<ListViewItem>().Where(item => int.TryParse(item.SubItems[0].Text, out int value)).Select(item => int.Parse(item.SubItems[0].Text)).Cast<int>();
+            IEnumerable<int> indices = statesListView.CheckedItems.Cast<ListViewItem>().Where(item => int.TryParse(item.SubItems[0].Text, out int value)).Select(item => int.Parse(item.SubItems[0].Text)).Cast<int>();
             SelectedStates = AllStates.Where((UowState stateFromAll) => stateFromAll.StateValue is int stateValue && indices.Contains<int>(stateValue)).Cast<UowState>().ToArray();
             DialogResult = DialogResult.OK;
             Close();
