@@ -161,6 +161,24 @@ namespace BaXmlSplitter.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to fb61b2d7-0d45-43c0-bc85-95701ceb3331.
+        /// </summary>
+        internal static string AzureAppID {
+            get {
+                return ResourceManager.GetString("AzureAppID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to BaXmlSplitter.
+        /// </summary>
+        internal static string AzureServicePrincipal {
+            get {
+                return ResourceManager.GetString("AzureServicePrincipal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;Objs Version=&quot;1.1.0.1&quot; xmlns=&quot;http://schemas.microsoft.com/powershell/2004/04&quot;&gt;
         ///  &lt;Obj RefId=&quot;0&quot;&gt;
         ///    &lt;TN RefId=&quot;0&quot;&gt;

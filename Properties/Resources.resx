@@ -6,7 +6,7 @@
     Version 2.0
     
     The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
+    that is mostly human-readable. The generation and parsing of the 
     various data types are done through the TypeConverter classes 
     associated with the data types.
     
@@ -117,6 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AzureAppID" xml:space="preserve">
+    <value>fb61b2d7-0d45-43c0-bc85-95701ceb3331</value>
+    <comment>Azure Service Principal App ID for uploading to Azure Blob Storage</comment>
+  </data>
+  <data name="AzureServicePrincipal" xml:space="preserve">
+    <value>BaXmlSplitter</value>
+    <comment>Azure Service Principal Name for uploading to Azure Blob Storage</comment>
+  </data>
   <data name="CheckoutItems" xml:space="preserve">
     <value>&lt;Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04"&gt;
   &lt;Obj RefId="0"&gt;
