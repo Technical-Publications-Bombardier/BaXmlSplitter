@@ -4,6 +4,7 @@ using RestSharp.Authenticators;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using BaXmlSplitter.Resources;
+using Google.Protobuf.WellKnownTypes;
 using CsdbProgram = BaXmlSplitter.XmlSplitterHelpers.CsdbProgram;
 
 namespace BaXmlSplitter
@@ -102,7 +103,130 @@ namespace BaXmlSplitter
                 }
             }
 
-            private abstract record TokenResponse
+            /// <summary>
+            /// Deserializes the <see href="https://developer.hashicorp.com/hcp/api-docs/vault-secrets#OpenAppSecret"><c>OpenAppSecret</c></see>.
+            /// </summary>
+            public record OpenAppSecret
+            {
+                /// <summary>
+                /// Gets the name.
+                /// </summary>
+                /// <value>
+                /// The name.
+                /// </value>
+                public required string Name { get; init; }
+                /// <summary>
+                /// Gets the version.
+                /// </summary>
+                /// <value>
+                /// The version.
+                /// </value>
+                public required VersionInfo Version { get; init; }
+                /// <summary>
+                /// Gets the created at.
+                /// </summary>
+                /// <value>
+                /// The created at.
+                /// </value>
+                public required string CreatedAt { get; init; }
+                /// <summary>
+                /// Gets the latest version.
+                /// </summary>
+                /// <value>
+                /// The latest version.
+                /// </value>
+                public required string LatestVersion { get; init; }
+                /// <summary>
+                /// Gets the created by.
+                /// </summary>
+                /// <value>
+                /// The created by.
+                /// </value>
+                public required CreatedByInfo CreatedBy { get; init; }
+                /// <summary>
+                /// Gets the synchronize status.
+                /// </summary>
+                /// <value>
+                /// The synchronize status.
+                /// </value>
+                public required object SyncStatus { get; init; }
+
+                /// <summary>
+                /// Secret value with version information
+                /// </summary>
+                public record VersionInfo
+                {
+                    /// <summary>
+                    /// Gets the version.
+                    /// </summary>
+                    /// <value>
+                    /// The version.
+                    /// </value>
+                    public required string Version { get; init; }
+                    /// <summary>
+                    /// Gets the type.
+                    /// </summary>
+                    /// <value>
+                    /// The type.
+                    /// </value>
+                    public required string Type { get; init; }
+                    /// <summary>
+                    /// Gets the created at.
+                    /// </summary>
+                    /// <value>
+                    /// The created at.
+                    /// </value>
+                    public required string CreatedAt { get; init; }
+                    /// <summary>
+                    /// Gets the value.
+                    /// </summary>
+                    /// <value>
+                    /// The value.
+                    /// </value>
+                    public required string Value { get; init; }
+                    /// <summary>
+                    /// Gets the created by.
+                    /// </summary>
+                    /// <value>
+                    /// The created by.
+                    /// </value>
+                    public required CreatedByInfo CreatedBy { get; init; }
+                }
+
+                /// <summary>
+                /// 
+                /// </summary>
+                public record CreatedByInfo
+                {
+                    /// <summary>
+                    /// Gets the name.
+                    /// </summary>
+                    /// <value>
+                    /// The name.
+                    /// </value>
+                    public required string Name { get; init; }
+                    /// <summary>
+                    /// Gets the type.
+                    /// </summary>
+                    /// <value>
+                    /// The type.
+                    /// </value>
+                    public required string Type { get; init; }
+                    /// <summary>
+                    /// Gets the email.
+                    /// </summary>
+                    /// <value>
+                    /// The email.
+                    /// </value>
+                    public required string Email { get; init; }
+                }
+            }
+
+
+            /// <summary>
+            /// The HashiCorp authentication token used to validate the session. The auth is valid for 3600 seconds, or 1 hour.
+            /// </summary>
+            private record TokenResponse
             {
 
                 /// <summary>
@@ -144,7 +268,7 @@ namespace BaXmlSplitter
             /// <summary>
             /// HashiCorp identity structure.
             /// </summary>
-            private abstract record HashiCorpIdentity
+            private record HashiCorpIdentity
             {
                 /// <summary>
                 /// Gets the client identifier.
@@ -155,13 +279,14 @@ namespace BaXmlSplitter
                 [JsonPropertyName("client_id")]
                 public required string ClientId { get; init; }
                 /// <summary>
-                /// Gets the analytics aid.
+                /// Gets the analytics Javascript anonymous identifier.
                 /// </summary>
                 /// <value>
-                /// The analytics id.
+                /// The anonymous analytics id.
                 /// </value>
+                /// <seealso href="https://github.com/hashicorp/web-platform-packages/blob/main/packages/analytics/analytics-js-helpers.ts#L33">HashiCorp web platform packages <c>getSegmentId()</c></seealso>
                 [JsonPropertyName("ajs_aid")]
-                public required string AnalyticsId { get; init; }
+                public required string AnalyticsJsAnonymousId { get; init; }
                 /// <summary>
                 /// Gets the user identifier.
                 /// </summary>
@@ -171,10 +296,10 @@ namespace BaXmlSplitter
                 [JsonPropertyName("user_id")]
                 public required string UserId { get; init; }
                 /// <summary>
-                /// Gets the org identifier.
+                /// Gets the organization identifier.
                 /// </summary>
                 /// <value>
-                /// The org identifier.
+                /// The organization identifier.
                 /// </value>
                 [JsonPropertyName("org_id")]
                 public required string OrgId { get; init; }
@@ -195,6 +320,12 @@ namespace BaXmlSplitter
                 [JsonPropertyName("app_name")]
                 public required string ApplicationName { get; init; }
             }
+
+            /// <summary>
+            /// Default error response from HashiCorp endpoints.
+            /// </summary>
+            /// <param name="Code"></param>
+            public record ErrorResponse(int Code, string Message, Any[] Details);
         }
     }
 }

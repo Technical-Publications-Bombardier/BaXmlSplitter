@@ -38,7 +38,7 @@ jobs:
     - name: Azure Login
       uses: azure/login@v1
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        creds: '{"clientId":"${{ secrets.AZUREAPPLICATIONID }}","clientSecret":"${{ secrets.AZUREAPPLICATIONSECRET }}","subscriptionId":"${{ secrets.AZURESUBSCRIPTIONID }}","tenantId":"${{ secrets.AZURETENANTID }}"}'
     - name: Upload artifact to Azure Blob Storage
       uses: azure/CLI@v1
       with:

@@ -26,6 +26,11 @@
 		<RepositoryType>git</RepositoryType>
 		<UseAppHost>true</UseAppHost>
 		<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+		<Description>An XML splitting tool for segmenting the Bombardier flight and maintenance manuals into in-progress units of work.</Description>
+		<Copyright>© Bombardier Aviation, 2023</Copyright>
+		<PackageProjectUrl>https://github.com/Technical-Publications-Bombardier/BaXmlSplitter</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 		<DebugSymbols>true</DebugSymbols>
@@ -59,8 +64,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Storage.Blobs" Version="12.18.0" />
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.19.0-beta.1" />
 		<PackageReference Include="F23.StringSimilarity" Version="5.1.0" />
+		<PackageReference Include="Google.Protobuf" Version="3.25.0-rc2" />
 		<PackageReference Include="Microsoft.WSMan.Management" Version="7.4.0-preview.6" />
 		<PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.12" />
 		<PackageReference Include="RestSharp" Version="110.2.1-alpha.0.13" />
@@ -88,6 +94,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="LICENSE.txt">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
+		<None Update="README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 		<None Update="Resources\icon.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
