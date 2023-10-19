@@ -3,6 +3,9 @@ using BaXmlSplitter.Properties;
 using System.Collections;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 internal static class XmlSplitterHelpers
 {
@@ -75,6 +78,21 @@ internal static class XmlSplitterHelpers
         return __statesPerProgram;
     }
 
+    internal static XmlNode CalculateParentTag(XmlNode curNode)
+    {
+        if (curNode is XmlDocument doc && doc.ChildNodes is XmlNodeList children && children.Cast<XmlNode>() is IEnumerable<XmlNode> childrenList && childrenList.FirstOrDefault(predicate: child => child.NodeType is not XmlNodeType.Comment and not XmlNodeType.DocumentType) is XmlNode result)
+        {
+            return result;
+        }
+        else if /* has key attrib */ (curNode.ParentNode != null && curNode.ParentNode.Attributes != null && curNode.ParentNode.Attributes.Cast<XmlAttribute>().Any(attrib => attrib.Name.Equals("key", StringComparison.OrdinalIgnoreCase)))
+        {
+            return curNode.ParentNode;
+        }
+        else /* does not have key attrib; need to recurse */
+        {
+            return CalculateParentTag(curNode.ParentNode!);
+        }
+    }
     internal static UowState[]? ParseUowContent(string? uowContent, string? Program, Dictionary<string, Dictionary<int, UowState>>? statesPerProgram, string? uowStatesFile, out List<LogMessage> logMessages, out Hashtable statesInManual, out string foundDoctype)
     {
         UowState[] states;
