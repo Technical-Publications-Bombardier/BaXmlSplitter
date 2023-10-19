@@ -2365,7 +2365,7 @@ FROM
 $statesPerProgram = [System.Collections.Generic.Dictionary[string, pscustomobject]]::new($CsdbProgram.Count)
 foreach ($Program in $CsdbProgram) {
     $connectionInfo = $dbConnections.connections.info | Where-Object -FilterScript { $_.serviceName -match ($Program -replace '_').Substring(0, 2) } | Select-Object -First 1
-    $sqlClOut = Write-Output "SET SQLFORMAT JSON`n$query" | SQLcl -S "***REMOVED***@$($connectionInfo.hostname):$($connectionInfo.port)/$($connectionInfo.serviceName)" | Join-String -Separator $([Environment]::NewLine)
+    $sqlClOut = Write-Output "SET SQLFORMAT JSON`n$query" | SQLcl -S "${BaOraConnectionString}/$($connectionInfo.serviceName)" | Join-String -Separator $([Environment]::NewLine)
     $sqlOutErrSplit = $sqlClOut | Select-String -Pattern '(?ms)(?<json>{.*})(?<err>.*)' | Select-Object -ExpandProperty Matches
     $sqlOut = $sqlOutErrSplit.Groups['json'].Value | ConvertFrom-Json
     $states = $sqlOut.results.items
