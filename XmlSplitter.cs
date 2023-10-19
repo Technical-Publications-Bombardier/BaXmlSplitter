@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 
+
 namespace BaXmlSplitter
 {
     /// <summary>
@@ -62,9 +63,9 @@ namespace BaXmlSplitter
         /// <summary>
         /// A dictionary of all the states in any CSDB program (GXPROD, CTALPROD, B_IFM, CH604PROD, LJ4045PROD).
         /// </summary>
-        private Dictionary<XmlSplitterHelpers.Program, Dictionary<int, UowState>>? statesPerProgram;
-        private Dictionary<XmlSplitterHelpers.Program, Dictionary<string, string[]>>? checkoutItems;
-        private Dictionary<XmlSplitterHelpers.Program, Dictionary<string, string>>? docnbrsPerCheckoutItem;
+        private Dictionary<XmlSplitterHelpers.Programs, Dictionary<int, UowState>>? statesPerProgram;
+        private Dictionary<XmlSplitterHelpers.Programs, Dictionary<string, string[]>>? checkoutItems;
+        private Dictionary<XmlSplitterHelpers.Programs, Dictionary<string, string>>? docnbrsPerCheckoutItem;
         private string? program;
         private IEnumerable<UowState>? fullyQualifiedSelectedStates;
 
@@ -104,6 +105,17 @@ namespace BaXmlSplitter
             InitializeComponent();
             logFile = Path.Combine(Path.GetTempPath(), string.Format("BaXmlSplitter-{0}.log", DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fffffff")));
             File.Move(Path.GetTempFileName(), logFile);
+            logTextBox.SuspendLayout();
+            logTextBox.Font = new Font("Cascadia Mono", 10);
+            logTextBox.SelectAll();
+            logTextBox.SelectionIndent += 10;
+            logTextBox.SelectionRightIndent += 10;
+            logTextBox.DeselectAll();
+            logTextBox.ResumeLayout();
+            programsComboBox.SuspendLayout();
+            programsComboBox.AutoCompleteCustomSource.AddRange(Enum.GetNames<XmlSplitterHelpers.Programs>());
+            programsComboBox.Items.AddRange(Enum.GetNames<XmlSplitterHelpers.Programs>());
+            programsComboBox.ResumeLayout();
             WriteLog($"Started XML splitting tool with real time log at '{logFile}'");
         }
 
@@ -269,7 +281,14 @@ namespace BaXmlSplitter
                 }
                 WriteLog(string.Format("Reading XML file '{0}'", Path.GetFileName(xmlSourceFile)));
                 //TextFileChosen(out xmlContent, xmlSelectTextBox.Text, xmlSelectTextBox, "XML");
-                xmlContent = await File.ReadAllTextAsync(xmlSourceFile);
+                try
+                {
+                    xmlContent = await File.ReadAllTextAsync(xmlSourceFile);
+                }
+                catch (Exception exception)
+                {
+                    WriteLog(exception.Message, Severity.Error);
+                }
                 if (string.IsNullOrEmpty(xmlContent) && new FileInfo(xmlSourceFile).Length > 0)
                 {
                     WriteLog("Unable to read XML file. Please check that the file is available and not locked by another process.", Severity.Error);
@@ -330,13 +349,26 @@ namespace BaXmlSplitter
                 }
             }
         }
+        internal bool XmlIsSelected()
+        {
+            return !string.IsNullOrEmpty(xmlSourceFile) && !string.IsNullOrEmpty(xmlContent);
+        }
+        internal bool UowIsSelected()
+        {
+            return !string.IsNullOrEmpty(uowStatesFile) && !string.IsNullOrEmpty(uowContent);
+        }
+        internal bool OutDirIsSelected()
+        {
+            return !string.IsNullOrEmpty(outputDir);
+        }
+        internal bool ProgramIsSelected()
+        {
+            return !string.IsNullOrEmpty(program);
+        }
         private void CheckExecuteSplitIsReady(object sender, EventArgs e)
         {
             execButton.SuspendLayout();
-            if (/* the XML is selected */ !(string.IsNullOrEmpty(xmlSourceFile) || string.IsNullOrEmpty(xmlContent) ||
-                /* UOW states is selected */ string.IsNullOrEmpty(uowStatesFile) || string.IsNullOrEmpty(uowContent) ||
-                /* output dir is set */ string.IsNullOrEmpty(outputDir) ||
-                /* program is chosen */ string.IsNullOrEmpty(program)))
+            if (XmlIsSelected() && UowIsSelected() && OutDirIsSelected() && ProgramIsSelected())
             {
                 execButton.Enabled = true;
             }
@@ -431,7 +463,7 @@ namespace BaXmlSplitter
                     if (checkoutItems != null && docnbrsPerCheckoutItem != null && xml.DocumentElement != null && xml.DocumentElement.GetAttribute("docnbr") is string docnbr && !string.IsNullOrEmpty(program))
                     {
                         WriteLog($"Using checkout element names on {Path.GetFileName(xmlSourceFile)} to restrict XPath query by docnbr '{docnbr}'.");
-                        XmlSplitterHelpers.Program enumProgram = Enum.Parse<XmlSplitterHelpers.Program>(program);
+                        XmlSplitterHelpers.Programs enumProgram = Enum.Parse<XmlSplitterHelpers.Programs>(program);
                         checkoutElementNames = checkoutItems[enumProgram][docnbrsPerCheckoutItem[enumProgram][docnbr]];
                         nodes = await Task.Run(() => xml.SelectNodesByCheckout(xpath, checkoutElementNames));
                     }
@@ -771,6 +803,39 @@ namespace BaXmlSplitter
                 WriteLog($"program chosen for manual: {program}");
             }
             CheckExecuteSplitIsReady(sender, e);
+        }
+
+        private void mouseEnteredExecButton(object sender, EventArgs e)
+        {
+            if (!execButton.Enabled)
+            {
+                StringBuilder toolTipSb = new();
+                if (!XmlIsSelected())
+                {
+                    _ = toolTipSb.AppendJoin('\n',"Please select an XML file before executing the split.");
+                }
+                if (!UowIsSelected())
+                {
+                    _ = toolTipSb.AppendJoin('\n', "Please select a UOW states file before executing the split.");
+                }
+                if (!OutDirIsSelected())
+                {
+                    _ = toolTipSb.AppendJoin('\n', "Please select an output directory before executing the split.");
+                }
+                if (!ProgramIsSelected())
+                {
+                    _ = toolTipSb.AppendJoin('\n',"Please select a program before executing the split.");
+                }
+                toolTip.SetToolTip(stepsPanel, toolTipSb.ToString());
+            }
+            else
+            {
+                toolTip.SetToolTip(execButton, "Execute the split");
+            }
+        }
+        private void mouseLeftExecButton(object sender, EventArgs e)
+        {
+
         }
 
     }

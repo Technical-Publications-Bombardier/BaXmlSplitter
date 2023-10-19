@@ -27,9 +27,13 @@ namespace BaXmlSplitter
             e.DrawDefault = true;
             if ((e.ItemIndex % 2) == 0)
             {
-                e.Item.BackColor = Color.Bisque;
-                e.Item.UseItemStyleForSubItems = true;
+                e.Item.BackColor = Color.LightSteelBlue;
             }
+            else
+            {
+                e.Item.BackColor = Color.AliceBlue;
+            }
+            e.Item.UseItemStyleForSubItems = true;
         }
 
         private void StatesInWip_Load(object sender, EventArgs e)

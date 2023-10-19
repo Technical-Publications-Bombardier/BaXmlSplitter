@@ -31,6 +31,7 @@ namespace BaXmlSplitter
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(XmlSplitter));
             xmlSelectBox = new GroupBox();
             xmlSelectTextBox = new TextBox();
@@ -44,7 +45,6 @@ namespace BaXmlSplitter
             programGroupBox = new GroupBox();
             programLabel = new Label();
             programsComboBox = new ComboBox();
-            execButton = new Button();
             outputBox = new GroupBox();
             outDirWillBeCreated = new Label();
             outDirTextBox = new TextBox();
@@ -55,6 +55,8 @@ namespace BaXmlSplitter
             xpathLabel = new Label();
             logGroupBox = new GroupBox();
             logTextBox = new RichTextBox();
+            toolTip = new ToolTip(components);
+            execButton = new Button();
             xmlSelectBox.SuspendLayout();
             uowSelectBox.SuspendLayout();
             stepsPanel.SuspendLayout();
@@ -69,7 +71,6 @@ namespace BaXmlSplitter
             xmlSelectBox.Controls.Add(xmlSelectTextBox);
             xmlSelectBox.Controls.Add(xmlSelectLabel);
             xmlSelectBox.Controls.Add(xmlButton);
-            xmlSelectBox.Font = new Font("72", 11.25F, FontStyle.Bold);
             xmlSelectBox.Location = new Point(0, 3);
             xmlSelectBox.Name = "xmlSelectBox";
             xmlSelectBox.Size = new Size(489, 100);
@@ -83,18 +84,17 @@ namespace BaXmlSplitter
             xmlSelectTextBox.AutoCompleteSource = AutoCompleteSource.FileSystem;
             xmlSelectTextBox.Location = new Point(6, 41);
             xmlSelectTextBox.Name = "xmlSelectTextBox";
-            xmlSelectTextBox.Size = new Size(402, 25);
+            xmlSelectTextBox.Size = new Size(402, 24);
             xmlSelectTextBox.TabIndex = 0;
-            xmlSelectTextBox.TextChanged += XmlSelectTextBox_TextChanged;
             xmlSelectTextBox.TextChanged += CheckExecuteSplitIsReady;
             // 
             // xmlSelectLabel
             // 
             xmlSelectLabel.AutoSize = true;
-            xmlSelectLabel.Font = new Font("72", 11.25F);
+            xmlSelectLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
             xmlSelectLabel.Location = new Point(6, 21);
             xmlSelectLabel.Name = "xmlSelectLabel";
-            xmlSelectLabel.Size = new Size(200, 17);
+            xmlSelectLabel.Size = new Size(198, 18);
             xmlSelectLabel.TabIndex = 0;
             xmlSelectLabel.Text = "Select manual in XML to split";
             // 
@@ -113,7 +113,7 @@ namespace BaXmlSplitter
             uowSelectBox.Controls.Add(uowTextBox);
             uowSelectBox.Controls.Add(uowLabel);
             uowSelectBox.Controls.Add(uowButton);
-            uowSelectBox.Font = new Font("72", 11.25F, FontStyle.Bold);
+            uowSelectBox.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold);
             uowSelectBox.Location = new Point(0, 109);
             uowSelectBox.Name = "uowSelectBox";
             uowSelectBox.Size = new Size(489, 100);
@@ -127,18 +127,17 @@ namespace BaXmlSplitter
             uowTextBox.AutoCompleteSource = AutoCompleteSource.FileSystem;
             uowTextBox.Location = new Point(6, 41);
             uowTextBox.Name = "uowTextBox";
-            uowTextBox.Size = new Size(402, 25);
+            uowTextBox.Size = new Size(402, 24);
             uowTextBox.TabIndex = 2;
-            uowTextBox.TextChanged += UowStatesTextBox_TextChanged;
             uowTextBox.TextChanged += CheckExecuteSplitIsReady;
             // 
             // uowLabel
             // 
             uowLabel.AutoSize = true;
-            uowLabel.Font = new Font("72", 11.25F);
+            uowLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
             uowLabel.Location = new Point(6, 21);
             uowLabel.Name = "uowLabel";
-            uowLabel.Size = new Size(206, 17);
+            uowLabel.Size = new Size(204, 18);
             uowLabel.TabIndex = 2;
             uowLabel.Text = "Select units of work states file";
             // 
@@ -163,41 +162,41 @@ namespace BaXmlSplitter
             stepsPanel.Name = "stepsPanel";
             stepsPanel.Size = new Size(489, 448);
             stepsPanel.TabIndex = 0;
+            stepsPanel.MouseMove += mouseEnteredExecButton;
             // 
             // programGroupBox
             // 
             programGroupBox.Controls.Add(programLabel);
             programGroupBox.Controls.Add(programsComboBox);
-            programGroupBox.Font = new Font("72", 11.25F, FontStyle.Bold);
+            programGroupBox.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold);
             programGroupBox.Location = new Point(0, 321);
             programGroupBox.Name = "programGroupBox";
             programGroupBox.Size = new Size(489, 83);
             programGroupBox.TabIndex = 6;
             programGroupBox.TabStop = false;
             programGroupBox.Text = "Step 4";
+            programGroupBox.TextChanged += CheckExecuteSplitIsReady;
             programGroupBox.Enter += ProgramGroupBox;
             // 
             // programLabel
             // 
             programLabel.AutoSize = true;
-            programLabel.Font = new Font("72", 11.25F);
+            programLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
             programLabel.Location = new Point(6, 21);
             programLabel.Name = "programLabel";
-            programLabel.Size = new Size(110, 17);
+            programLabel.Size = new Size(109, 18);
             programLabel.TabIndex = 4;
             programLabel.Text = "Select program";
             // 
             // programsComboBox
             // 
-            programsComboBox.AutoCompleteCustomSource.AddRange(new string[] { "B_IFM", "CH604PROD", "CTALPROD", "LJ4045PROD", "GXPROD" });
             programsComboBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             programsComboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
             programsComboBox.FormattingEnabled = true;
-            programsComboBox.Items.AddRange(new object[] { "B_IFM", "CH604PROD", "CTALPROD", "GXPROD", "LJ4045PROD" });
             programsComboBox.Location = new Point(6, 41);
             programsComboBox.MaxLength = 10;
             programsComboBox.Name = "programsComboBox";
-            programsComboBox.Size = new Size(284, 25);
+            programsComboBox.Size = new Size(284, 26);
             programsComboBox.Sorted = true;
             programsComboBox.TabIndex = 3;
             programsComboBox.DropDown += ProgramGroupBox;
@@ -205,21 +204,8 @@ namespace BaXmlSplitter
             programsComboBox.TextUpdate += ProgramGroupBox;
             programsComboBox.DropDownClosed += ProgramGroupBox;
             programsComboBox.TextChanged += ProgramGroupBox;
-            programGroupBox.TextChanged += CheckExecuteSplitIsReady;
             programsComboBox.Leave += ProgramGroupBox;
             programsComboBox.Validated += ProgramGroupBox;
-            // 
-            // execButton
-            // 
-            execButton.Dock = DockStyle.Bottom;
-            execButton.Font = new Font("72", 11.25F, FontStyle.Bold);
-            execButton.Location = new Point(0, 416);
-            execButton.Name = "execButton";
-            execButton.Size = new Size(489, 32);
-            execButton.TabIndex = 5;
-            execButton.Text = "Execute Splitting";
-            execButton.UseVisualStyleBackColor = true;
-            execButton.Click += ExecuteSplit;
             // 
             // outputBox
             // 
@@ -227,7 +213,7 @@ namespace BaXmlSplitter
             outputBox.Controls.Add(outDirTextBox);
             outputBox.Controls.Add(dirOutLabel);
             outputBox.Controls.Add(outDirButton);
-            outputBox.Font = new Font("72", 11.25F, FontStyle.Bold);
+            outputBox.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold);
             outputBox.Location = new Point(0, 215);
             outputBox.Name = "outputBox";
             outputBox.Size = new Size(489, 100);
@@ -241,12 +227,12 @@ namespace BaXmlSplitter
             outDirWillBeCreated.AccessibleName = "Will be created";
             outDirWillBeCreated.AccessibleRole = AccessibleRole.StaticText;
             outDirWillBeCreated.AutoSize = true;
-            outDirWillBeCreated.Font = new Font("72", 11.25F, FontStyle.Bold | FontStyle.Italic);
+            outDirWillBeCreated.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold | FontStyle.Italic);
             outDirWillBeCreated.ForeColor = Color.ForestGreen;
             outDirWillBeCreated.LiveSetting = System.Windows.Forms.Automation.AutomationLiveSetting.Polite;
             outDirWillBeCreated.Location = new Point(6, 69);
             outDirWillBeCreated.Name = "outDirWillBeCreated";
-            outDirWillBeCreated.Size = new Size(111, 17);
+            outDirWillBeCreated.Size = new Size(120, 18);
             outDirWillBeCreated.TabIndex = 3;
             outDirWillBeCreated.Text = "Will be created";
             outDirWillBeCreated.Visible = false;
@@ -257,18 +243,17 @@ namespace BaXmlSplitter
             outDirTextBox.AutoCompleteSource = AutoCompleteSource.FileSystem;
             outDirTextBox.Location = new Point(6, 41);
             outDirTextBox.Name = "outDirTextBox";
-            outDirTextBox.Size = new Size(402, 25);
+            outDirTextBox.Size = new Size(402, 24);
             outDirTextBox.TabIndex = 4;
-            outDirTextBox.TextChanged += OutDirTextBox_TextChanged;
             outDirTextBox.TextChanged += CheckExecuteSplitIsReady;
             // 
             // dirOutLabel
             // 
             dirOutLabel.AutoSize = true;
-            dirOutLabel.Font = new Font("72", 11.25F);
+            dirOutLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
             dirOutLabel.Location = new Point(6, 21);
             dirOutLabel.Name = "dirOutLabel";
-            dirOutLabel.Size = new Size(160, 17);
+            dirOutLabel.Size = new Size(155, 18);
             dirOutLabel.TabIndex = 4;
             dirOutLabel.Text = "Select output directory";
             // 
@@ -286,7 +271,7 @@ namespace BaXmlSplitter
             // 
             xpathGroupBox.Controls.Add(xpathTextBox);
             xpathGroupBox.Controls.Add(xpathLabel);
-            xpathGroupBox.Font = new Font("72", 11.25F, FontStyle.Bold);
+            xpathGroupBox.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold);
             xpathGroupBox.Location = new Point(506, 12);
             xpathGroupBox.Name = "xpathGroupBox";
             xpathGroupBox.Size = new Size(552, 209);
@@ -307,23 +292,22 @@ namespace BaXmlSplitter
             xpathTextBox.ScrollBars = ScrollBars.Vertical;
             xpathTextBox.Size = new Size(534, 158);
             xpathTextBox.TabIndex = 1;
-            xpathTextBox.TextChanged += XPathTextBox_TextChanged;
             xpathTextBox.TextChanged += CheckExecuteSplitIsReady;
             // 
             // xpathLabel
             // 
             xpathLabel.AutoSize = true;
-            xpathLabel.Font = new Font("72", 11.25F);
+            xpathLabel.Font = new Font("Microsoft Sans Serif", 11.25F);
             xpathLabel.Location = new Point(6, 21);
             xpathLabel.Name = "xpathLabel";
-            xpathLabel.Size = new Size(505, 17);
+            xpathLabel.Size = new Size(496, 18);
             xpathLabel.TabIndex = 0;
             xpathLabel.Text = "The XPath query that would select the nodes on which the XML will be split";
             // 
             // logGroupBox
             // 
             logGroupBox.Controls.Add(logTextBox);
-            logGroupBox.Font = new Font("72", 11.25F, FontStyle.Bold);
+            logGroupBox.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold);
             logGroupBox.Location = new Point(518, 227);
             logGroupBox.Name = "logGroupBox";
             logGroupBox.Size = new Size(534, 230);
@@ -337,9 +321,9 @@ namespace BaXmlSplitter
             logTextBox.AccessibleName = "Output log";
             logTextBox.AccessibleRole = AccessibleRole.Text;
             logTextBox.BackColor = SystemColors.Desktop;
-            logTextBox.Font = new Font("72 Monospace", 11.25F);
+            logTextBox.Font = new Font("Microsoft Sans Serif", 11.25F);
             logTextBox.ForeColor = Color.Lime;
-            logTextBox.Location = new Point(-6, 24);
+            logTextBox.Location = new Point(0, 24);
             logTextBox.Name = "logTextBox";
             logTextBox.ReadOnly = true;
             logTextBox.RightToLeft = RightToLeft.No;
@@ -348,16 +332,36 @@ namespace BaXmlSplitter
             logTextBox.TabIndex = 0;
             logTextBox.Text = "";
             // 
+            // toolTip
+            // 
+            toolTip.ToolTipIcon = ToolTipIcon.Info;
+            // 
+            // execButton
+            // 
+            execButton.Dock = DockStyle.Bottom;
+            execButton.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold);
+            execButton.Location = new Point(0, 416);
+            execButton.Name = "execButton";
+            execButton.Size = new Size(489, 32);
+            execButton.TabIndex = 5;
+            execButton.Text = "Execute Splitting";
+            execButton.UseVisualStyleBackColor = true;
+            execButton.Click += ExecuteSplit;
+            execButton.MouseEnter += mouseEnteredExecButton;
+            execButton.MouseLeave += mouseLeftExecButton;
+            execButton.MouseHover += mouseEnteredExecButton;
+            execButton.MouseMove += mouseEnteredExecButton;
+            // 
             // XmlSplitter
             // 
             AllowDrop = true;
-            AutoScaleDimensions = new SizeF(8F, 17F);
+            AutoScaleDimensions = new SizeF(9F, 18F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1070, 461);
             Controls.Add(logGroupBox);
             Controls.Add(xpathGroupBox);
             Controls.Add(stepsPanel);
-            Font = new Font("72", 11.25F);
+            Font = new Font("Microsoft Sans Serif", 11.25F);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -396,7 +400,6 @@ namespace BaXmlSplitter
         private TextBox outDirTextBox;
         private Label dirOutLabel;
         private Button outDirButton;
-        private Button execButton;
         private Label outDirWillBeCreated;
         private GroupBox programGroupBox;
         private Label programLabel;
@@ -406,5 +409,7 @@ namespace BaXmlSplitter
         private TextBox xpathTextBox;
         private GroupBox logGroupBox;
         private RichTextBox logTextBox;
+        private ToolTip toolTip;
+        private Button execButton;
     }
 }
