@@ -39,7 +39,7 @@
             BaOraConnectionStringTextBox = new TextBox();
             AzureApplicationSecretLabel = new Label();
             AzureApplicationSecretTextBox = new TextBox();
-            hashiCorpClientSecretTextBox = new TextBox();
+            HashiCorpClientSecretTextBox = new TextBox();
             hashiCorpClientSecretLabel = new Label();
             cancelSettings = new Button();
             okSettings = new Button();
@@ -63,7 +63,7 @@
             settingsGroup.Controls.Add(BaOraConnectionStringTextBox);
             settingsGroup.Controls.Add(AzureApplicationSecretLabel);
             settingsGroup.Controls.Add(AzureApplicationSecretTextBox);
-            settingsGroup.Controls.Add(hashiCorpClientSecretTextBox);
+            settingsGroup.Controls.Add(HashiCorpClientSecretTextBox);
             settingsGroup.Controls.Add(hashiCorpClientSecretLabel);
             settingsGroup.Location = new Point(3, 3);
             settingsGroup.Name = "settingsGroup";
@@ -149,13 +149,13 @@
             AzureApplicationSecretTextBox.Size = new Size(270, 23);
             AzureApplicationSecretTextBox.TabIndex = 5;
             // 
-            // hashiCorpClientSecretTextBox
+            // HashiCorpClientSecretTextBox
             // 
-            hashiCorpClientSecretTextBox.Location = new Point(6, 22);
-            hashiCorpClientSecretTextBox.Name = "hashiCorpClientSecretTextBox";
-            hashiCorpClientSecretTextBox.Size = new Size(270, 23);
-            hashiCorpClientSecretTextBox.TabIndex = 4;
-            hashiCorpClientSecretTextBox.UseSystemPasswordChar = true;
+            HashiCorpClientSecretTextBox.Location = new Point(6, 22);
+            HashiCorpClientSecretTextBox.Name = "HashiCorpClientSecretTextBox";
+            HashiCorpClientSecretTextBox.Size = new Size(270, 23);
+            HashiCorpClientSecretTextBox.TabIndex = 4;
+            HashiCorpClientSecretTextBox.UseSystemPasswordChar = true;
             // 
             // hashiCorpClientSecretLabel
             // 
@@ -238,7 +238,7 @@
         private Button okSettings;
         private Button applySettings;
         private Label hashiCorpClientSecretLabel;
-        private TextBox hashiCorpClientSecretTextBox;
+        private TextBox HashiCorpClientSecretTextBox;
         private GlyphableCheckbox showClientSecret = new(Properties.Resources.EyeOpen, Properties.Resources.EyeClosed);
         private Label AzureApplicationSecretLabel;
         private TextBox AzureApplicationSecretTextBox;

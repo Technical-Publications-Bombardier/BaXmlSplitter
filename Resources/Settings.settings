@@ -5,7 +5,16 @@
     <Setting Name="HashiCorpClientSecret" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="InitializationVector" Type="System.String" Scope="User">
+    <Setting Name="AzureApplicationSecret" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="BaOraConnectionString" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="StorageAccountKeyOne" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="StorageAccountKeyTwo" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

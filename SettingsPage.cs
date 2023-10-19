@@ -1,7 +1,12 @@
-﻿using BaXmlSplitter.Resources;
+﻿using System.Configuration;
+using System.Collections.Specialized;
+using BaXmlSplitter.Resources;
+using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Resources;
 
 namespace BaXmlSplitter
 {
@@ -10,7 +15,7 @@ namespace BaXmlSplitter
         /// <summary>
         /// Exception to indicate that the secret was incorrect.
         /// </summary>
-        /// <seealso cref="System.ArgumentException" />
+        /// <seealso cref="ArgumentException" />
         private class SecretSettingsException : ArgumentException
         {
             /// <summary>
@@ -49,7 +54,7 @@ namespace BaXmlSplitter
         /// The HashiCorp client secret (encrypted bytes encoded as base-64 string)
         /// </summary>
         /// <remarks>The stored secret is encrypted to remain secure at rest. The client should only store the value from this private variable, and use the value of the <see cref="HashiCorpClientSecret"/> at runtime.</remarks>
-        private string hashiCorpClientSecret;
+        private string hashiCorpClientSecret = string.Empty;
         /// <summary>
         /// Gets the HashiCorp client secret.
         /// </summary>
@@ -63,8 +68,8 @@ namespace BaXmlSplitter
         /// </exception>
         internal string HashiCorpClientSecret
         {
-            get => GetSecretSetting(hashiCorpClientSecret, "HashiCorpClientSecret");
-            set => SetSecretSetting("HashiCorpClientSecret", Properties.Resources.HashiCorpClientSecretExpectedHash, value, out hashiCorpClientSecret);
+            get => GetSecretSetting(hashiCorpClientSecret, nameof(HashiCorpClientSecret));
+            set => SetSecretSetting(nameof(HashiCorpClientSecret), Properties.Resources.HashiCorpClientSecretExpectedHash, value, out hashiCorpClientSecret);
         }
 
         /// <summary>
@@ -93,22 +98,45 @@ namespace BaXmlSplitter
             field = Settings.Default.HashiCorpClientSecret = Convert.ToBase64String(cipherTextBytes);
         }
 
-        private string GetSecretSetting(string secret, string property)
+        private string GetSecretSetting(string? secret, string propertyName)
         {
-            dynamic? fromSettings;
+            string? fromSettings;
             try
             {
-                fromSettings = typeof(Settings).GetProperty(property)?.GetValue(this);
+                // Get a specific property by name
+                if(Settings.Default.Properties[propertyName] is not { } property)
+                {
+                    throw new SettingsPropertyNotFoundException(propertyName);
+                }
+                fromSettings = Settings.Default[property.Name].ToString();
             }
-            catch (TargetException)
+            catch (SettingsPropertyNotFoundException)
+            {
+                // Handle the case when the property does not exist
+                return string.Empty;
+            }
+            catch (ConfigurationErrorsException)
+            {
+                // Handle the case when the configuration file is invalid
+                return string.Empty;
+            }
+            var secretValue = secret ?? fromSettings;
+            if (string.IsNullOrEmpty(secretValue))
             {
                 return string.Empty;
             }
-            if (fromSettings is null || string.IsNullOrEmpty(fromSettings.ToString()))
+
+            byte[] cipherTextBytes;
+
+            try
             {
+                cipherTextBytes = Convert.FromBase64String(secretValue);
+            }
+            catch (FormatException)
+            {
+                Debug.WriteLine("Retrieving secret failed on base-64 decoding. This suggests the settings were corrupted.", "Error");
                 return string.Empty;
             }
-            var cipherTextBytes = Convert.FromBase64String(secret);
             var plainTextBytes = ProtectedData.Unprotect(cipherTextBytes, entropy, DataProtectionScope.CurrentUser);
             return Encoding.UTF8.GetString(plainTextBytes);
         }
@@ -116,23 +144,23 @@ namespace BaXmlSplitter
         /// <summary>
         /// The Azure application secret
         /// </summary>
-        private string azureSecret;
+        private string azureApplicationSecret = string.Empty;
         /// <summary>
         /// Gets the Azure application secret.
         /// </summary>
         /// <value>
         /// The Azure application secret.
         /// </value>
-        internal string AzureSecret
+        internal string AzureApplicationSecret
         {
-            get => GetSecretSetting(azureSecret, "AzureSecret");
-            set => SetSecretSetting("AzureSecret", Properties.Resources.AzureSecretExpectedHash, value, out azureSecret);
+            get => GetSecretSetting(azureApplicationSecret, nameof(AzureApplicationSecret));
+            set => SetSecretSetting(nameof(AzureApplicationSecret), Properties.Resources.AzureApplicationSecretExpectedHash, value, out azureApplicationSecret);
         }
 
         /// <summary>
         /// The Bombardier Oracle connection string
         /// </summary>
-        private string baOraConnectionString;
+        private string baOraConnectionString = string.Empty;
         /// <summary>
         /// Gets the Bombardier Oracle connection string.
         /// </summary>
@@ -141,14 +169,14 @@ namespace BaXmlSplitter
         /// </value>
         internal string BaOraConnectionString
         {
-            get => GetSecretSetting(baOraConnectionString, "BaOraConnectionString");
-            set => SetSecretSetting("BaOraConnectionString", Properties.Resources.BaOraConnectionStringExpectedHash, value, out baOraConnectionString);
+            get => GetSecretSetting(baOraConnectionString, nameof(BaOraConnectionString));
+            set => SetSecretSetting(nameof(BaOraConnectionString), Properties.Resources.BaOraConnectionStringExpectedHash, value, out baOraConnectionString);
         }
 
         /// <summary>
         /// The first Azure storage account key.
         /// </summary>
-        private string storageAccountKeyOne;
+        private string storageAccountKeyOne = string.Empty;
         /// <summary>
         /// Gets the Azure storage account key number one.
         /// </summary>
@@ -157,14 +185,14 @@ namespace BaXmlSplitter
         /// </value>
         internal string StorageAccountKeyOne
         {
-            get => GetSecretSetting(storageAccountKeyOne, "StorageAccountKeyOne");
-            set => SetSecretSetting("StorageAccountKeyOne", Properties.Resources.StorageAccountKeyOneExpectedHash, value, out storageAccountKeyOne);
+            get => GetSecretSetting(storageAccountKeyOne, nameof(StorageAccountKeyOne));
+            set => SetSecretSetting(nameof(StorageAccountKeyOne), Properties.Resources.StorageAccountKeyOneExpectedHash, value, out storageAccountKeyOne);
         }
 
         /// <summary>
         /// The second Azure storage account key.
         /// </summary>
-        private string storageAccountKeyTwo;
+        private string storageAccountKeyTwo = string.Empty;
         /// <summary>
         /// Gets the Azure storage account key number two.
         /// </summary>
@@ -173,8 +201,8 @@ namespace BaXmlSplitter
         /// </value>
         internal string StorageAccountKeyTwo
         {
-            get => GetSecretSetting(storageAccountKeyTwo, "StorageAccountKeyTwo");
-            set => SetSecretSetting("StorageAccountKeyTwo", Properties.Resources.StorageAccountKeyTwoExpectedHash, value, out storageAccountKeyTwo);
+            get => GetSecretSetting(storageAccountKeyTwo, nameof(StorageAccountKeyTwo));
+            set => SetSecretSetting(nameof(StorageAccountKeyTwo), Properties.Resources.StorageAccountKeyTwoExpectedHash, value, out storageAccountKeyTwo);
         }
 
         /// <summary>
@@ -183,34 +211,48 @@ namespace BaXmlSplitter
         public SettingsPage()
         {
             InitializeComponent();
-            hashiCorpClientSecret = Settings.Default.HashiCorpClientSecret;
-            hashiCorpClientSecretTextBox.Text = HashiCorpClientSecret;
+            HashiCorpClientSecret = GetSecretSetting(null, nameof(HashiCorpClientSecret));
+            AzureApplicationSecret = GetSecretSetting(null, nameof(AzureApplicationSecret));
+            BaOraConnectionString = GetSecretSetting(null, nameof(BaOraConnectionString));
+            StorageAccountKeyOne = GetSecretSetting(null, nameof(StorageAccountKeyOne));
+            StorageAccountKeyTwo = GetSecretSetting(null, nameof(StorageAccountKeyTwo));
+
+            // Set TextBox values
+            HashiCorpClientSecretTextBox.Text = HashiCorpClientSecret;
+            AzureApplicationSecretTextBox.Text = AzureApplicationSecret;
+            BaOraConnectionStringTextBox.Text = BaOraConnectionString;
+            AzureStorageKeyOneTextBox.Text = StorageAccountKeyOne;
+            AzureStorageKeyTwoTextBox.Text = StorageAccountKeyTwo;
         }
 
         /// <summary>
         /// The HashiCorp client secret text field handler.
         /// </summary>
         /// <param name="sender">The sender.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         /// <returns></returns>
         private void HashiCorpClientSecretHandler(object sender, EventArgs e)
         {
             try
             {
-                HashiCorpClientSecret = hashiCorpClientSecretTextBox.Text;
+                HashiCorpClientSecret = HashiCorpClientSecretTextBox.Text;
                 Settings.Default.HashiCorpClientSecret = hashiCorpClientSecret;
+                // if the HashiCorp client secret is set, then hide the arrowsLabel
+                arrowsLabel.Hide();
+                return;
             }
             catch (SecretSettingsException ex)
             {
                 XmlSplitterHelpers.ShowWarningBox($"{ex.Message}. Please check the HashiCorp client secret and re-enter.", "Invalid HashiCorp Client Secret");
             }
+            arrowsLabel.Show();
         }
 
         /// <summary>
         /// Handles the click event of the OkSettings control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         /// <returns></returns>
         private void OkSettings_Click(object sender, EventArgs e)
         {
@@ -223,7 +265,7 @@ namespace BaXmlSplitter
         /// Handles the Click event of the ApplySettings control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         /// <returns></returns>
         private void ApplySettings_Click(object sender, EventArgs e)
         {
@@ -235,7 +277,7 @@ namespace BaXmlSplitter
         /// Handles the Click event of the CancelSettings control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         /// <returns></returns>
         private void CancelSettings_Click(object sender, EventArgs e)
         {
@@ -246,12 +288,11 @@ namespace BaXmlSplitter
         /// Handles the Click event of the ShowHashiCorpClientSecret control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         /// <returns></returns>
         private void ShowHashiCorpClientSecret_Click(object sender, EventArgs e)
         {
-            hashiCorpClientSecretTextBox.UseSystemPasswordChar = !hashiCorpClientSecretTextBox.UseSystemPasswordChar;
-
+            HashiCorpClientSecretTextBox.UseSystemPasswordChar = !HashiCorpClientSecretTextBox.UseSystemPasswordChar;
         }
 
     }

@@ -38,12 +38,48 @@ namespace BaXmlSplitter.Resources {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string InitializationVector {
+        public string AzureApplicationSecret {
             get {
-                return ((string)(this["InitializationVector"]));
+                return ((string)(this["AzureApplicationSecret"]));
             }
             set {
-                this["InitializationVector"] = value;
+                this["AzureApplicationSecret"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string BaOraConnectionString {
+            get {
+                return ((string)(this["BaOraConnectionString"]));
+            }
+            set {
+                this["BaOraConnectionString"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string StorageAccountKeyOne {
+            get {
+                return ((string)(this["StorageAccountKeyOne"]));
+            }
+            set {
+                this["StorageAccountKeyOne"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string StorageAccountKeyTwo {
+            get {
+                return ((string)(this["StorageAccountKeyTwo"]));
+            }
+            set {
+                this["StorageAccountKeyTwo"] = value;
             }
         }
     }
