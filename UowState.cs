@@ -8,12 +8,12 @@ namespace BaXmlSplitter
     /// <summary>
     /// Unit-of-work states from ETPS. They are relative to the <see cref="XmlSplitterHelpers.CsdbProgram"/>.
     /// </summary>
-    /// <seealso cref="BaXmlSplitter.IUowState" />
+    /// <seealso cref="IUowState" />
     /// <seealso cref="IUowState" />
     /// <seealso cref="IUowState" />
     /// <seealso cref="UowState" />
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-    internal record class UowState(int? StateValue = null, string? StateName = null, string? Remark = null,
+    internal record UowState(int? StateValue = null, string? StateName = null, string? Remark = null,
             string? XPath = null, string? TagName = null, string? Key = null, string? Resource = null,
             string? Title = null, string? Level = null)
         : IUowState
@@ -135,8 +135,8 @@ namespace BaXmlSplitter
     /// <summary>
     /// Defines the structure of the unit-of-work state.
     /// </summary>
-    /// <seealso cref="System.IEquatable&lt;BaXmlSplitter.IUowState&gt;" />
-    /// <seealso cref="System.Collections.Generic.IEqualityComparer&lt;BaXmlSplitter.IUowState&gt;" />
+    /// <seealso cref="IEquatable&lt;IUowState&gt;" />
+    /// <seealso cref="IEqualityComparer&lt;IUowState&gt;" />
     internal interface IUowState : IEquatable<IUowState>, IEqualityComparer<IUowState>
     {
         /// <summary>

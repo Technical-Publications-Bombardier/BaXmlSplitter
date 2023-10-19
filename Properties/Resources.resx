@@ -125,7 +125,7 @@
     <value>fb61b2d7-0d45-43c0-bc85-95701ceb3331</value>
     <comment>Azure Service Principal App ID for uploading to Azure Blob Storage</comment>
   </data>
-  <data name="AzureSecretExpectedHash" xml:space="preserve">
+  <data name="AzureApplicationSecretExpectedHash" xml:space="preserve">
     <value>A09A0E1E9E7FEB5A2A649418D547BF3DDB9259C6B32FF8809C3A5657E7C30A67</value>
     <comment>$hcp = Get-Content -Path "C:\Users\B0649033\source\repos\mavaddat\BaXmlSplitter\Resources\HashiCorpIdentity.json" | ConvertFrom-Json
 $hcpApiToken = Invoke-RestMethod -Uri 'https://auth.hashicorp.com/oauth/token' -Headers @{ 'Content-Type'='application/json'; Accept='application/json' } -Body (@{ audience = 'https://api.hashicorp.cloud'; grant_type = "client_credentials"; client_id = $hcp.client_id; client_secret = (Get-Secret -Name HcpClientSecret -Vault CredMan -AsPlainText) } | ConvertTo-Json) -Method Post

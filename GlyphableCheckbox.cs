@@ -5,7 +5,7 @@ namespace BaXmlSplitter
 {
     [Designer(typeof(GlyphableCheckboxDesigner))]
     [ToolboxBitmap(typeof(CheckBox))]
-    internal class GlyphableCheckbox : CheckBox
+    public class GlyphableCheckbox : CheckBox
     {
         private const int DefaultImageSize = 16;
         private Image checkmarkGlyph;
@@ -85,4 +85,6 @@ namespace BaXmlSplitter
             }
         }
     }
+
+    public class ShowPasswordCheckbox() : GlyphableCheckbox(Properties.Resources.EyeOpen, Properties.Resources.EyeClosed);
 }

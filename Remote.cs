@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RestSharp;
 using RestSharp.Authenticators;
-using System.Collections;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CsdbProgram = BaXmlSplitter.XmlSplitterHelpers.CsdbProgram;
@@ -68,7 +67,7 @@ namespace BaXmlSplitter
             /// <summary>
             /// Exception to indicate failed token acquisition.
             /// </summary>
-            /// <seealso cref="System.Exception" />
+            /// <seealso cref="Exception" />
             public class TokenAcquisitionException : Exception
             {
                 /// <summary>
@@ -101,8 +100,7 @@ namespace BaXmlSplitter
                 }
             }
 
-            // ReSharper disable once ClassNeverInstantiated.Local
-            private record TokenResponse
+            private abstract record TokenResponse
             {
 
                 /// <summary>
@@ -142,9 +140,9 @@ namespace BaXmlSplitter
                 }
             }
             /// <summary>
-            /// 
+            /// HashiCorp identity structure.
             /// </summary>
-            private record HashiCorpIdentity
+            private abstract record HashiCorpIdentity
             {
                 /// <summary>
                 /// Gets the client identifier.

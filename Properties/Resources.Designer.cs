@@ -82,9 +82,9 @@ namespace BaXmlSplitter.Properties {
         /// <summary>
         ///   Looks up a localized string similar to A09A0E1E9E7FEB5A2A649418D547BF3DDB9259C6B32FF8809C3A5657E7C30A67.
         /// </summary>
-        internal static string AzureSecretExpectedHash {
+        internal static string AzureApplicationSecretExpectedHash {
             get {
-                return ResourceManager.GetString("AzureSecretExpectedHash", resourceCulture);
+                return ResourceManager.GetString("AzureApplicationSecretExpectedHash", resourceCulture);
             }
         }
         
