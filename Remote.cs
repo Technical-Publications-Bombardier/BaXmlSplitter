@@ -3,6 +3,7 @@ using RestSharp;
 using RestSharp.Authenticators;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BaXmlSplitter.Resources;
 using CsdbProgram = BaXmlSplitter.XmlSplitterHelpers.CsdbProgram;
 
 namespace BaXmlSplitter
@@ -11,6 +12,7 @@ namespace BaXmlSplitter
     {
         internal class ManualContext(CsdbProgram program) : DbContext
         {
+            private readonly string baOraConnectionString = Settings.Default.BaOraConnectionString;
             private readonly string serviceName = ServiceNameTable[program];
             private static readonly Dictionary<CsdbProgram, string> ServiceNameTable = new() {
                 { CsdbProgram.B_IFM , "BIFM" },
@@ -22,7 +24,7 @@ namespace BaXmlSplitter
 
             protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             {
-                _ = optionsBuilder.UseOracle($"***REMOVED***/{serviceName}");
+                _ = optionsBuilder.UseOracle($"{baOraConnectionString}/{serviceName}");
                 base.OnConfiguring(optionsBuilder);
             }
         }
