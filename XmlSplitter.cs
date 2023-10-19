@@ -669,31 +669,33 @@ namespace BaXmlSplitter
             var data = e.Data;
             if (data != null && data.GetData(DataFormats.FileDrop) != null)
             {
-                string[] paths = (string[])(data.GetData(DataFormats.FileDrop) ?? Array.Empty<string>());
-                foreach (string path in paths.Distinct())
+                if (data.GetData(DataFormats.FileDrop) is string[] paths)
                 {
-                    if (File.Exists(path))
+                    foreach (string path in paths.Distinct())
                     {
-                        if (Regex.IsMatch(path, ".*\\.xml$", RegexOptions.IgnoreCase))
+                        if (File.Exists(path))
                         {
-
-                            xmlSelectTextBox.Text = path;
-                            XmlSelectTextBox_TextChanged(sender, e);
-                        }
-                        else
-                        {
-                            if (IsBinary(path) && !ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", path), string.Format("{0} appears to be binary", Path.GetFileName(path))))
+                            if (Regex.IsMatch(path, ".*\\.xml$", RegexOptions.IgnoreCase))
                             {
-                                continue;
+
+                                xmlSelectTextBox.Text = path;
+                                XmlSelectTextBox_TextChanged(sender, e);
                             }
-                            uowSelectBox.Text = path;
-                            UowStatesTextBox_TextChanged(sender, e);
+                            else
+                            {
+                                if (IsBinary(path) && !ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", path), string.Format("{0} appears to be binary", Path.GetFileName(path))))
+                                {
+                                    continue;
+                                }
+                                uowSelectBox.Text = path;
+                                UowStatesTextBox_TextChanged(sender, e);
+                            }
                         }
-                    }
-                    else if (Directory.Exists(path))
-                    {
-                        outDirTextBox.Text = path;
-                        OutDirTextBox_TextChanged(sender, e);
+                        else if (Directory.Exists(path))
+                        {
+                            outDirTextBox.Text = path;
+                            OutDirTextBox_TextChanged(sender, e);
+                        }
                     }
                 }
             }
