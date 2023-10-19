@@ -263,65 +263,80 @@ namespace BaXmlSplitter
         private async void XmlSelectTextBox_TextChanged(object sender, EventArgs e)
         {
             xmlSelectTextBox.Select(xmlSelectTextBox.Text.Length, 0);
-            if (XmlSplitterHelpers.PathIsValid(xmlSelectTextBox.Text) && File.Exists(xmlSelectTextBox.Text))
+            try
             {
-                if (!string.IsNullOrEmpty(xmlSourceFile) && Path.GetFullPath(xmlSourceFile) == Path.GetFullPath(xmlSelectTextBox.Text))
+                if (File.Exists(xmlSelectTextBox.Text))
                 {
-                    return;
-                }
-                else
-                {
-                    xmlSourceFile = Path.GetFullPath(xmlSelectTextBox.Text);
-                }
-                string? container = Path.GetDirectoryName(xmlSourceFile);
-                if (container != null)
-                {
-                    outDirTextBox.Text = Path.Combine(container, XmlSplitterHelpers.DEFAULT_OUTPUT_DIR);
-                    OutDirTextBox_TextChanged(sender, e);
-                }
-                WriteLog(string.Format("Reading XML file '{0}'", Path.GetFileName(xmlSourceFile)));
-                //TextFileChosen(out xmlContent, xmlSelectTextBox.Text, xmlSelectTextBox, "XML");
-                try
-                {
+                    if (!string.IsNullOrEmpty(xmlSourceFile) && Path.GetFullPath(xmlSourceFile) == Path.GetFullPath(xmlSelectTextBox.Text))
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        xmlSourceFile = Path.GetFullPath(xmlSelectTextBox.Text);
+                    }
+                    string? container = Path.GetDirectoryName(xmlSourceFile);
+                    if (container != null)
+                    {
+                        outDirTextBox.Text = Path.Combine(container, XmlSplitterHelpers.DEFAULT_OUTPUT_DIR);
+                        OutDirTextBox_TextChanged(sender, e);
+                    }
+                    WriteLog(string.Format("Reading XML file '{0}'", Path.GetFileName(xmlSourceFile)));
+                    //TextFileChosen(out xmlContent, xmlSelectTextBox.Text, xmlSelectTextBox, "XML");
                     xmlContent = await File.ReadAllTextAsync(xmlSourceFile);
-                }
-                catch (Exception exception)
-                {
-                    WriteLog(exception.Message, Severity.Error);
-                }
-                if (string.IsNullOrEmpty(xmlContent) && new FileInfo(xmlSourceFile).Length > 0)
-                {
-                    WriteLog("Unable to read XML file. Please check that the file is available and not locked by another process.", Severity.Error);
+                    if (string.IsNullOrEmpty(xmlContent) && new FileInfo(xmlSourceFile).Length > 0)
+                    {
+                        WriteLog("Unable to read XML file. Please check that the file is available and not locked by another process.", Severity.Error);
+                    }
+                    else
+                    {
+                        WriteLog("Done reading XML file into memory.");
+                    }
                 }
                 else
                 {
-                    WriteLog("Done reading XML file into memory.");
+                    WriteLog("Please select a valid XML file.", Severity.Warning);
                 }
+            }
+            catch (Exception exception)
+            {
+                WriteLog(exception.Message, Severity.Error);
             }
         }
         private async void UowStatesTextBox_TextChanged(object sender, EventArgs e)
         {
             uowTextBox.Select(uowTextBox.Text.Length, 0);
-            if (XmlSplitterHelpers.PathIsValid(uowTextBox.Text) && File.Exists(uowTextBox.Text) && (!XmlSplitterHelpers.IsBinary(uowTextBox.Text) || XmlSplitterHelpers.ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", uowTextBox.Text), string.Format("File '{0}' is not text", Path.GetFileName(uowTextBox.Text)))))
+            try
             {
+                if (File.Exists(uowTextBox.Text) && (!XmlSplitterHelpers.IsBinary(uowTextBox.Text) || XmlSplitterHelpers.ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", uowTextBox.Text), string.Format("File '{0}' is not text", Path.GetFileName(uowTextBox.Text)))))
+                {
 
-                if (!string.IsNullOrEmpty(uowStatesFile) && uowStatesFile == uowTextBox.Text)
-                {
-                    return;
-                }
-                uowStatesFile = uowTextBox.Text;
-                WriteLog($"Reading UOW file '{Path.GetFileName(uowStatesFile)}'");
-                uowContent = await File.ReadAllTextAsync(uowStatesFile);
-                xpath = string.Empty;
-                XPathTextBox_TextChanged(sender, e);
-                if (string.IsNullOrEmpty(uowContent) && new FileInfo(uowStatesFile).Length > 0)
-                {
-                    WriteLog("Unable to read UOW states file. Please check that the file is available and not locked by another process.", Severity.Error);
+                    if (!string.IsNullOrEmpty(uowStatesFile) && uowStatesFile == uowTextBox.Text)
+                    {
+                        return;
+                    }
+                    uowStatesFile = uowTextBox.Text;
+                    WriteLog($"Reading UOW file '{Path.GetFileName(uowStatesFile)}'");
+                    uowContent = await File.ReadAllTextAsync(uowStatesFile);
+                    xpath = string.Empty;
+                    XPathTextBox_TextChanged(sender, e);
+                    if (string.IsNullOrEmpty(uowContent) && new FileInfo(uowStatesFile).Length > 0)
+                    {
+                        WriteLog("Unable to read UOW states file. Please check that the file is available and not locked by another process.", Severity.Error);
+                    }
+                    else
+                    {
+                        WriteLog("Done reading UOW file into memory.");
+                    }
                 }
                 else
                 {
-                    WriteLog("Done reading UOW file into memory.");
+                    WriteLog("Please provide a valid path", Severity.Warning);
                 }
+            }
+            catch (Exception exception)
+            {
+                WriteLog(exception.Message, Severity.Error);
             }
         }
 
@@ -331,7 +346,7 @@ namespace BaXmlSplitter
             if (outputDir != outDirTextBox.Text)
             {
                 // if the out dir does not exist, set outDirWillBeCreated.Visible to true
-                if (XmlSplitterHelpers.PathIsValid(outDirTextBox.Text))
+                try
                 {
                     outputDir = outDirTextBox.Text;
                     outDirWillBeCreated.SuspendLayout();
@@ -346,6 +361,10 @@ namespace BaXmlSplitter
                     }
                     outDirWillBeCreated.ResumeLayout();
                     WriteLog($"Selected units of work will be written to {outputDir}");
+                }
+                catch (Exception exception)
+                {
+                    WriteLog(exception.Message, Severity.Error);
                 }
             }
         }
@@ -812,7 +831,7 @@ namespace BaXmlSplitter
                 StringBuilder toolTipSb = new();
                 if (!XmlIsSelected())
                 {
-                    _ = toolTipSb.AppendJoin('\n',"Please select an XML file before executing the split.");
+                    _ = toolTipSb.AppendJoin('\n', "Please select an XML file before executing the split.");
                 }
                 if (!UowIsSelected())
                 {
@@ -824,7 +843,7 @@ namespace BaXmlSplitter
                 }
                 if (!ProgramIsSelected())
                 {
-                    _ = toolTipSb.AppendJoin('\n',"Please select a program before executing the split.");
+                    _ = toolTipSb.AppendJoin('\n', "Please select a program before executing the split.");
                 }
                 toolTip.SetToolTip(stepsPanel, toolTipSb.ToString());
             }

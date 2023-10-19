@@ -45,6 +45,7 @@ namespace BaXmlSplitter
             programGroupBox = new GroupBox();
             programLabel = new Label();
             programsComboBox = new ComboBox();
+            execButton = new Button();
             outputBox = new GroupBox();
             outDirWillBeCreated = new Label();
             outDirTextBox = new TextBox();
@@ -56,7 +57,6 @@ namespace BaXmlSplitter
             logGroupBox = new GroupBox();
             logTextBox = new RichTextBox();
             toolTip = new ToolTip(components);
-            execButton = new Button();
             xmlSelectBox.SuspendLayout();
             uowSelectBox.SuspendLayout();
             stepsPanel.SuspendLayout();
@@ -100,6 +100,7 @@ namespace BaXmlSplitter
             // 
             // xmlButton
             // 
+            xmlButton.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             xmlButton.Location = new Point(414, 40);
             xmlButton.Name = "xmlButton";
             xmlButton.Size = new Size(75, 26);
@@ -125,6 +126,7 @@ namespace BaXmlSplitter
             // 
             uowTextBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             uowTextBox.AutoCompleteSource = AutoCompleteSource.FileSystem;
+            uowTextBox.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             uowTextBox.Location = new Point(6, 41);
             uowTextBox.Name = "uowTextBox";
             uowTextBox.Size = new Size(402, 24);
@@ -207,6 +209,22 @@ namespace BaXmlSplitter
             programsComboBox.Leave += ProgramGroupBox;
             programsComboBox.Validated += ProgramGroupBox;
             // 
+            // execButton
+            // 
+            execButton.Dock = DockStyle.Bottom;
+            execButton.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold);
+            execButton.Location = new Point(0, 416);
+            execButton.Name = "execButton";
+            execButton.Size = new Size(489, 32);
+            execButton.TabIndex = 5;
+            execButton.Text = "Execute Splitting";
+            execButton.UseVisualStyleBackColor = true;
+            execButton.Click += ExecuteSplit;
+            execButton.MouseEnter += mouseEnteredExecButton;
+            execButton.MouseLeave += mouseLeftExecButton;
+            execButton.MouseHover += mouseEnteredExecButton;
+            execButton.MouseMove += mouseEnteredExecButton;
+            // 
             // outputBox
             // 
             outputBox.Controls.Add(outDirWillBeCreated);
@@ -241,6 +259,7 @@ namespace BaXmlSplitter
             // 
             outDirTextBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             outDirTextBox.AutoCompleteSource = AutoCompleteSource.FileSystem;
+            outDirTextBox.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
             outDirTextBox.Location = new Point(6, 41);
             outDirTextBox.Name = "outDirTextBox";
             outDirTextBox.Size = new Size(402, 24);
@@ -335,22 +354,6 @@ namespace BaXmlSplitter
             // toolTip
             // 
             toolTip.ToolTipIcon = ToolTipIcon.Info;
-            // 
-            // execButton
-            // 
-            execButton.Dock = DockStyle.Bottom;
-            execButton.Font = new Font("Microsoft Sans Serif", 11.25F, FontStyle.Bold);
-            execButton.Location = new Point(0, 416);
-            execButton.Name = "execButton";
-            execButton.Size = new Size(489, 32);
-            execButton.TabIndex = 5;
-            execButton.Text = "Execute Splitting";
-            execButton.UseVisualStyleBackColor = true;
-            execButton.Click += ExecuteSplit;
-            execButton.MouseEnter += mouseEnteredExecButton;
-            execButton.MouseLeave += mouseLeftExecButton;
-            execButton.MouseHover += mouseEnteredExecButton;
-            execButton.MouseMove += mouseEnteredExecButton;
             // 
             // XmlSplitter
             // 
