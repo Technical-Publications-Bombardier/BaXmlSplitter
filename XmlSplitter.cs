@@ -1,13 +1,10 @@
 using BaXmlSplitter.Properties;
 using System.Collections;
 using System.Drawing.Text;
-using System.IO;
 using System.Management.Automation;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Xml.Linq;
-using System.Xml.XPath;
-
 namespace BaXmlSplitter
 {
     public partial class XmlSplitter : Form
@@ -17,12 +14,13 @@ namespace BaXmlSplitter
             IntPtr pdv, in uint pcFonts);
         private PrivateFontCollection fonts = new();
         private string logFile;
-        private FileInfo? xmlFileInfo;
+        private string? xmlSourceFile;
         private string? xmlContent;
+        private string? uowStatesFile;
         private string? uowContent;
         private string? outputDir;
         private string? xpath;
-        private Dictionary<string, Dictionary<int, UowState>> statesPerProgram;
+        private Dictionary<string, Dictionary<int, UowState>>? statesPerProgram;
         private string? Program;
         private const string DEFAULT_OUTPUT_DIR = "WIPItems";
         private static readonly string[] PROGRAMS = new string[] { "B_IFM", "CH604PROD", "CTALPROD", "LJ4045PROD", "GXPROD" };
@@ -47,6 +45,10 @@ namespace BaXmlSplitter
                 StateName = (string)(stateName ?? "");
                 Remark = (string)(remark ?? "");
             }
+
+            public override string ToString() => string.Join(", ", GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
+            .Where(field => field.GetValue(this) != null)
+            .Select(field => $"{field.Name}={field.GetValue(this)}"));
         }
         public static bool IsBinary(string path)
         {
@@ -86,30 +88,31 @@ namespace BaXmlSplitter
             Error,
             Fatal
         };
-        public XmlSplitter()
+
+        private void LoadFonts()
         {
-            InitializeComponent();
-            logFile = Path.GetTempFileName();
-            WriteLog($"Start XML splitting tool with log at '{logFile}'");
             uint dummy = 0;
-            foreach (byte[] font in new byte[][] { Resources._72_Black, Resources._72_Bold, Resources._72_BoldItalic, Resources._72_Condensed, Resources._72_CondensedBold, Resources._72_Italic, Resources._72_Light, Resources._72_Monospace_Bd, Resources._72_Monospace_Rg, Resources._72_Regular })
+            var seventyTwoFonts = new byte[][] { Resources._72_Black, Resources._72_Bold, Resources._72_BoldItalic, Resources._72_Condensed, Resources._72_CondensedBold, Resources._72_Italic, Resources._72_Light, Resources._72_Monospace_Bd, Resources._72_Monospace_Rg, Resources._72_Regular };
+            for(int i = 0; i < seventyTwoFonts.Length; i++)
             {
-                IntPtr data = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(font.Length);
+                IntPtr data = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(seventyTwoFonts[i].Length);
                 try
                 {
-                    System.Runtime.InteropServices.Marshal.Copy(font, 0, data, font.Length);
-                    AddFontMemResourceEx(data, (uint)font.Length, IntPtr.Zero, in dummy);
-                    fonts.AddMemoryFont(data, font.Length);
+                    System.Runtime.InteropServices.Marshal.Copy(seventyTwoFonts[i], 0, data, seventyTwoFonts[i].Length);
+                    AddFontMemResourceEx(data, (uint)seventyTwoFonts[i].Length, IntPtr.Zero, in dummy);
+                    fonts.AddMemoryFont(data, seventyTwoFonts[i].Length);
                 }
                 finally
                 {
                     System.Runtime.InteropServices.Marshal.FreeCoTaskMem(data);
                 }
             }
+        }
+        private void DeSerializeStates()
+        {
             dynamic deSerializedStatesPerProgram = PSSerializer.Deserialize(Resources.StatesPerProgramXml);
-
             ICollection Programs = deSerializedStatesPerProgram.Keys;
-            statesPerProgram = new Dictionary<string, Dictionary<int, UowState>>(Programs.Count);
+            statesPerProgram = new(Programs.Count);
             foreach (var Program in Programs)
             {
                 dynamic stateNames = deSerializedStatesPerProgram[Program];
@@ -130,7 +133,22 @@ namespace BaXmlSplitter
                 }
                 statesPerProgram.Add((string)Program, states);
             }
-            WriteLog("XML splitting tool initialized");
+        }
+        public XmlSplitter()
+        {
+            InitializeComponent();
+            logFile = Path.GetTempFileName();
+            WriteLog($"Start XML splitting tool with log at '{logFile}'");
+        }
+
+        private async void XmlSplitter_Load(object sender, EventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                LoadFonts();
+                DeSerializeStates();
+            });
+            WriteLog("Finished initializing.");
         }
 
         private void WriteLog(string message, Severity severity = Severity.Hint, bool NoNewLine = false)
@@ -159,6 +177,8 @@ namespace BaXmlSplitter
                     logTextBox.SelectionColor = Color.Red;
                     break;
             }
+            // scroll to the bottom of the logTextBox
+            logTextBox.SelectionStart = logTextBox.Text.Length;
         }
 
         private static string BrowseForFile(string? filter = null)
@@ -220,17 +240,8 @@ namespace BaXmlSplitter
         private void BrowseUow(object sender, EventArgs e)
         {
             string filename = BrowseForFile("UOW states file|*.*");
-            if (ReadText(out uowContent, filename, out Exception? exception))
-            {
-                uowTextBox.Text = filename;
-                uowTextBox.Select(uowTextBox.Text.Length, 0);
-                ProcessUowStates();
-            }
-            else
-            {
-                var message = exception?.Message;
-                ShowWarningBox(string.Format("Unable to read UOW states file '{0}'\n{1}", filename, message), string.Format("UOW states file '{0}' unreadable", filename));
-            }
+            uowTextBox.Text = filename;
+            UowStatesTextBox_TextChanged(sender, e);
         }
 
         private void BrowseOutDir(object sender, EventArgs e)
@@ -238,65 +249,106 @@ namespace BaXmlSplitter
             using FolderBrowserDialog dialog = new();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                outDirTextBox.Text = outputDir = dialog.SelectedPath;
-                outDirTextBox.Select(outDirTextBox.Text.Length, 0);
+                outDirTextBox.Text = dialog.SelectedPath;
+                OutDirTextBox_TextChanged(sender, e);
             }
         }
 
-        private void XmlSelectTextBox_TextChanged(object sender, EventArgs e)
+        private async void XmlSelectTextBox_TextChanged(object sender, EventArgs e)
         {
             xmlSelectTextBox.Select(xmlSelectTextBox.Text.Length, 0);
             if (!string.IsNullOrWhiteSpace(xmlSelectTextBox.Text) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(xmlSelectTextBox.Text.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute) && File.Exists(xmlSelectTextBox.Text))
             {
-                FileInfo tempFileInfo = new(xmlSelectTextBox.Text);
-                if (xmlFileInfo != null && xmlFileInfo.FullName == tempFileInfo.FullName)
+                if (!string.IsNullOrEmpty(xmlSourceFile) && Path.GetFullPath(xmlSourceFile) == Path.GetFullPath(xmlSelectTextBox.Text))
                 {
                     return;
-                } else
-                {
-                    xmlFileInfo = tempFileInfo;
                 }
-                var container = xmlFileInfo.Directory;
+                else
+                {
+                    xmlSourceFile = Path.GetFullPath(xmlSelectTextBox.Text);
+                }
+                var container = Path.GetDirectoryName(xmlSourceFile);
                 if (container != null)
                 {
-                    outDirTextBox.Text = Path.Combine(container.FullName, DEFAULT_OUTPUT_DIR);
+                    outDirTextBox.Text = Path.Combine(container, DEFAULT_OUTPUT_DIR);
                     OutDirTextBox_TextChanged(sender, e);
                 }
-                WriteLog(string.Format("Reading XML file '{0}'\n", xmlFileInfo.Name));
-                TextFileChosen(out xmlContent, xmlSelectTextBox.Text, xmlSelectTextBox, "XML");
+                WriteLog(string.Format("Reading XML file '{0}'", Path.GetFileName(xmlSourceFile)));
+                await Task.Run(() => TextFileChosen(out xmlContent, xmlSelectTextBox.Text, xmlSelectTextBox, "XML") );
+                WriteLog("Done reading XML file into memory.");
             }
         }
-        private void UowStatesTextBox_TextChanged(object sender, EventArgs e)
+        private async void UowStatesTextBox_TextChanged(object sender, EventArgs e)
         {
             uowTextBox.Select(uowTextBox.Text.Length, 0);
             if (!string.IsNullOrWhiteSpace(uowTextBox.Text) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(uowTextBox.Text.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute) && File.Exists(uowTextBox.Text) && (!IsBinary(uowTextBox.Text) || ShowConfirmationBox(string.Format("The file at '{0}' appears to be a binary file, not text. Continue?", uowTextBox.Text), string.Format("File '{0}' is not text", (new FileInfo(uowTextBox.Text)).Name))))
             {
-                TextFileChosen(out uowContent, uowTextBox.Text, uowTextBox, "UOW states");
+
+                if (!string.IsNullOrEmpty(uowStatesFile) && uowStatesFile == uowTextBox.Text)
+                {
+                    return;
+                }
+                uowStatesFile = uowTextBox.Text;
+                WriteLog($"Reading UOW file '{Path.GetFileName(uowStatesFile)}'");
+                await Task.Run(()=> TextFileChosen(out uowContent, uowTextBox.Text, uowTextBox, "UOW states") );
+                WriteLog("Done reading UOW file into memory.");
             }
         }
 
         private void OutDirTextBox_TextChanged(object sender, EventArgs e)
         {
             outDirTextBox.Select(outDirTextBox.Text.Length, 0);
-            // if the out dir does not exist, set outDirWillBeCreated.Visible to true
-            if (!string.IsNullOrWhiteSpace(outDirTextBox.Text) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(outDirTextBox.Text.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute) && !Directory.Exists(outDirTextBox.Text))
+            if(outputDir != outDirTextBox.Text)
             {
-                outDirWillBeCreated.Enabled = outDirWillBeCreated.Visible = true;
+                // if the out dir does not exist, set outDirWillBeCreated.Visible to true
+                if (!string.IsNullOrWhiteSpace(outDirTextBox.Text) && Uri.IsWellFormedUriString(string.Format("{0}/{1}", Uri.UriSchemeFile + Uri.SchemeDelimiter, Regex.Replace(outDirTextBox.Text.Replace(@"\", "/"), @"^//", "")), UriKind.RelativeOrAbsolute))
+                {
+                    outputDir = outDirTextBox.Text;
+                    if (!Directory.Exists(outputDir))
+                    {
+                        outDirWillBeCreated.Enabled = outDirWillBeCreated.Visible = true;
+                        WriteLog("Output directory will be created.");
+                    }
+                    else
+                    {
+                        outDirWillBeCreated.Enabled = outDirWillBeCreated.Visible = false;
+                    }
+                    WriteLog($"Selected units of work will be written to {outputDir}");
+                }
             }
-            else
-            {
-                outDirWillBeCreated.Enabled = outDirWillBeCreated.Visible = false;
-            }
-
         }
 
-        private void ExecuteSplit(object sender, EventArgs e)
+        private async void ExecuteSplit(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(uowTextBox.Text) || string.IsNullOrEmpty(uowContent))
+            {
+                ShowWarningBox("Please select a UOW states file before executing the split.", "Cannot proceed: No UOW states provided.");
+                WriteLog("Prematurely attempted to begin splitting prior to specifying UOW states", Severity.Warning);
+                return;
+            }
+            if (string.IsNullOrEmpty(Program) || string.IsNullOrEmpty(programsComboBox.Text))
+            {
+                ShowWarningBox("Please select a program before executing the split.", "Cannot proceed: No program specified.");
+                WriteLog("Prematurely attempted to begin splitting prior to specifying program", Severity.Warning);
+                return;
+            }
+            if (xmlSourceFile == null || string.IsNullOrEmpty(xmlContent))
+            {
+                ShowWarningBox("Please select an XML file before executing the split.", "Cannot proceed: No XML file provided.");
+                WriteLog("Prematurely attempted to begin splitting prior to specifying XML file", Severity.Warning);
+                return;
+            }
+            if (string.IsNullOrEmpty(outputDir))
+            {
+                ShowWarningBox("Please select an output directory before executing the split.", "Cannot proceed: No output directory provided.");
+                WriteLog("Prematurely attempted to begin splitting prior to specifying output directory", Severity.Warning);
+                return;
+            }
             if (string.IsNullOrEmpty(xpath))
             {
-                ProcessUowStates();
+                await Task.Run(()=> ProcessUowStates());
             }
-            if (xmlContent != null && xpath != null && xmlFileInfo != null && !string.IsNullOrEmpty(xmlFileInfo.Name))
+            if (xmlContent != null && xpath != null && !string.IsNullOrEmpty(xmlSourceFile))
             {
                 execButton.Visible = false;
                 // show the progress bar
@@ -317,7 +369,7 @@ namespace BaXmlSplitter
                 XmlDocument xml = new();
                 xml.LoadXml(xmlContent);
                 var nodes = xml.SelectNodes(xpath);
-                WriteLog(string.Format("Splitting XML file '{0}' into {1} fragments\n", xmlFileInfo.Name, nodes?.Count));
+                WriteLog(string.Format("Splitting XML file '{0}' into {1} fragments", Path.GetFileName(xmlSourceFile), nodes?.Count));
                 for (int i = 0; i < nodes?.Count; i++)
                 {
                     progressBar.Value = (int)(100 * (i + 1) / nodes.Count);
@@ -330,14 +382,14 @@ namespace BaXmlSplitter
                     var key = nodes[i]?.Attributes?["key"]?.Value;
                     if (key != null)
                     {
-                        var outPath = Path.Combine(outDirTextBox.Text, string.Format("{0}-{1}.xml",Path.GetFileNameWithoutExtension(xmlFileInfo.FullName), key));
+                        var outPath = Path.Combine(outDirTextBox.Text, string.Format("{0}-{1}.xml", Path.GetFileNameWithoutExtension(xmlSourceFile), key));
                         // write the fragment to the outPath
                         xmlFragment.Save(outPath);
-                        WriteLog(string.Format("Wrote fragment to '{0}'\n", outPath),Severity.Hint);
+                        WriteLog(string.Format("Wrote fragment to '{0}'", outPath), Severity.Hint);
                     }
                     else
                     {
-                        WriteLog(string.Format("Unable to get 'key' attribute from node {0}\n", nodes[i]!.Name),Severity.Hint);
+                        WriteLog(string.Format("Unable to get 'key' attribute from node {0}", nodes[i]!.Name), Severity.Hint);
                     }
 
                 }
@@ -372,7 +424,8 @@ namespace BaXmlSplitter
                         if (Regex.IsMatch(path, ".*\\.xml$", RegexOptions.IgnoreCase))
                         {
 
-                            TextFileChosen(out xmlContent, path, xmlSelectTextBox, "XML");
+                            xmlSelectTextBox.Text = path;
+                            XmlSelectTextBox_TextChanged(sender, e);
                         }
                         else
                         {
@@ -380,13 +433,14 @@ namespace BaXmlSplitter
                             {
                                 continue;
                             }
-                            TextFileChosen(out uowContent, path, uowTextBox, "UOW states");
+                            uowSelectBox.Text = path;
+                            UowStatesTextBox_TextChanged(sender, e);
                         }
                     }
                     else if (Directory.Exists(path))
                     {
                         outDirTextBox.Text = path;
-                        outDirTextBox.Select(outDirTextBox.Text.Length, 0);
+                        OutDirTextBox_TextChanged(sender, e);
                     }
                 }
             }
@@ -396,7 +450,14 @@ namespace BaXmlSplitter
         {
             if (uowContent != null && !string.IsNullOrEmpty(Program))
             {
+                WriteLog("Parsing units of work states file");
                 var stateMatches = Regex.Matches(uowContent, @"\t*(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = ""(?<state>[^""]*)""\)$", RegexOptions.Multiline);
+                if(stateMatches.Count == 0)
+                {
+                    ShowWarningBox("The file chosen as the units of work states does not appear to be valid; please choose another", "Invalid UOW file");
+                    WriteLog($"Invalid UOW file '{uowStatesFile}' chosen", Severity.Error);
+                    return;
+                }
                 var states = new UowState[stateMatches.Count];
                 Hashtable statesInManual = new();
                 for (int i = 0; i < stateMatches.Count; i++)
@@ -426,60 +487,64 @@ namespace BaXmlSplitter
                         var state = statesPerProgram[Program][stateValue];
                         if (!statesInManual.ContainsKey(stateValue))
                         {
-                            statesInManual[stateValue] = state;
+                            statesInManual.Add(stateValue, state);
                         }
+                        states[i].StateValue = stateValue;
                         states[i].StateName = state.StateName;
                         states[i].Remark = state.Remark;
                     }
                     states[i].XPath = string.Join('|', xpaths);
-                    var listView = new ListView
+                }
+                WriteLog(string.Format("Found {0} distinct work states in the manual: {1}", statesInManual.Count, string.Join("; ", statesInManual.Values.Cast<UowState>().Select(uow => uow.ToString()))));
+                var listView = new ListView
+                {
+                    BackColor = SystemColors.Control,
+                    BorderStyle = BorderStyle.None,
+                    Dock = DockStyle.Fill,
+                    FullRowSelect = true,
+                    HeaderStyle = ColumnHeaderStyle.Nonclickable,
+                    HideSelection = false,
+                    Location = new Point(0, 0),
+                    MultiSelect = true,
+                    Name = "UOWStatesInManualSelectList",
+                    Size = this.Size,
+                    TabIndex = 0,
+                    UseCompatibleStateImageBehavior = false,
+                    View = View.Details
+                };
+                listView.Columns.AddRange(new ColumnHeader[]
+                {
+                        new ColumnHeader { Name = "Value", Text = "Value", TextAlign = HorizontalAlignment.Right, Width = (int)(Size.Width*0.1111) },
+                        new ColumnHeader { Name = "Name", Text = "Name", TextAlign = HorizontalAlignment.Center, Width = (int)(Size.Width*0.2222) },
+                        new ColumnHeader { Name = "Remark", Text = "Remark", TextAlign = HorizontalAlignment.Left, Width = (int)(Size.Width*0.6667) }
+                });
+                var items = statesInManual.Values.Cast<UowState>().Select(state => new ListViewItem(new string[] { state.StateValue.ToString() ?? "", state.StateName ?? "", state.Remark ?? "" }));
+                listView.Items.AddRange(items.ToArray());
+                // display the multi select list view
+                var dialog = new Form
+                {
+                    Text = "Select UOW states from this manual on which to split",
+                    Size = this.Size,
+                    StartPosition = FormStartPosition.CenterParent,
+                    Icon = Resources.Icon
+            };
+                dialog.Controls.Add(listView);
+                dialog.AcceptButton = new Button { DialogResult = DialogResult.OK, Text = "OK" };
+                dialog.CancelButton = new Button { DialogResult = DialogResult.Cancel, Text = "Cancel" };
+                dialog.ShowDialog();
+                if (dialog.DialogResult == DialogResult.OK)
+                {
+                    var selectedIndices = listView.SelectedIndices;
+                    var chosenStatesToSplit = selectedIndices.Cast<int>().Select(index => (statesInManual[index] as UowState)?.StateValue).ToArray();
+                    if (selectedIndices.Count > 0)
                     {
-                        BackColor = SystemColors.Control,
-                        BorderStyle = BorderStyle.None,
-                        Dock = DockStyle.Fill,
-                        FullRowSelect = true,
-                        HeaderStyle = ColumnHeaderStyle.Nonclickable,
-                        HideSelection = false,
-                        Location = new Point(0, 0),
-                        MultiSelect = true,
-                        Name = "UOWStatesInManualSelectList",
-                        Size = new Size(200, 100),
-                        TabIndex = 0,
-                        UseCompatibleStateImageBehavior = false,
-                        View = View.Details
-                    };
-                    listView.Columns.AddRange(new ColumnHeader[]
+                        xpathTextBox.Text = xpath = string.Join('|', states.Where(state => chosenStatesToSplit.Contains(state.StateValue)).Select(state => state.XPath));
+                        xpathGroupBox.Visible = true;
+                    }
+                    else
                     {
-                        new ColumnHeader { Name = "Value", Text = "Value", TextAlign = HorizontalAlignment.Right, Width = 25 },
-                        new ColumnHeader { Name = "Name", Text = "Name", TextAlign = HorizontalAlignment.Center, Width = 50 },
-                        new ColumnHeader { Name = "Remark", Text = "Remark", TextAlign = HorizontalAlignment.Left, Width = 150 }
-                    });
-                    var items = statesInManual.Values.Cast<UowState>().Select(state => new ListViewItem(new string[] { (state.StateValue ?? int.MinValue).ToString(), state.StateName ?? "", state.Remark ?? "" }));
-                    listView.Items.AddRange(items.ToArray());
-                    // display the multi select list view
-                    var dialog = new Form
-                    {
-                        Text = "Select UOW states from this manual on which to split",
-                        Size = new Size(300, 200),
-                        StartPosition = FormStartPosition.CenterParent
-                    };
-                    dialog.Controls.Add(listView);
-                    dialog.AcceptButton = new Button { DialogResult = DialogResult.OK, Text = "OK" };
-                    dialog.CancelButton = new Button { DialogResult = DialogResult.Cancel, Text = "Cancel" };
-                    dialog.ShowDialog();
-                    if (dialog.DialogResult == DialogResult.OK)
-                    {
-                        var selectedIndices = listView.SelectedIndices;
-                        var chosenStatesToSplit = selectedIndices.Cast<int>().Select(index => (statesInManual[index] as UowState)?.StateValue).ToArray();
-                        if (selectedIndices.Count > 0)
-                        {
-                            xpathTextBox.Text = xpath = string.Join('|', states.Where(state => chosenStatesToSplit.Contains(state.StateValue)).Select(state => state.XPath));
-                            xpathGroupBox.Visible = true;
-                        }
-                        else
-                        {
-                            ShowWarningBox("Please re-execute the split to select the states.", "No states chosen");
-                        }
+                        ShowWarningBox("Please re-execute the split to select the states.", "No states chosen");
+                        WriteLog("No states chosen to split manual.", Severity.Warning);
                     }
                 }
             }
@@ -487,17 +552,10 @@ namespace BaXmlSplitter
 
         private void ProgramGroupBox(object sender, EventArgs e)
         {
-            Program = programsComboBox.Text;
-            if (!PROGRAMS.Contains<string>(Program))
+            if(Program != programsComboBox.Text && PROGRAMS.Contains<string>(programsComboBox.Text))
             {
-                try
-                {
-                    Program = PROGRAMS.Where(prog => Regex.IsMatch(prog, programsComboBox.Text)).SingleOrDefault<string>(PROGRAMS[0]);
-                }
-                catch
-                {
-                    Program = PROGRAMS[0];
-                }
+                Program = programsComboBox.Text;
+                WriteLog($"Program chosen for manual: {Program}");
             }
         }
 

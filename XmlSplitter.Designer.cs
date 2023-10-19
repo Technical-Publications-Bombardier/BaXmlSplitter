@@ -188,7 +188,8 @@ namespace BaXmlSplitter
             // programsComboBox
             // 
             programsComboBox.AutoCompleteCustomSource.AddRange(new string[] { "B_IFM", "CH604PROD", "CTALPROD", "LJ4045PROD", "GXPROD" });
-            programsComboBox.AutoCompleteMode = AutoCompleteMode.Suggest;
+            programsComboBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            programsComboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
             programsComboBox.FormattingEnabled = true;
             programsComboBox.Items.AddRange(new object[] { "B_IFM", "CH604PROD", "CTALPROD", "GXPROD", "LJ4045PROD" });
             programsComboBox.Location = new Point(6, 41);
@@ -328,13 +329,13 @@ namespace BaXmlSplitter
             logTextBox.Font = new Font("72 Monospace", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             logTextBox.ForeColor = Color.Lime;
             logTextBox.Location = new Point(-6, 24);
-            logTextBox.Multiline = true;
             logTextBox.Name = "logTextBox";
             logTextBox.ReadOnly = true;
             logTextBox.RightToLeft = RightToLeft.No;
             logTextBox.ScrollBars = RichTextBoxScrollBars.Vertical;
             logTextBox.Size = new Size(540, 198);
             logTextBox.TabIndex = 0;
+            logTextBox.Text = "";
             // 
             // XmlSplitter
             // 
@@ -352,6 +353,7 @@ namespace BaXmlSplitter
             Name = "XmlSplitter";
             SizeGripStyle = SizeGripStyle.Hide;
             Text = "Bombardier XML Splitting Tool";
+            Load += XmlSplitter_Load;
             DragOver += OnDragDrop;
             xmlSelectBox.ResumeLayout(false);
             xmlSelectBox.PerformLayout();
@@ -365,7 +367,6 @@ namespace BaXmlSplitter
             xpathGroupBox.ResumeLayout(false);
             xpathGroupBox.PerformLayout();
             logGroupBox.ResumeLayout(false);
-            logGroupBox.PerformLayout();
             ResumeLayout(false);
         }
 
