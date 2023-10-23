@@ -1,6 +1,5 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
-using System.Text.Json;
 
 namespace BaXmlSplitter
 {
@@ -18,7 +17,7 @@ namespace BaXmlSplitter
             using var configuration = TelemetryConfiguration.CreateDefault();
             try
             {
-                var applicationInsights = JsonSerializer.Deserialize<Remote.AzureResource>(Properties.Resources.ApplicationInsights);
+                var applicationInsights = Remote.ApplicationInsights;
                 configuration.ConnectionString = applicationInsights?.Properties.ConnectionString;
             }
             catch (Exception e)

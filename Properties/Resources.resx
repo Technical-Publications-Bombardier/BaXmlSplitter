@@ -130,7 +130,7 @@
   </data>
   <data name="AzureApplicationSecretExpectedHash" xml:space="preserve">
     <value>A09A0E1E9E7FEB5A2A649418D547BF3DDB9259C6B32FF8809C3A5657E7C30A67</value>
-    <comment>$hcp = Get-Content -Path "C:\Users\B0649033\source\repos\mavaddat\BaXmlSplitter\Resources\HashiCorpIdentity.json" | ConvertFrom-Json
+    <comment>$hcp = Get-Content -Path "$env:USERPROFILE\source\repos\mavaddat\BaXmlSplitter\Resources\HashiCorpIdentity.json" | ConvertFrom-Json
 $hcpApiToken = Invoke-RestMethod -Uri 'https://auth.hashicorp.com/oauth/token' -Headers @{ 'Content-Type'='application/json'; Accept='application/json' } -Body (@{ audience = 'https://api.hashicorp.cloud'; grant_type = "client_credentials"; client_id = $hcp.client_id; client_secret = (Get-Secret -Name HcpClientSecret -Vault CredMan -AsPlainText) } | ConvertTo-Json) -Method Post
 $secrets = Invoke-RestMethod -Uri "https://api.cloud.hashicorp.com/secrets/2023-06-13/organizations/84ff43ee-a407-43cf-be28-3342f32fb62c/projects/93a0ec93-839f-4b93-84a3-51d10c796d8a/apps/BaXmlSplitter/open" -Method Get -Headers @{ Authorization = "Bearer $($hcpApiToken.access_token)" }
 $secrets.secrets | ForEach-Object { $memoryStream = [System.IO.MemoryStream]::new($([System.Text.Encoding]::UTF8.GetBytes(($_.version.value)))); $hash = Get-FileHash -InputStream $memoryStream -Algorithm SHA256 | Select-Object -ExpandProperty Hash; @{ "$($_.Name)ExpectedHash"=$hash} } | Format-Table -Wrap -AutoSize</comment>
@@ -175,14 +175,14 @@ Get-FileHash -InputStream $memoryStream -Algorithm SHA256 | Select-Object -Expan
   </data>
   <data name="StorageAccountKeyOneExpectedHash" xml:space="preserve">
     <value>1502C7FE00BCF6E9A4312C34338080D462CE14B841087929A75C16EBA21B659F</value>
-    <comment>$hcp = Get-Content -Path "C:\Users\B0649033\source\repos\mavaddat\BaXmlSplitter\Resources\HashiCorpIdentity.json" | ConvertFrom-Json
+    <comment>$hcp = Get-Content -Path "$env:USERPROFILE\source\repos\mavaddat\BaXmlSplitter\Resources\HashiCorpIdentity.json" | ConvertFrom-Json
 $hcpApiToken = Invoke-RestMethod -Uri 'https://auth.hashicorp.com/oauth/token' -Headers @{ 'Content-Type'='application/json'; Accept='application/json' } -Body (@{ audience = 'https://api.hashicorp.cloud'; grant_type = "client_credentials"; client_id = $hcp.client_id; client_secret = (Get-Secret -Name HcpClientSecret -Vault CredMan -AsPlainText) } | ConvertTo-Json) -Method Post
 $secrets = Invoke-RestMethod -Uri "https://api.cloud.hashicorp.com/secrets/2023-06-13/organizations/84ff43ee-a407-43cf-be28-3342f32fb62c/projects/93a0ec93-839f-4b93-84a3-51d10c796d8a/apps/BaXmlSplitter/open" -Method Get -Headers @{ Authorization = "Bearer $($hcpApiToken.access_token)" }
 $secrets.secrets | ForEach-Object { $memoryStream = [System.IO.MemoryStream]::new($([System.Text.Encoding]::UTF8.GetBytes(($_.version.value)))); $hash = Get-FileHash -InputStream $memoryStream -Algorithm SHA256 | Select-Object -ExpandProperty Hash; @{ "$($_.Name)ExpectedHash"=$hash} } | Format-Table -Wrap -AutoSize</comment>
   </data>
   <data name="StorageAccountKeyTwoExpectedHash" xml:space="preserve">
     <value>18876E1A9946F6965B2BDCB503996EF5C253C2C3E281174558C86C67910561E1</value>
-    <comment>$hcp = Get-Content -Path "C:\Users\B0649033\source\repos\mavaddat\BaXmlSplitter\Resources\HashiCorpIdentity.json" | ConvertFrom-Json
+    <comment>$hcp = Get-Content -Path "$env:USERPROFILE\source\repos\mavaddat\BaXmlSplitter\Resources\HashiCorpIdentity.json" | ConvertFrom-Json
 $hcpApiToken = Invoke-RestMethod -Uri 'https://auth.hashicorp.com/oauth/token' -Headers @{ 'Content-Type'='application/json'; Accept='application/json' } -Body (@{ audience = 'https://api.hashicorp.cloud'; grant_type = "client_credentials"; client_id = $hcp.client_id; client_secret = (Get-Secret -Name HcpClientSecret -Vault CredMan -AsPlainText) } | ConvertTo-Json) -Method Post
 $secrets = Invoke-RestMethod -Uri "https://api.cloud.hashicorp.com/secrets/2023-06-13/organizations/84ff43ee-a407-43cf-be28-3342f32fb62c/projects/93a0ec93-839f-4b93-84a3-51d10c796d8a/apps/BaXmlSplitter/open" -Method Get -Headers @{ Authorization = "Bearer $($hcpApiToken.access_token)" }
 $secrets.secrets | ForEach-Object { $memoryStream = [System.IO.MemoryStream]::new($([System.Text.Encoding]::UTF8.GetBytes(($_.version.value)))); $hash = Get-FileHash -InputStream $memoryStream -Algorithm SHA256 | Select-Object -ExpandProperty Hash; @{ "$($_.Name)ExpectedHash"=$hash} } | Format-Table -Wrap -AutoSize</comment>
