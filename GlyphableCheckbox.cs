@@ -5,66 +5,63 @@ namespace BaXmlSplitter
 {
     [Designer(typeof(GlyphableCheckboxDesigner))]
     [ToolboxBitmap(typeof(CheckBox))]
-    public class GlyphableCheckbox : CheckBox
+    public class GlyphableCheckbox(Image @checked, Image @unchecked) : CheckBox
     {
-        private const int DefaultImageSize = 16;
-        private Image checkmarkGlyph;
+        internal const int DefaultImageSize = 16;
+
+        public override string Text
+        {
+            get => string.Empty;
+            set { /* Do nothing */ }
+        }
+
         public Image CheckmarkGlyph
         {
-            get => checkmarkGlyph;
+            get => @checked;
             set
             {
-                checkmarkGlyph = value;
+                @checked = value;
                 Invalidate();
                 UpdateSize();
             }
         }
-        private Image unCheckmarkGlyph;
+
         public Image UnCheckmarkGlyph
         {
-            get => unCheckmarkGlyph;
+            get => @unchecked;
             set
             {
-                unCheckmarkGlyph = value;
+                @unchecked = value;
                 Invalidate();
                 UpdateSize();
             }
         }
 
-        internal GlyphableCheckbox()
+        protected override void OnPaint(PaintEventArgs? pevent)
         {
-            checkmarkGlyph = CheckmarkGlyph = new Bitmap(DefaultImageSize, DefaultImageSize);
-            unCheckmarkGlyph = UnCheckmarkGlyph = new Bitmap(DefaultImageSize, DefaultImageSize);
-        }
-
-        internal GlyphableCheckbox(Image checkmark, Image uncheckmark)
-        {
-            checkmarkGlyph = CheckmarkGlyph = checkmark;
-            unCheckmarkGlyph = UnCheckmarkGlyph = uncheckmark;
-        }
-        protected override void OnPaint(PaintEventArgs pevent)
-        {
-            //clear the previous image
-            if (Parent is not null)
+            if (pevent is null)
             {
-                pevent.Graphics.Clear(Parent.BackColor);
+                return;
             }
+            //clear the previous image
+            pevent.Graphics.Clear(Parent?.BackColor ?? BackColor);
             pevent.Graphics.DrawImage(Checked ? CheckmarkGlyph : UnCheckmarkGlyph, new Rectangle(0, 0, Width, Height));
         }
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
             if (!disposing) return;
+            @checked.Dispose();
+            @unchecked.Dispose();
             CheckmarkGlyph.Dispose();
             UnCheckmarkGlyph.Dispose();
         }
 
         private void UpdateSize()
         {
-            int width = Math.Max(CheckmarkGlyph?.Width ?? 0, UnCheckmarkGlyph?.Width ?? 0);
-            int height = Math.Max(CheckmarkGlyph?.Height ?? 0, UnCheckmarkGlyph?.Height ?? 0);
-
-            Size = new Size(width, height);
+            Width = Math.Max(CheckmarkGlyph?.Width ?? DefaultImageSize, UnCheckmarkGlyph?.Width ?? DefaultImageSize);
+            Height = Math.Max(CheckmarkGlyph?.Height ?? DefaultImageSize, UnCheckmarkGlyph?.Height ?? DefaultImageSize);
+            Size = new Size(Width, Height);
         }
     }
 
@@ -74,6 +71,7 @@ namespace BaXmlSplitter
         {
             base.OnPaintAdornments(pe);
             var checkbox = (GlyphableCheckbox)Control;
+            checkbox.MinimumSize = new Size(GlyphableCheckbox.DefaultImageSize, GlyphableCheckbox.DefaultImageSize);
             ArgumentNullException.ThrowIfNull(pe, nameof(pe));
             if (checkbox.Checked)
             {

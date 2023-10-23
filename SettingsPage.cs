@@ -6,12 +6,14 @@ using System.Globalization;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using System.Resources;
+using System.Runtime.Versioning;
 
 namespace BaXmlSplitter
 {
+    [SupportedOSPlatform("windows")]
     public partial class SettingsPage : Form
     {
+        private readonly Remote.HashiCorpClient hcpClient;
         /// <summary>
         /// Exception to indicate that the secret was incorrect.
         /// </summary>
@@ -86,8 +88,18 @@ namespace BaXmlSplitter
         /// </exception>
         private void SetSecretSetting(string property, string expectedHash, string inputValue, out string field)
         {
+            if (string.IsNullOrEmpty(inputValue))
+            {
+                field = string.Empty;
+                return;
+            }
             // check that the SHA-256 hash is as expected
-            if (SHA256.HashData(Encoding.UTF8.GetBytes(inputValue)) is not { } hash || string.Equals(hash.ToString(),
+            if (SHA256.HashData(Encoding.UTF8.GetBytes(inputValue)) is not { } hashBytes ||
+                BitConverter.ToString(hashBytes)
+                        .Replace("-",
+                            string.Empty,
+                            StringComparison.InvariantCulture) is not { } hashStr ||
+                !string.Equals(hashStr,
                     expectedHash, StringComparison.OrdinalIgnoreCase))
             {
                 throw new SecretSettingsException($"Hash mismatch. {property} content appears to have been corrupted.");

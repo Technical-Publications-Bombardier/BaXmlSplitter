@@ -117,6 +117,148 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="secretsGroup.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="showAzureStorageAccountKeyTwoCheckbox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="showAzureStorageAccountKeyTwoCheckbox.CheckmarkGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        WgAAAFoBBySI6wAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAGTSURBVDhPpdPN
+        K0RRGMfxa8EYY+tlxwY7s1JCakJTlL9AsVFkSsNWmpIsZCPFxAoLESsUe7G0RcjCQkp5z0uN7288dzrN
+        nRVTnzrn9zzn6c6ZO14mkwngU4QOrOIS70ZrZZ0oKng2EHheDy7wgU0ModsMYxuqqacncD638LwwlvGJ
+        aVRZHsWoiVpWiRl8YQXh3BxrKMEurtFsWQhr0MZ3jBRC1tOEK+yhxLLsfW3gFjUKrbAAf9CpqUc/5p2+
+        WtxA16NZXh9e0Og0VUBfR5uEk+seH6BahZM3QDM0K/s1pvyiNcShxb2bW+3OavG8fAonWhwgnVeMQYtn
+        ZO/G8mI8QptY3pk0DrXQ4W/0OsVyaJg2Syg1i5Y9IeL0d0EzYn4wiTe0OE3j0EL03om/Tzp9rdD9pbJ7
+        pzBrhUEnG4P/pKK1O2wAetq5XOYU9ZOP4BX70FUoi6DNlFnWDr176k0oCwzMBb/v2g70jzmDLnsC+hXX
+        cQ7V9BesC5zPD3x8qpHEFo6M1rqG6kJnpGD4HwXDv8t4P8QCAVH2CPswAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="showAzureStorageAccountKeyTwoCheckbox.UnCheckmarkGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        WgAAAFoBBySI6wAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADxSURBVDhPrdC9
+        TgJBFIbhsYFsWG8CYm2zFT0QCnoLf2i3ZTV4SSbQCQ2XwA1o5SVY2JgY4/J+69nEbE6Im+EkT7LzzZ4z
+        mQllWZ6UG8ZwwxhuGMMNY7hhDNUUqbfZBnVus8Ib1t5PbVBPNiuM8YMH78f/oO5txqgOCujjEWfNhmOo
+        JTRsUa0tzPAJLbYY/G3yUH08Qwv1ZpaHS7xjhwle8Y0VrnGBFD0McAXtfeEFejL1aoZmVffXSYmd0MUt
+        9lDg0d4NOtaTQDMK9zpC5fjAEDOjb2W51yNuKNQaGyfXG6+aec0NRcNw5+Rz7TXzX2U4AOhP7QUzrg/t
+        AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <metadata name="showAzureStorageAccountKeyOneCheckbox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="showAzureStorageAccountKeyOneCheckbox.CheckmarkGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        WwAAAFsB1WNqDwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAGTSURBVDhPpdPN
+        K0RRGMfxa8EYY+tlxwY7s1JCakJTlL9AsVFkSsNWmpIsZCPFxAoLESsUe7G0RcjCQkp5z0uN7288dzrN
+        nRVTnzrn9zzn6c6ZO14mkwngU4QOrOIS70ZrZZ0oKng2EHheDy7wgU0ModsMYxuqqacncD638LwwlvGJ
+        aVRZHsWoiVpWiRl8YQXh3BxrKMEurtFsWQhr0MZ3jBRC1tOEK+yhxLLsfW3gFjUKrbAAf9CpqUc/5p2+
+        WtxA16NZXh9e0Og0VUBfR5uEk+seH6BahZM3QDM0K/s1pvyiNcShxb2bW+3OavG8fAonWhwgnVeMQYtn
+        ZO/G8mI8QptY3pk0DrXQ4W/0OsVyaJg2Syg1i5Y9IeL0d0EzYn4wiTe0OE3j0EL03om/Tzp9rdD9pbJ7
+        pzBrhUEnG4P/pKK1O2wAetq5XOYU9ZOP4BX70FUoi6DNlFnWDr176k0oCwzMBb/v2g70jzmDLnsC+hXX
+        cQ7V9BesC5zPD3x8qpHEFo6M1rqG6kJnpGD4HwXDv8t4P8QCAVH2CPswAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="showAzureStorageAccountKeyOneCheckbox.UnCheckmarkGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        WwAAAFsB1WNqDwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADxSURBVDhPrdC9
+        TgJBFIbhsYFsWG8CYm2zFT0QCnoLf2i3ZTV4SSbQCQ2XwA1o5SVY2JgY4/J+69nEbE6Im+EkT7LzzZ4z
+        mQllWZ6UG8ZwwxhuGMMNY7hhDNUUqbfZBnVus8Ib1t5PbVBPNiuM8YMH78f/oO5txqgOCujjEWfNhmOo
+        JTRsUa0tzPAJLbYY/G3yUH08Qwv1ZpaHS7xjhwle8Y0VrnGBFD0McAXtfeEFejL1aoZmVffXSYmd0MUt
+        9lDg0d4NOtaTQDMK9zpC5fjAEDOjb2W51yNuKNQaGyfXG6+aec0NRcNw5+Rz7TXzX2U4AOhP7QUzrg/t
+        AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <metadata name="showBaOraConnectionStringCheckbox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="showBaOraConnectionStringCheckbox.CheckmarkGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        XAAAAFwBhyfMcAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAGTSURBVDhPpdPN
+        K0RRGMfxa8EYY+tlxwY7s1JCakJTlL9AsVFkSsNWmpIsZCPFxAoLESsUe7G0RcjCQkp5z0uN7288dzrN
+        nRVTnzrn9zzn6c6ZO14mkwngU4QOrOIS70ZrZZ0oKng2EHheDy7wgU0ModsMYxuqqacncD638LwwlvGJ
+        aVRZHsWoiVpWiRl8YQXh3BxrKMEurtFsWQhr0MZ3jBRC1tOEK+yhxLLsfW3gFjUKrbAAf9CpqUc/5p2+
+        WtxA16NZXh9e0Og0VUBfR5uEk+seH6BahZM3QDM0K/s1pvyiNcShxb2bW+3OavG8fAonWhwgnVeMQYtn
+        ZO/G8mI8QptY3pk0DrXQ4W/0OsVyaJg2Syg1i5Y9IeL0d0EzYn4wiTe0OE3j0EL03om/Tzp9rdD9pbJ7
+        pzBrhUEnG4P/pKK1O2wAetq5XOYU9ZOP4BX70FUoi6DNlFnWDr176k0oCwzMBb/v2g70jzmDLnsC+hXX
+        cQ7V9BesC5zPD3x8qpHEFo6M1rqG6kJnpGD4HwXDv8t4P8QCAVH2CPswAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="showBaOraConnectionStringCheckbox.UnCheckmarkGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        XAAAAFwBhyfMcAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADxSURBVDhPrdC9
+        TgJBFIbhsYFsWG8CYm2zFT0QCnoLf2i3ZTV4SSbQCQ2XwA1o5SVY2JgY4/J+69nEbE6Im+EkT7LzzZ4z
+        mQllWZ6UG8ZwwxhuGMMNY7hhDNUUqbfZBnVus8Ib1t5PbVBPNiuM8YMH78f/oO5txqgOCujjEWfNhmOo
+        JTRsUa0tzPAJLbYY/G3yUH08Qwv1ZpaHS7xjhwle8Y0VrnGBFD0McAXtfeEFejL1aoZmVffXSYmd0MUt
+        9lDg0d4NOtaTQDMK9zpC5fjAEDOjb2W51yNuKNQaGyfXG6+aec0NRcNw5+Rz7TXzX2U4AOhP7QUzrg/t
+        AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <metadata name="showAzureApplicationSecretCheckbox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="showAzureApplicationSecretCheckbox.CheckmarkGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        XAAAAFwBhyfMcAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAGTSURBVDhPpdPN
+        K0RRGMfxa8EYY+tlxwY7s1JCakJTlL9AsVFkSsNWmpIsZCPFxAoLESsUe7G0RcjCQkp5z0uN7288dzrN
+        nRVTnzrn9zzn6c6ZO14mkwngU4QOrOIS70ZrZZ0oKng2EHheDy7wgU0ModsMYxuqqacncD638LwwlvGJ
+        aVRZHsWoiVpWiRl8YQXh3BxrKMEurtFsWQhr0MZ3jBRC1tOEK+yhxLLsfW3gFjUKrbAAf9CpqUc/5p2+
+        WtxA16NZXh9e0Og0VUBfR5uEk+seH6BahZM3QDM0K/s1pvyiNcShxb2bW+3OavG8fAonWhwgnVeMQYtn
+        ZO/G8mI8QptY3pk0DrXQ4W/0OsVyaJg2Syg1i5Y9IeL0d0EzYn4wiTe0OE3j0EL03om/Tzp9rdD9pbJ7
+        pzBrhUEnG4P/pKK1O2wAetq5XOYU9ZOP4BX70FUoi6DNlFnWDr176k0oCwzMBb/v2g70jzmDLnsC+hXX
+        cQ7V9BesC5zPD3x8qpHEFo6M1rqG6kJnpGD4HwXDv8t4P8QCAVH2CPswAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="showAzureApplicationSecretCheckbox.UnCheckmarkGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        XAAAAFwBhyfMcAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADxSURBVDhPrdC9
+        TgJBFIbhsYFsWG8CYm2zFT0QCnoLf2i3ZTV4SSbQCQ2XwA1o5SVY2JgY4/J+69nEbE6Im+EkT7LzzZ4z
+        mQllWZ6UG8ZwwxhuGMMNY7hhDNUUqbfZBnVus8Ib1t5PbVBPNiuM8YMH78f/oO5txqgOCujjEWfNhmOo
+        JTRsUa0tzPAJLbYY/G3yUH08Qwv1ZpaHS7xjhwle8Y0VrnGBFD0McAXtfeEFejL1aoZmVffXSYmd0MUt
+        9lDg0d4NOtaTQDMK9zpC5fjAEDOjb2W51yNuKNQaGyfXG6+aec0NRcNw5+Rz7TXzX2U4AOhP7QUzrg/t
+        AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <metadata name="showHashiCorpClientSecretCheckbox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="showHashiCorpClientSecretCheckbox.CheckmarkGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        XQAAAF0BVWAulAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAGTSURBVDhPpdPN
+        K0RRGMfxa8EYY+tlxwY7s1JCakJTlL9AsVFkSsNWmpIsZCPFxAoLESsUe7G0RcjCQkp5z0uN7288dzrN
+        nRVTnzrn9zzn6c6ZO14mkwngU4QOrOIS70ZrZZ0oKng2EHheDy7wgU0ModsMYxuqqacncD638LwwlvGJ
+        aVRZHsWoiVpWiRl8YQXh3BxrKMEurtFsWQhr0MZ3jBRC1tOEK+yhxLLsfW3gFjUKrbAAf9CpqUc/5p2+
+        WtxA16NZXh9e0Og0VUBfR5uEk+seH6BahZM3QDM0K/s1pvyiNcShxb2bW+3OavG8fAonWhwgnVeMQYtn
+        ZO/G8mI8QptY3pk0DrXQ4W/0OsVyaJg2Syg1i5Y9IeL0d0EzYn4wiTe0OE3j0EL03om/Tzp9rdD9pbJ7
+        pzBrhUEnG4P/pKK1O2wAetq5XOYU9ZOP4BX70FUoi6DNlFnWDr176k0oCwzMBb/v2g70jzmDLnsC+hXX
+        cQ7V9BesC5zPD3x8qpHEFo6M1rqG6kJnpGD4HwXDv8t4P8QCAVH2CPswAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="showHashiCorpClientSecretCheckbox.UnCheckmarkGlyph" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
+        XQAAAF0BVWAulAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAADxSURBVDhPrdC9
+        TgJBFIbhsYFsWG8CYm2zFT0QCnoLf2i3ZTV4SSbQCQ2XwA1o5SVY2JgY4/J+69nEbE6Im+EkT7LzzZ4z
+        mQllWZ6UG8ZwwxhuGMMNY7hhDNUUqbfZBnVus8Ib1t5PbVBPNiuM8YMH78f/oO5txqgOCujjEWfNhmOo
+        JTRsUa0tzPAJLbYY/G3yUH08Qwv1ZpaHS7xjhwle8Y0VrnGBFD0McAXtfeEFejL1aoZmVffXSYmd0MUt
+        9lDg0d4NOtaTQDMK9zpC5fjAEDOjb2W51yNuKNQaGyfXG6+aec0NRcNw5+Rz7TXzX2U4AOhP7QUzrg/t
+        AAAAAElFTkSuQmCC
+</value>
+  </data>
+  <metadata name="arrowsLabel.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="arrowsLabel.Text" xml:space="preserve">
     <value>Providing the HashiCorp
 Client Secret will populate
@@ -131,7 +273,51 @@ the other fields.
 	 secrets and fill the 
 	 corresponding fields</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <metadata name="StorageAccountKeyTwoLabel.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="AzureStorageKeyTwoTextBox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="StorageAccountKeyOneLabel.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="AzureStorageKeyOneTextBox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="BaOraConnectionStringLabel.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="BaOraConnectionStringTextBox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="AzureApplicationSecretLabel.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="AzureApplicationSecretTextBox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="HashiCorpClientSecretTextBox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="hashiCorpClientSecretLabel.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="cancelSettings.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="okSettings.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="applySettings.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="splitSettings.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="$this.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         AAABAAcAAAAAAAAAGAAoIAMAdgAAABAQAAAAABgAaAMAAJ4gAwCAgAAAAAAYACjIAAAGJAMAICAAAAAA

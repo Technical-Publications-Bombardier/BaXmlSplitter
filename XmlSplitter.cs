@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using Microsoft.ApplicationInsights;
+#pragma warning disable CA1308
 
 namespace BaXmlSplitter
 {
@@ -35,7 +36,13 @@ namespace BaXmlSplitter
         /// The path to the source XML file on which the split will be performed.
         /// </summary>
         private string? xmlSourceFile;
-        private string? XmlSourceFileBaseName => XmlSplitterHelpers.XmlFilenameRe.Replace(Path.GetFileNameWithoutExtension(xmlSourceFile ?? string.Empty), m => TerminusChars().Replace(m.Groups[1].Value, string.Empty));
+        /// <summary>
+        /// Gets the name of the XML source file base.
+        /// </summary>
+        /// <value>
+        /// The name of the XML source file base.
+        /// </value>
+        private string XmlSourceFileBaseName => XmlSplitterHelpers.XmlFilenameRe.Replace(Path.GetFileNameWithoutExtension(xmlSourceFile ?? string.Empty), m => TerminusChars().Replace(m.Groups[1].Value, string.Empty));
 
         /// <summary>The string content of the XML file on which the split will be performed. This is 
         /// loaded into memory as soon as the XML is selected.</summary>
@@ -153,13 +160,11 @@ namespace BaXmlSplitter
                             finally
                             {
                                 logWriter.Close();
-                                logWriter.Dispose();
                             }
                         }
                         finally
                         {
                             log.Close();
-                            log.Dispose();
                         }
                     }
                     catch (Exception e)
@@ -294,7 +299,7 @@ namespace BaXmlSplitter
                         OutDirTextBox_TextChanged(sender, e);
                     }
                     WriteLog(string.Format(CultureInfo.InvariantCulture, "Reading XML file '{0}'", Path.GetFileName(xmlSourceFile)));
-                    //TextFileChosen(out xmlContent, xmlSelectTextBox.Text, xmlSelectTextBox, "XML");
+
                     xmlContent = await File.ReadAllTextAsync(xmlSourceFile).ConfigureAwait(false);
                     if (string.IsNullOrEmpty(xmlContent) && new FileInfo(xmlSourceFile).Length > 0)
                     {
@@ -645,7 +650,8 @@ namespace BaXmlSplitter
                                                  """);
                         var dateTimeNow = DateTime.Now.ToString(XmlSplitterHelpers.ReportTimestampFormat, CultureInfo.InvariantCulture);
                         var reportBaseFilename = $"{XmlSourceFileBaseName}SplittingReport - {dateTimeNow}";
-                        var splittingReportFilenames = Enum.GetNames<XmlSplitReport.ReportFormat>().Select(format => $"{reportBaseFilename}.{format.ToLowerInvariant()}").ToArray();
+                        var splittingReportFilenames = Enum.GetNames<XmlSplitReport.ReportFormat>()
+                            .Select(format => $"{reportBaseFilename}.{format.ToLowerInvariant()}").ToArray();
                         _ = htmlReportBuilder.Append(CultureInfo.InvariantCulture, $"""
                              <body>
                                  <p>The source XML, '{Path.GetFileName(xmlSourceFile)}', was split into {nodes.Length} unit of work nodes.</p>
@@ -1054,5 +1060,50 @@ namespace BaXmlSplitter
 
         [GeneratedRegex("[_-]$")]
         private static partial Regex TerminusChars();
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // quit the app
+            Application.Exit();
+        }
+
+        private void printPreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // show print preview
+            PrintPreviewDialog printPreviewDialog = new();
+        }
+
+        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // show print dialog
+            PrintDialog printDialog = new();
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // save the xpath
+            SaveFileDialog saveFileDialog = new();
+
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

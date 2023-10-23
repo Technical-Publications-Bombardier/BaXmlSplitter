@@ -17,6 +17,7 @@
             {
                 components.Dispose();
             }
+            hcpClient.Dispose();
             base.Dispose(disposing);
         }
 
@@ -197,20 +198,42 @@
             applySettings.UseVisualStyleBackColor = true;
             applySettings.Click += ApplySettings_Click;
             // 
-            // splitContainer1
+            // splitSettings
             // 
-            splitContainer1.Location = new Point(12, 12);
-            splitContainer1.Name = "splitContainer1";
+            splitSettings.Location = new Point(12, 12);
+            splitSettings.Name = "splitSettings";
             // 
-            // splitContainer1.Panel2
+            // splitSettings.Panel1
             // 
-            splitContainer1.Panel2.Controls.Add(settingsGroup);
-            splitContainer1.Panel2.Controls.Add(applySettings);
-            splitContainer1.Panel2.Controls.Add(okSettings);
-            splitContainer1.Panel2.Controls.Add(cancelSettings);
-            splitContainer1.Size = new Size(776, 426);
-            splitContainer1.SplitterDistance = 194;
-            splitContainer1.TabIndex = 1;
+            splitSettings.Panel1.Controls.Add(languageGroup);
+            // 
+            // splitSettings.Panel2
+            // 
+            splitSettings.Panel2.Controls.Add(secretsGroup);
+            splitSettings.Panel2.Controls.Add(applySettings);
+            splitSettings.Panel2.Controls.Add(okSettings);
+            splitSettings.Panel2.Controls.Add(cancelSettings);
+            splitSettings.Size = new Size(776, 426);
+            splitSettings.SplitterDistance = 194;
+            splitSettings.TabIndex = 1;
+            // 
+            // languageGroup
+            // 
+            languageGroup.Controls.Add(languageComboBox);
+            languageGroup.Location = new Point(1, 0);
+            languageGroup.Name = "languageGroup";
+            languageGroup.Size = new Size(194, 426);
+            languageGroup.TabIndex = 0;
+            languageGroup.TabStop = false;
+            languageGroup.Text = "Language";
+            // 
+            // languageComboBox
+            // 
+            languageComboBox.FormattingEnabled = true;
+            languageComboBox.Location = new Point(6, 21);
+            languageComboBox.Name = "languageComboBox";
+            languageComboBox.Size = new Size(182, 23);
+            languageComboBox.TabIndex = 0;
             // 
             // SettingsPage
             // 
@@ -219,15 +242,18 @@
             AutoScaleMode = AutoScaleMode.Font;
             CancelButton = cancelSettings;
             ClientSize = new Size(800, 450);
-            Controls.Add(splitContainer1);
+            Controls.Add(splitSettings);
             Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "SettingsPage";
             Text = "Xml Splitter Settings";
-            settingsGroup.ResumeLayout(false);
-            settingsGroup.PerformLayout();
-            splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
-            splitContainer1.ResumeLayout(false);
+            Load += LoadSecrets;
+            secretsGroup.ResumeLayout(false);
+            secretsGroup.PerformLayout();
+            splitSettings.Panel1.ResumeLayout(false);
+            splitSettings.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitSettings).EndInit();
+            splitSettings.ResumeLayout(false);
+            languageGroup.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -248,7 +274,7 @@
         private TextBox AzureStorageKeyOneTextBox;
         private Label BaOraConnectionStringLabel;
         private TextBox BaOraConnectionStringTextBox;
-        private SplitContainer splitContainer1;
+        private SplitContainer splitSettings;
         private Label arrowsLabel;
     }
 }
