@@ -23,6 +23,10 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
           ${{ runner.os }}-nuget
+    - name: Embed environment variables
+      shell: pwsh
+      run: |
+        Write-Verbose -Message "Setting Application Insights JSON" -Verbose; try { Get-Item -Path (Join-Path -Path 'Env:' -ChildPath 'AZUREAPPLICATIONINSIGHTS') -ErrorAction SilentlyContinue | ConvertFrom-Json -Depth 99 | ConvertTo-Json -Depth 99 | Out-File -FilePath .\Resources\ApplicationInsights.json -Verbose } catch { Write-Warning -Message "Failed setting up Application Insights JSON: $_" -Verbose; throw $_ }
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -31,10 +35,6 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Publish
       run: dotnet publish BaXmlSplitter.csproj --configuration Release --output ./publish --runtime win-x64 --self-contained true
-    - name: Embed environment variables
-      shell: pwsh
-      run: |
-        Write-Verbose -Message "Setting Application Insights JSON" -Verbose; try { Get-Item -Path (Join-Path -Path 'Env:' -ChildPath 'AZUREAPPLICATIONINSIGHTS') -ErrorAction SilentlyContinue | ConvertFrom-Json -Depth 99 | ConvertTo-Json -Depth 99 | Out-File -FilePath .\Resources\ApplicationInsights.json -Verbose } catch { Write-Warning -Message "Failed setting up Application Insights JSON: $_" -Verbose }
     - name: Zip the executable
       shell: pwsh
       run: |
