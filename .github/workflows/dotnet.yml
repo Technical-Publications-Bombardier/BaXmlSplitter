@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build-and-deploy:
+  build:
 
     runs-on: windows-latest
 
@@ -31,10 +31,31 @@ jobs:
       run: dotnet test --no-build --verbosity normal
     - name: Publish
       run: dotnet publish BaXmlSplitter.csproj --configuration Release --output ./publish --runtime win-x64 --self-contained true
+    - name: Embed environment variables
+      shell: pwsh
+      run: |
+        Write-Verbose -Message "Setting Application Insights JSON" -Verbose; try { Get-Item -Path (Join-Path -Path 'Env:' -ChildPath 'AZUREAPPLICATIONINSIGHTS') -ErrorAction SilentlyContinue | ConvertFrom-Json -Depth 99 | ConvertTo-Json -Depth 99 | Out-File -FilePath .\Resources\ApplicationInsights.json -Verbose } catch { Write-Warning -Message "Failed setting up Application Insights JSON: $_" -Verbose }
     - name: Zip the executable
       shell: pwsh
       run: |
-        Get-ChildItem -Path ./publish -Include @('BaXmlSplitter.exe') -File -Recurse | Select-Object -First 1 | Compress-Archive -DestinationPath ./publish/BaXmlSplitter.zip -CompressionLevel Optimal -PassThru
+        Write-Verbose -Message "Compressing publish output" -Verbose; try { Get-ChildItem -Path ./publish -Include @('BaXmlSplitter.exe') -File -Recurse | Select-Object -First 1 | Compress-Archive -DestinationPath ./publish/BaXmlSplitter.zip -CompressionLevel Optimal -PassThru -Verbose | Write-Verbose -Verbose } catch { Write-Warning -Message "Failed compressing publish output" -Verbose; throw $_; }
+    - name: Handover Artifacts to Linux Runner
+      uses: actions/upload-artifact@v3
+      with:
+        name: BaXmlSplitter
+        path: ./publish/BaXmlSplitter.zip
+
+  deploy:
+
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Receive Artifacts from Windows Runner
+      uses: actions/download-artifact@v3
+      with:
+        name: BaXmlSplitter
     - name: Azure Login
       uses: azure/login@v1
       with:
@@ -43,5 +64,5 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          az storage blob upload --account-name blobstoragedev001 --name BaXmlSplitter.zip --type block --file ./publish/BaXmlSplitter.zip --container-name bastorage
-        azcliversion: 2.30.0
+          az storage blob upload --account-name blobstoragedev001 --name BaXmlSplitter.zip --type block --file ./BaXmlSplitter.zip --container-name bastorage --overwrite
+        azcliversion: latest
