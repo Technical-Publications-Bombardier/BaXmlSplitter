@@ -30,7 +30,12 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsPage));
-            settingsGroup = new GroupBox();
+            secretsGroup = new GroupBox();
+            showAzureStorageAccountKeyTwoCheckbox = new ShowPasswordCheckbox();
+            showAzureStorageAccountKeyOneCheckbox = new ShowPasswordCheckbox();
+            showBaOraConnectionStringCheckbox = new ShowPasswordCheckbox();
+            showAzureApplicationSecretCheckbox = new ShowPasswordCheckbox();
+            showHashiCorpClientSecretCheckbox = new ShowPasswordCheckbox();
             arrowsLabel = new Label();
             StorageAccountKeyTwoLabel = new Label();
             AzureStorageKeyTwoTextBox = new TextBox();
@@ -45,33 +50,97 @@
             cancelSettings = new Button();
             okSettings = new Button();
             applySettings = new Button();
-            splitContainer1 = new SplitContainer();
-            settingsGroup.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
-            splitContainer1.Panel2.SuspendLayout();
-            splitContainer1.SuspendLayout();
+            splitSettings = new SplitContainer();
+            languageGroup = new GroupBox();
+            languageComboBox = new ComboBox();
+            secretsGroup.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitSettings).BeginInit();
+            splitSettings.Panel1.SuspendLayout();
+            splitSettings.Panel2.SuspendLayout();
+            splitSettings.SuspendLayout();
+            languageGroup.SuspendLayout();
             SuspendLayout();
             // 
-            // settingsGroup
+            // secretsGroup
             // 
-            settingsGroup.BackgroundImage = Properties.Resources.arrows;
-            settingsGroup.Controls.Add(arrowsLabel);
-            settingsGroup.Controls.Add(StorageAccountKeyTwoLabel);
-            settingsGroup.Controls.Add(AzureStorageKeyTwoTextBox);
-            settingsGroup.Controls.Add(StorageAccountKeyOneLabel);
-            settingsGroup.Controls.Add(AzureStorageKeyOneTextBox);
-            settingsGroup.Controls.Add(BaOraConnectionStringLabel);
-            settingsGroup.Controls.Add(BaOraConnectionStringTextBox);
-            settingsGroup.Controls.Add(AzureApplicationSecretLabel);
-            settingsGroup.Controls.Add(AzureApplicationSecretTextBox);
-            settingsGroup.Controls.Add(HashiCorpClientSecretTextBox);
-            settingsGroup.Controls.Add(hashiCorpClientSecretLabel);
-            settingsGroup.Location = new Point(3, 3);
-            settingsGroup.Name = "settingsGroup";
-            settingsGroup.Size = new Size(575, 261);
-            settingsGroup.TabIndex = 0;
-            settingsGroup.TabStop = false;
-            settingsGroup.Text = "Secrets Retrieval";
+            secretsGroup.BackgroundImage = Properties.Resources.arrows;
+            secretsGroup.Controls.Add(showAzureStorageAccountKeyTwoCheckbox);
+            secretsGroup.Controls.Add(showAzureStorageAccountKeyOneCheckbox);
+            secretsGroup.Controls.Add(showBaOraConnectionStringCheckbox);
+            secretsGroup.Controls.Add(showAzureApplicationSecretCheckbox);
+            secretsGroup.Controls.Add(showHashiCorpClientSecretCheckbox);
+            secretsGroup.Controls.Add(arrowsLabel);
+            secretsGroup.Controls.Add(StorageAccountKeyTwoLabel);
+            secretsGroup.Controls.Add(AzureStorageKeyTwoTextBox);
+            secretsGroup.Controls.Add(StorageAccountKeyOneLabel);
+            secretsGroup.Controls.Add(AzureStorageKeyOneTextBox);
+            secretsGroup.Controls.Add(BaOraConnectionStringLabel);
+            secretsGroup.Controls.Add(BaOraConnectionStringTextBox);
+            secretsGroup.Controls.Add(AzureApplicationSecretLabel);
+            secretsGroup.Controls.Add(AzureApplicationSecretTextBox);
+            secretsGroup.Controls.Add(HashiCorpClientSecretTextBox);
+            secretsGroup.Controls.Add(hashiCorpClientSecretLabel);
+            secretsGroup.Location = new Point(3, 3);
+            secretsGroup.Name = "secretsGroup";
+            secretsGroup.Size = new Size(575, 261);
+            secretsGroup.TabIndex = 0;
+            secretsGroup.TabStop = false;
+            secretsGroup.Text = "Secrets Retrieval";
+            // 
+            // showAzureStorageAccountKeyTwoCheckbox
+            // 
+            showAzureStorageAccountKeyTwoCheckbox.AutoSize = true;
+            showAzureStorageAccountKeyTwoCheckbox.CheckmarkGlyph = (Image)resources.GetObject("showAzureStorageAccountKeyTwoCheckbox.CheckmarkGlyph");
+            showAzureStorageAccountKeyTwoCheckbox.Location = new Point(258, 202);
+            showAzureStorageAccountKeyTwoCheckbox.Name = "showAzureStorageAccountKeyTwoCheckbox";
+            showAzureStorageAccountKeyTwoCheckbox.Size = new Size(15, 14);
+            showAzureStorageAccountKeyTwoCheckbox.TabIndex = 18;
+            showAzureStorageAccountKeyTwoCheckbox.UnCheckmarkGlyph = (Image)resources.GetObject("showAzureStorageAccountKeyTwoCheckbox.UnCheckmarkGlyph");
+            showAzureStorageAccountKeyTwoCheckbox.CheckedChanged += ShowAzureStorageAccountKeyTwo_Click;
+            // 
+            // showAzureStorageAccountKeyOneCheckbox
+            // 
+            showAzureStorageAccountKeyOneCheckbox.AutoSize = true;
+            showAzureStorageAccountKeyOneCheckbox.CheckmarkGlyph = (Image)resources.GetObject("showAzureStorageAccountKeyOneCheckbox.CheckmarkGlyph");
+            showAzureStorageAccountKeyOneCheckbox.Location = new Point(259, 158);
+            showAzureStorageAccountKeyOneCheckbox.Name = "showAzureStorageAccountKeyOneCheckbox";
+            showAzureStorageAccountKeyOneCheckbox.Size = new Size(15, 14);
+            showAzureStorageAccountKeyOneCheckbox.TabIndex = 17;
+            showAzureStorageAccountKeyOneCheckbox.UnCheckmarkGlyph = (Image)resources.GetObject("showAzureStorageAccountKeyOneCheckbox.UnCheckmarkGlyph");
+            showAzureStorageAccountKeyOneCheckbox.CheckedChanged += ShowAzureStorageAccountKeyOne_Click;
+            // 
+            // showBaOraConnectionStringCheckbox
+            // 
+            showBaOraConnectionStringCheckbox.AutoSize = true;
+            showBaOraConnectionStringCheckbox.CheckmarkGlyph = (Image)resources.GetObject("showBaOraConnectionStringCheckbox.CheckmarkGlyph");
+            showBaOraConnectionStringCheckbox.Location = new Point(258, 115);
+            showBaOraConnectionStringCheckbox.Name = "showBaOraConnectionStringCheckbox";
+            showBaOraConnectionStringCheckbox.Size = new Size(15, 14);
+            showBaOraConnectionStringCheckbox.TabIndex = 16;
+            showBaOraConnectionStringCheckbox.UnCheckmarkGlyph = (Image)resources.GetObject("showBaOraConnectionStringCheckbox.UnCheckmarkGlyph");
+            showBaOraConnectionStringCheckbox.CheckedChanged += ShowBaOraConnectionString_Click;
+            // 
+            // showAzureApplicationSecretCheckbox
+            // 
+            showAzureApplicationSecretCheckbox.AutoSize = true;
+            showAzureApplicationSecretCheckbox.CheckmarkGlyph = (Image)resources.GetObject("showAzureApplicationSecretCheckbox.CheckmarkGlyph");
+            showAzureApplicationSecretCheckbox.Location = new Point(259, 70);
+            showAzureApplicationSecretCheckbox.Name = "showAzureApplicationSecretCheckbox";
+            showAzureApplicationSecretCheckbox.Size = new Size(15, 14);
+            showAzureApplicationSecretCheckbox.TabIndex = 15;
+            showAzureApplicationSecretCheckbox.UnCheckmarkGlyph = (Image)resources.GetObject("showAzureApplicationSecretCheckbox.UnCheckmarkGlyph");
+            showAzureApplicationSecretCheckbox.CheckedChanged += ShowAzureApplicationSecret_Click;
+            // 
+            // showHashiCorpClientSecretCheckbox
+            // 
+            showHashiCorpClientSecretCheckbox.AutoSize = true;
+            showHashiCorpClientSecretCheckbox.CheckmarkGlyph = (Image)resources.GetObject("showHashiCorpClientSecretCheckbox.CheckmarkGlyph");
+            showHashiCorpClientSecretCheckbox.Location = new Point(258, 27);
+            showHashiCorpClientSecretCheckbox.Name = "showHashiCorpClientSecretCheckbox";
+            showHashiCorpClientSecretCheckbox.Size = new Size(15, 14);
+            showHashiCorpClientSecretCheckbox.TabIndex = 14;
+            showHashiCorpClientSecretCheckbox.UnCheckmarkGlyph = (Image)resources.GetObject("showHashiCorpClientSecretCheckbox.UnCheckmarkGlyph");
+            showHashiCorpClientSecretCheckbox.CheckedChanged += ShowHashiCorpClientSecret_Click;
             // 
             // arrowsLabel
             // 
@@ -98,6 +167,7 @@
             AzureStorageKeyTwoTextBox.Name = "AzureStorageKeyTwoTextBox";
             AzureStorageKeyTwoTextBox.Size = new Size(270, 23);
             AzureStorageKeyTwoTextBox.TabIndex = 11;
+            AzureStorageKeyTwoTextBox.UseSystemPasswordChar = true;
             // 
             // StorageAccountKeyOneLabel
             // 
@@ -115,6 +185,7 @@
             AzureStorageKeyOneTextBox.Name = "AzureStorageKeyOneTextBox";
             AzureStorageKeyOneTextBox.Size = new Size(270, 23);
             AzureStorageKeyOneTextBox.TabIndex = 9;
+            AzureStorageKeyOneTextBox.UseSystemPasswordChar = true;
             // 
             // BaOraConnectionStringLabel
             // 
@@ -132,6 +203,7 @@
             BaOraConnectionStringTextBox.Name = "BaOraConnectionStringTextBox";
             BaOraConnectionStringTextBox.Size = new Size(270, 23);
             BaOraConnectionStringTextBox.TabIndex = 7;
+            BaOraConnectionStringTextBox.UseSystemPasswordChar = true;
             // 
             // AzureApplicationSecretLabel
             // 
@@ -149,6 +221,7 @@
             AzureApplicationSecretTextBox.Name = "AzureApplicationSecretTextBox";
             AzureApplicationSecretTextBox.Size = new Size(270, 23);
             AzureApplicationSecretTextBox.TabIndex = 5;
+            AzureApplicationSecretTextBox.UseSystemPasswordChar = true;
             // 
             // HashiCorpClientSecretTextBox
             // 
@@ -259,7 +332,6 @@
 
         #endregion
 
-        private GroupBox settingsGroup;
         private Button cancelSettings;
         private Button okSettings;
         private Button applySettings;
@@ -276,5 +348,13 @@
         private TextBox BaOraConnectionStringTextBox;
         private SplitContainer splitSettings;
         private Label arrowsLabel;
+        private GroupBox secretsGroup;
+        private ShowPasswordCheckbox showAzureApplicationSecretCheckbox;
+        private ShowPasswordCheckbox showHashiCorpClientSecretCheckbox;
+        private ShowPasswordCheckbox showAzureStorageAccountKeyTwoCheckbox;
+        private ShowPasswordCheckbox showAzureStorageAccountKeyOneCheckbox;
+        private ShowPasswordCheckbox showBaOraConnectionStringCheckbox;
+        private GroupBox languageGroup;
+        private ComboBox languageComboBox;
     }
 }

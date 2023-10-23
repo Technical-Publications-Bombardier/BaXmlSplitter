@@ -33,19 +33,13 @@ namespace BaXmlSplitter
                 base.OnConfiguring(optionsBuilder);
             }
         }
-        class UnitOfWork
-        {
-        }
 
-        internal class HashiCorpContext(string clientSecret) : AuthenticatorBase(string.Empty)
-        {
-            private DateTime Expiration { get; set; } = DateTime.MinValue;
 
         /// <summary>
         /// The Azure Application Insights details
         /// </summary>
         internal record AzureResource
-            {
+        {
             /// <summary>
             /// Gets the universal resource identifier relative to https://management.azure.com/.
             /// </summary>
@@ -117,29 +111,24 @@ namespace BaXmlSplitter
             /// </value>
             [JsonPropertyName("properties")]
             public ResourceProperties Properties { get; init; }
-                }
-                var options = new RestClientOptions("https://auth.hashicorp.com");
-                using var client = new RestClient(options);
-                var request = new RestRequest("oauth/token").AddParameter("audience", "https://api.hashicorp.cloud").AddParameter("grant_type", "client_credentials").AddParameter("client_id", hashiCorpIdentity.ClientId).AddParameter("client_secret", clientSecret);
-                return await client.PostAsync<TokenResponse>(request).ConfigureAwait(false);
-            }
-            /// <summary>
+        }
+        /// <summary>
         /// Azure Application Insights properties.
-            /// </summary>
+        /// </summary>
         internal record ResourceProperties
-            {
-                /// <summary>
+        {
+            /// <summary>
             /// Gets the human-readable remote application identifier.
-                /// </summary>
+            /// </summary>
             /// <value>
             /// The application identifier.
             /// </value>
             [JsonPropertyName("ApplicationId")]
             public string ApplicationId { get; init; }
 
-                /// <summary>
+            /// <summary>
             /// Gets the machine-readable remote application identifier.
-                /// </summary>
+            /// </summary>
             /// <value>
             /// The application identifier as <see cref="Guid"/>.
             /// </value>
@@ -155,9 +144,9 @@ namespace BaXmlSplitter
             [JsonPropertyName("Application_Type")]
             public string ApplicationType { get; init; }
 
-                /// <summary>
+            /// <summary>
             /// Gets the type of the flow.
-                /// </summary>
+            /// </summary>
             /// <value>
             /// The type of the flow.
             /// </value>
@@ -292,8 +281,8 @@ namespace BaXmlSplitter
         }
 
         class UnitOfWork
-                {
-                }
+        {
+        }
         /// <summary>
         /// HashiCorp <see cref="RestSharp"/> client for retrieving secrets from HashiCorp Cloud Platform Vault Secrets.
         /// </summary>
@@ -310,18 +299,35 @@ namespace BaXmlSplitter
             /// </summary>
             private readonly RestClient hashiCorpClient;
 
-                /// <summary>
-                /// Initializes a new instance of the <see cref="TokenAcquisitionException" /> class.
-                /// </summary>
-                /// <param name="specificMessage">The specific message.</param>
-                /// <param name="innerException">The inner exception.</param>
-                public TokenAcquisitionException(string specificMessage, Exception innerException) : base($"{BaseMessage}: {specificMessage}", innerException)
+            /// <summary>
+            /// Initializes a new instance of the <see cref="HashiCorpClient"/> class.
+            /// </summary>
+            /// <param name="clientSecret">The client secret.</param>
+            internal HashiCorpClient(string clientSecret)
+            {
+                var options = new RestClientOptions($"https://api.cloud.hashicorp.com/secrets/2023-06-13/organizations/{identity.OrganizationId}/projects/{identity.ProjectId}/apps/{identity.ApplicationName}")
                 {
-                }
+                    Authenticator = new HashiCorpContext(clientSecret, identity)
+                };
+                hashiCorpClient = new RestClient(options);
             }
 
             /// <summary>
             /// Deserializes the <see href="https://developer.hashicorp.com/hcp/api-docs/vault-secrets#OpenAppSecret"><c>OpenAppSecret</c></see>.
+            /// </summary>
+            public record OpenAppSecretResponse
+            {
+                /// <summary>
+                /// Gets the secret.
+                /// </summary>
+                /// <value>
+                /// The secret.
+                /// </value>
+                [JsonPropertyName("secret")]
+                public OpenAppSecret Secret { get; init; }
+            }
+            /// <summary>
+            /// Represents a <see href="https://developer.hashicorp.com/hcp/api-docs/vault-secrets#OpenAppSecret"><c>OpenAppSecret</c></see>.
             /// </summary>
             public record OpenAppSecret
             {
@@ -331,42 +337,48 @@ namespace BaXmlSplitter
                 /// <value>
                 /// The name.
                 /// </value>
-                public required string Name { get; init; }
+                [JsonPropertyName("name")]
+                public string Name { get; init; }
                 /// <summary>
                 /// Gets the version.
                 /// </summary>
                 /// <value>
                 /// The version.
                 /// </value>
-                public required VersionInfo Version { get; init; }
+                [JsonPropertyName("version")]
+                public VersionInfo Version { get; init; }
                 /// <summary>
                 /// Gets the created at.
                 /// </summary>
                 /// <value>
                 /// The created at.
                 /// </value>
-                public required string CreatedAt { get; init; }
+                [JsonPropertyName("created_at")]
+                public string CreatedAt { get; init; }
                 /// <summary>
                 /// Gets the latest version.
                 /// </summary>
                 /// <value>
                 /// The latest version.
                 /// </value>
-                public required string LatestVersion { get; init; }
+                [JsonPropertyName("latest_version")]
+                public string LatestVersion { get; init; }
                 /// <summary>
                 /// Gets the created by.
                 /// </summary>
                 /// <value>
                 /// The created by.
                 /// </value>
-                public required CreatedByInfo CreatedBy { get; init; }
+                [JsonPropertyName("created_by")]
+                public CreatedByInfo CreatedBy { get; init; }
                 /// <summary>
                 /// Gets the synchronize status.
                 /// </summary>
                 /// <value>
                 /// The synchronize status.
                 /// </value>
-                public required object SyncStatus { get; init; }
+                [JsonPropertyName("sync_status")]
+                public object SyncStatus { get; init; }
 
                 /// <summary>
                 /// Secret value with version information
@@ -379,35 +391,40 @@ namespace BaXmlSplitter
                     /// <value>
                     /// The version.
                     /// </value>
-                    public required string Version { get; init; }
+                    [JsonPropertyName("version")]
+                    public string Version { get; init; }
                     /// <summary>
                     /// Gets the type.
                     /// </summary>
                     /// <value>
                     /// The type.
                     /// </value>
-                    public required string Type { get; init; }
+                    [JsonPropertyName("type")]
+                    public string Type { get; init; }
                     /// <summary>
                     /// Gets the created at.
                     /// </summary>
                     /// <value>
                     /// The created at.
                     /// </value>
-                    public required string CreatedAt { get; init; }
+                    [JsonPropertyName("created_at")]
+                    public string CreatedAt { get; init; }
                     /// <summary>
                     /// Gets the value.
                     /// </summary>
                     /// <value>
                     /// The value.
                     /// </value>
-                    public required string Value { get; init; }
+                    [JsonPropertyName("value")]
+                    public string Value { get; init; }
                     /// <summary>
                     /// Gets the created by.
                     /// </summary>
                     /// <value>
                     /// The created by.
                     /// </value>
-                    public required CreatedByInfo CreatedBy { get; init; }
+                    [JsonPropertyName("created_by")]
+                    public CreatedByInfo CreatedBy { get; init; }
                 }
 
                 /// <summary>
@@ -421,71 +438,60 @@ namespace BaXmlSplitter
                     /// <value>
                     /// The name.
                     /// </value>
-                    public required string Name { get; init; }
+                    [JsonPropertyName("name")]
+                    public string Name { get; init; }
                     /// <summary>
                     /// Gets the type.
                     /// </summary>
                     /// <value>
                     /// The type.
                     /// </value>
-                    public required string Type { get; init; }
+                    [JsonPropertyName("type")]
+                    public string Type { get; init; }
                     /// <summary>
                     /// Gets the email.
                     /// </summary>
                     /// <value>
                     /// The email.
                     /// </value>
-                    public required string Email { get; init; }
+                    [JsonPropertyName("email")]
+                    public string Email { get; init; }
                 }
             }
 
 
             /// <summary>
-            /// The HashiCorp authentication token used to validate the session. The auth is valid for 3600 seconds, or 1 hour.
+            /// Gets the secret.
             /// </summary>
-            private record TokenResponse
+            /// <param name="secretName">Name of the secret.</param>
+            /// <returns></returns>
+            public async Task<OpenAppSecret> GetSecret(string secretName)
             {
-
-                /// <summary>
-                /// Gets the access token.
-                /// </summary>
-                /// <value>
-                /// The access token.
-                /// </value>
-                [JsonPropertyName("access_token")]
-                public required string AccessToken { get; init; }
-                /// <summary>
-                /// Gets the expires in.
-                /// </summary>
-                /// <value>
-                /// The expires in.
-                /// </value>
-                [JsonPropertyName("expires_in")]
-                public long ExpiresIn { get; init; }
-                /// <summary>
-                /// Gets the type of the token.
-                /// </summary>
-                /// <value>
-                /// The type of the token.
-                /// </value>
-                [JsonPropertyName("token_type")]
-                public required string TokenType { get; init; }
-
-                /// <summary>
-                /// Gets the expiration date.
-                /// </summary>
-                /// <param name="baseDateTime">The base date time.</param>
-                /// <param name="toleranceInMinutes">The tolerance in minutes.</param>
-                /// <returns>The expiration <see cref="DateTime"/> of the token.</returns>
-                public DateTime GetExpirationDate(DateTime baseDateTime, int toleranceInMinutes = 1)
+                var secret = new OpenAppSecret();
+                // check if we are in debugging mode
+                if (await hashiCorpClient.GetJsonAsync<OpenAppSecretResponse>($"open/{secretName}").ConfigureAwait(false) is { } response)
                 {
-                    return baseDateTime.AddSeconds(ExpiresIn).AddMinutes(-toleranceInMinutes);
+                    secret = response.Secret;
                 }
+                return secret;
             }
+
+            public void Dispose()
+            {
+                hashiCorpClient.Dispose();
+                GC.SuppressFinalize(this);
+            }
+
             /// <summary>
-            /// HashiCorp identity structure.
+            /// Default error response from HashiCorp endpoints.
             /// </summary>
-            private record HashiCorpIdentity
+            /// <param name="Code"></param>
+            public record ErrorResponse(int Code, string Message, Any[] Details);
+
+            /// <summary>
+            /// HashiCorp identity (non-secret regions only).
+            /// </summary>
+            internal record HashiCorpIdentity
             {
                 /// <summary>
                 /// Gets the client identifier.
@@ -494,7 +500,7 @@ namespace BaXmlSplitter
                 /// The client identifier.
                 /// </value>
                 [JsonPropertyName("client_id")]
-                public required string ClientId { get; init; }
+                public string ClientId { get; init; }
                 /// <summary>
                 /// Gets the analytics Javascript anonymous identifier.
                 /// </summary>
@@ -503,7 +509,7 @@ namespace BaXmlSplitter
                 /// </value>
                 /// <seealso href="https://github.com/hashicorp/web-platform-packages/blob/main/packages/analytics/analytics-js-helpers.ts#L33">HashiCorp web platform packages <c>getSegmentId()</c></seealso>
                 [JsonPropertyName("ajs_aid")]
-                public required string AnalyticsJsAnonymousId { get; init; }
+                public string AnalyticsJsAnonymousId { get; init; }
                 /// <summary>
                 /// Gets the user identifier.
                 /// </summary>
@@ -511,7 +517,7 @@ namespace BaXmlSplitter
                 /// The user identifier.
                 /// </value>
                 [JsonPropertyName("user_id")]
-                public required string UserId { get; init; }
+                public string UserId { get; init; }
                 /// <summary>
                 /// Gets the organization identifier.
                 /// </summary>
@@ -519,7 +525,7 @@ namespace BaXmlSplitter
                 /// The organization identifier.
                 /// </value>
                 [JsonPropertyName("org_id")]
-                public required string OrgId { get; init; }
+                public string OrganizationId { get; init; }
                 /// <summary>
                 /// Gets the project identifier.
                 /// </summary>
@@ -527,7 +533,7 @@ namespace BaXmlSplitter
                 /// The project identifier.
                 /// </value>
                 [JsonPropertyName("proj_id")]
-                public required string ProjectId { get; init; }
+                public string ProjectId { get; init; }
                 /// <summary>
                 /// Gets the name of the application.
                 /// </summary>
@@ -535,14 +541,134 @@ namespace BaXmlSplitter
                 /// The name of the application.
                 /// </value>
                 [JsonPropertyName("app_name")]
-                public required string ApplicationName { get; init; }
+                public string ApplicationName { get; init; }
+            }
+            internal class HashiCorpContext(string clientSecret, HashiCorpIdentity identity) : AuthenticatorBase(string.Empty)
+            {
+                /// <summary>
+                /// Gets the token expiration.
+                /// </summary>
+                /// <value>
+                /// The expiration.
+                /// </value>
+                private DateTime Expiration { get; set; } = DateTime.Now;
+
+                /// <summary>
+                /// Gets the authentication parameter.
+                /// </summary>
+                /// <param name="accessToken">The access token.</param>
+                /// <returns></returns>
+                /// <exception cref="TokenAcquisitionException">Did not receive HashiCorp auth token</exception>
+                protected override async ValueTask<Parameter> GetAuthenticationParameter(string accessToken)
+                {
+                    var tokenType = "Bearer";
+                    // ReSharper disable once InvertIf
+                    if (string.IsNullOrEmpty(Token) || DateTime.UtcNow >= Expiration)
+                    {
+                        if (await GetToken().ConfigureAwait(false) is not { } tokenResponse)
+                        {
+                            throw new TokenAcquisitionException("Did not receive HashiCorp auth token");
+                        }
+                        tokenType = tokenResponse.TokenType;
+                        Token = tokenResponse.AccessToken;
+                        Expiration = tokenResponse.GetExpirationDate(DateTime.UtcNow);
+                    }
+                    return new HeaderParameter(KnownHeaders.Authorization, $"{tokenType} {Token}");
+                }
+
+                /// <summary>
+                /// Gets the token.
+                /// </summary>
+                /// <returns>HashiCorp <see cref="TokenResponse"/> token.</returns>
+                private async Task<TokenResponse?> GetToken()
+                {
+                    var options = new RestClientOptions("https://auth.hashicorp.com");
+                    using var client = new RestClient(options);
+                    var request = new RestRequest("oauth/token").AddParameter("audience", "https://api.hashicorp.cloud")
+                        .AddParameter("grant_type", "client_credentials").AddParameter("client_id", identity.ClientId)
+                        .AddParameter("client_secret", clientSecret);
+                    return await client.PostAsync<TokenResponse>(request).ConfigureAwait(false);
+                }
+                /// <summary>
+                /// Exception to indicate failed token acquisition.
+                /// </summary>
+                /// <seealso cref="Exception" />
+                public class TokenAcquisitionException : Exception
+                {
+                    /// <summary>
+                    /// The base message
+                    /// </summary>
+                    private const string BaseMessage = "Failed to get token";
+                    /// <summary>
+                    /// Initializes a new instance of the <see cref="TokenAcquisitionException" /> class.
+                    /// </summary>
+                    public TokenAcquisitionException() : base($"{BaseMessage}.")
+                    {
+
+                    }
+
+                    /// <summary>
+                    /// Initializes a new instance of the <see cref="TokenAcquisitionException" /> class.
+                    /// </summary>
+                    /// <param name="specificMessage">The specific message.</param>
+                    public TokenAcquisitionException(string specificMessage) : base($"{BaseMessage}: {specificMessage}")
+                    {
+                    }
+
+                    /// <summary>
+                    /// Initializes a new instance of the <see cref="TokenAcquisitionException" /> class.
+                    /// </summary>
+                    /// <param name="specificMessage">The specific message.</param>
+                    /// <param name="innerException">The inner exception.</param>
+                    public TokenAcquisitionException(string specificMessage, Exception innerException) : base($"{BaseMessage}: {specificMessage}", innerException)
+                    {
+                    }
+                }
+
+                /// <summary>
+                /// The HashiCorp authentication token used to validate the session. The auth is valid for 3600 seconds, or 1 hour.
+                /// </summary>
+                private record TokenResponse
+                {
+
+                    /// <summary>
+                    /// Gets the access token.
+                    /// </summary>
+                    /// <value>
+                    /// The access token.
+                    /// </value>
+                    [JsonPropertyName("access_token")]
+                    public string AccessToken { get; init; }
+                    /// <summary>
+                    /// Gets the expires in.
+                    /// </summary>
+                    /// <value>
+                    /// The expires in.
+                    /// </value>
+                    [JsonPropertyName("expires_in")]
+                    public long ExpiresIn { get; init; }
+                    /// <summary>
+                    /// Gets the type of the token.
+                    /// </summary>
+                    /// <value>
+                    /// The type of the token.
+                    /// </value>
+                    [JsonPropertyName("token_type")]
+                    public string TokenType { get; init; }
+
+                    /// <summary>
+                    /// Gets the expiration date.
+                    /// </summary>
+                    /// <param name="baseDateTime">The base date time.</param>
+                    /// <param name="toleranceInMinutes">The tolerance in minutes.</param>
+                    /// <returns>The expiration <see cref="DateTime"/> of the token.</returns>
+                    public DateTime GetExpirationDate(DateTime baseDateTime, int toleranceInMinutes = 1)
+                    {
+                        return baseDateTime.AddSeconds(ExpiresIn).AddMinutes(-toleranceInMinutes);
+                    }
+                }
             }
 
-            /// <summary>
-            /// Default error response from HashiCorp endpoints.
-            /// </summary>
-            /// <param name="Code"></param>
-            public record ErrorResponse(int Code, string Message, Any[] Details);
         }
     }
 }

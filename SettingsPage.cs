@@ -1,9 +1,6 @@
 ﻿using System.Configuration;
-using System.Collections.Specialized;
 using BaXmlSplitter.Resources;
 using System.Diagnostics;
-using System.Globalization;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Runtime.Versioning;
@@ -102,7 +99,7 @@ namespace BaXmlSplitter
                 !string.Equals(hashStr,
                     expectedHash, StringComparison.OrdinalIgnoreCase))
             {
-                throw new SecretSettingsException($"Hash mismatch. {property} content appears to have been corrupted.");
+                throw new SecretSettingsException($"Hash mismatch. {property} content appears to have been corrupted");
             }
             // encrypt the hashicorp client secret
             var plainTextBytes = Encoding.UTF8.GetBytes(inputValue);
@@ -110,13 +107,20 @@ namespace BaXmlSplitter
             field = Settings.Default.HashiCorpClientSecret = Convert.ToBase64String(cipherTextBytes);
         }
 
+        /// <summary>
+        /// Gets the secret setting.
+        /// </summary>
+        /// <param name="secret">The secret.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns></returns>
+        /// <exception cref="SettingsPropertyNotFoundException">propertyName</exception>
         private string GetSecretSetting(string? secret, string propertyName)
         {
             string? fromSettings;
             try
             {
                 // Get a specific property by name
-                if(Settings.Default.Properties[propertyName] is not { } property)
+                if (Settings.Default.Properties[propertyName] is not { } property)
                 {
                     throw new SettingsPropertyNotFoundException(propertyName);
                 }
@@ -217,24 +221,82 @@ namespace BaXmlSplitter
             set => SetSecretSetting(nameof(StorageAccountKeyTwo), Properties.Resources.StorageAccountKeyTwoExpectedHash, value, out storageAccountKeyTwo);
         }
 
+        private readonly Dictionary<string, Action<string>> secrets;
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="SettingsPage"/> class.
+        /// Initializes a new instance of the <see cref="SettingsPage" /> class.
         /// </summary>
         public SettingsPage()
         {
             InitializeComponent();
-            HashiCorpClientSecret = GetSecretSetting(null, nameof(HashiCorpClientSecret));
-            AzureApplicationSecret = GetSecretSetting(null, nameof(AzureApplicationSecret));
-            BaOraConnectionString = GetSecretSetting(null, nameof(BaOraConnectionString));
-            StorageAccountKeyOne = GetSecretSetting(null, nameof(StorageAccountKeyOne));
-            StorageAccountKeyTwo = GetSecretSetting(null, nameof(StorageAccountKeyTwo));
 
-            // Set TextBox values
-            HashiCorpClientSecretTextBox.Text = HashiCorpClientSecret;
-            AzureApplicationSecretTextBox.Text = AzureApplicationSecret;
-            BaOraConnectionStringTextBox.Text = BaOraConnectionString;
-            AzureStorageKeyOneTextBox.Text = StorageAccountKeyOne;
-            AzureStorageKeyTwoTextBox.Text = StorageAccountKeyTwo;
+
+            // Collection of secrets to iterate over
+            secrets = new Dictionary<string, Action<string>>
+            {
+                { nameof(AzureApplicationSecret), secretValue => AzureApplicationSecret = secretValue },
+                { nameof(BaOraConnectionString), secretValue => BaOraConnectionString = secretValue },
+                { nameof(StorageAccountKeyOne), secretValue => StorageAccountKeyOne = secretValue },
+                { nameof(StorageAccountKeyTwo), secretValue => StorageAccountKeyTwo = secretValue },
+            };
+
+            // Get the HashiCorp Client Secret from the settings, if possible
+            HashiCorpClientSecret = GetSecretSetting(null, nameof(HashiCorpClientSecret));
+
+            // prepare a HashiCorp client to query for HashiCorp Cloud Platform Vault Secrets
+            hcpClient = new Remote.HashiCorpClient(HashiCorpClientSecret);
+        }
+
+
+        private void LoadSecrets(object sender, EventArgs e)
+        {
+            _ = LoadSecretsAsync(sender, e);
+        }
+        private async Task LoadSecretsAsync(object sender, EventArgs e)
+        {
+            foreach (var name in secrets.Keys)
+            {
+                // set the secret using the settings with fallback to the HashiCorp client
+                var secret = GetSecretSetting(null, name);
+                if (string.IsNullOrEmpty(secret) && !string.IsNullOrEmpty(hashiCorpClientSecret))
+                {
+                    Remote.HashiCorpClient.OpenAppSecret result;
+                    try
+                    {
+                        result = await hcpClient.GetSecret(name).ConfigureAwait(true);
+                    }
+                    catch (HttpRequestException exception)
+                    {
+                        Debug.WriteLine(exception);
+                        throw;
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.WriteLine(exception);
+                        throw;
+                    }
+                    if (result is { Version.Value: { } value })
+                        // set the secret using the HashiCorp client
+                        secrets[name](value);
+                }
+                else
+                {
+                    // set the secret using the settings
+                    secrets[name](secret);
+                }
+            }
+            this.Invoke((MethodInvoker)delegate
+            {
+                // Set secret TextBox values from the properties
+                HashiCorpClientSecretTextBox.Text = HashiCorpClientSecret;
+                AzureApplicationSecretTextBox.Text = AzureApplicationSecret;
+                BaOraConnectionStringTextBox.Text = BaOraConnectionString;
+                AzureStorageKeyOneTextBox.Text = StorageAccountKeyOne;
+                AzureStorageKeyTwoTextBox.Text = StorageAccountKeyTwo;
+
+                // Hide the arrows if HashiCorp client secret is set
+                HideArrowsIfClientSecretIsSet();
+            });
         }
 
         /// <summary>
@@ -249,15 +311,31 @@ namespace BaXmlSplitter
             {
                 HashiCorpClientSecret = HashiCorpClientSecretTextBox.Text;
                 Settings.Default.HashiCorpClientSecret = hashiCorpClientSecret;
-                // if the HashiCorp client secret is set, then hide the arrowsLabel
-                arrowsLabel.Hide();
-                return;
             }
             catch (SecretSettingsException ex)
             {
                 XmlSplitterHelpers.ShowWarningBox($"{ex.Message}. Please check the HashiCorp client secret and re-enter.", "Invalid HashiCorp Client Secret");
             }
-            arrowsLabel.Show();
+            HideArrowsIfClientSecretIsSet();
+        }
+
+        /// <summary>
+        /// Hides the arrow instructions if the <see cref="HashiCorpClientSecret"/> is set.
+        /// </summary>
+        /// <returns></returns>
+        private void HideArrowsIfClientSecretIsSet()
+        {
+
+            if (!string.IsNullOrEmpty(HashiCorpClientSecret))
+            {
+                secretsGroup.BackgroundImage = null;
+                arrowsLabel.Hide();
+            }
+            else
+            {
+                arrowsLabel.Show();
+                secretsGroup.BackgroundImage = Properties.Resources.arrows;
+            }
         }
 
         /// <summary>
@@ -297,7 +375,7 @@ namespace BaXmlSplitter
         }
 
         /// <summary>
-        /// Handles the Click event of the ShowHashiCorpClientSecret control.
+        /// Handles the Click event of the <see cref="showHashiCorpClientSecretCheckbox"/>.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
@@ -305,6 +383,50 @@ namespace BaXmlSplitter
         private void ShowHashiCorpClientSecret_Click(object sender, EventArgs e)
         {
             HashiCorpClientSecretTextBox.UseSystemPasswordChar = !HashiCorpClientSecretTextBox.UseSystemPasswordChar;
+        }
+
+        /// <summary>
+        /// Handles the Click event of the <see cref="showAzureApplicationSecretCheckbox"/>.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void ShowAzureApplicationSecret_Click(object sender, EventArgs e)
+        {
+            AzureApplicationSecretTextBox.UseSystemPasswordChar = !AzureApplicationSecretTextBox.UseSystemPasswordChar;
+        }
+
+        /// <summary>
+        /// Handles the Click event of the <see cref="showBaOraConnectionStringCheckbox"/>.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void ShowBaOraConnectionString_Click(object sender, EventArgs e)
+        {
+            BaOraConnectionStringTextBox.UseSystemPasswordChar = !BaOraConnectionStringTextBox.UseSystemPasswordChar;
+        }
+
+        /// <summary>
+        /// Handles the Click event of the <see cref="showAzureStorageAccountKeyOneCheckbox"/>.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void ShowAzureStorageAccountKeyOne_Click(object sender, EventArgs e)
+        {
+            AzureStorageKeyOneTextBox.UseSystemPasswordChar = !AzureStorageKeyOneTextBox.UseSystemPasswordChar;
+        }
+
+        /// <summary>
+        /// Handles the Click event of the <see cref="showAzureStorageAccountKeyTwoCheckbox"/>.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        /// <returns></returns>
+        private void ShowAzureStorageAccountKeyTwo_Click(object sender, EventArgs e)
+        {
+            AzureStorageKeyTwoTextBox.UseSystemPasswordChar = !AzureStorageKeyTwoTextBox.UseSystemPasswordChar;
         }
 
     }
