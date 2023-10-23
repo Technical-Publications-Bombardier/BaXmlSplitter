@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
+using Microsoft.ApplicationInsights;
 
 namespace BaXmlSplitter
 {
@@ -16,6 +17,10 @@ namespace BaXmlSplitter
     /// <seealso cref="Form" />
     public partial class XmlSplitter : Form
     {
+        /// <summary>
+        /// The <see cref="Microsoft.ApplicationInsights"/> telemetry client
+        /// </summary>
+        internal readonly TelemetryClient TelemetryClient;
         /// <summary>The log file path
         /// for the XML splitting.</summary>
         private readonly string logFile;
@@ -69,9 +74,10 @@ namespace BaXmlSplitter
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlSplitter"/> class.
         /// </summary>
-        public XmlSplitter()
+        public XmlSplitter(TelemetryClient telemetryClient)
         {
             InitializeComponent();
+            TelemetryClient = telemetryClient;
             logFile = Path.Combine(Path.GetTempPath(), $"BaXmlSplitter-{DateTime.Now:yyyy-MM-dd-HH-mm-ss-fffffff}.log");
             File.Move(Path.GetTempFileName(), logFile);
             logTextBox.SuspendLayout();

@@ -67,6 +67,8 @@
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.19.0-beta.1" />
 		<PackageReference Include="F23.StringSimilarity" Version="5.1.0" />
 		<PackageReference Include="Google.Protobuf" Version="3.25.0-rc2" />
+		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0-beta4" />
+		<PackageReference Include="Microsoft.ApplicationInsights.WindowsServer" Version="2.22.0-beta4" />
 		<PackageReference Include="Microsoft.WSMan.Management" Version="7.4.0-preview.6" />
 		<PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.12" />
 		<PackageReference Include="RestSharp" Version="110.2.1-alpha.0.13" />
@@ -111,5 +113,7 @@
 		  <LastGenOutput>Settings.Designer.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
+
+	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 
 </Project>

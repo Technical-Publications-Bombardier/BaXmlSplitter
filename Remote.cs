@@ -11,6 +11,10 @@ namespace BaXmlSplitter
 {
     internal class Remote
     {
+        /// <summary>
+        /// The Azure Application Insights properties
+        /// </summary>
+        internal static readonly AzureResource? ApplicationInsights = JsonSerializer.Deserialize<AzureResource>(Properties.Resources.ApplicationInsights);
         internal class ManualContext(CsdbProgram program) : DbContext
         {
             private readonly string baOraConnectionString = Settings.Default.BaOraConnectionString;
@@ -37,30 +41,82 @@ namespace BaXmlSplitter
         {
             private DateTime Expiration { get; set; } = DateTime.MinValue;
 
-            protected override async ValueTask<Parameter> GetAuthenticationParameter(string accessToken)
+        /// <summary>
+        /// The Azure Application Insights details
+        /// </summary>
+        internal record AzureResource
             {
-                // ReSharper disable once InvertIf
-                if (string.IsNullOrEmpty(Token) || DateTime.UtcNow >= Expiration)
-                {
-                    if (await GetToken().ConfigureAwait(false) is not { } tokenResponse)
-                    {
-                        throw new TokenAcquisitionException("Did not receive HashiCorp auth token");
-                    }
-                    Token = $"{tokenResponse.TokenType} {tokenResponse.AccessToken}";
-                    Expiration = tokenResponse.GetExpirationDate(DateTime.UtcNow);
-                }
-                return new HeaderParameter(KnownHeaders.Authorization, $"Bearer {Token}");
-            }
+            /// <summary>
+            /// Gets the universal resource identifier relative to https://management.azure.com/.
+            /// </summary>
+            /// <value>
+            /// The Azure universal resource identifier.
+            /// </value>
+            [JsonPropertyName("id")]
+            public string Id { get; init; }
 
             /// <summary>
-            /// Gets the token.
+            /// Gets the resource name.
             /// </summary>
-            /// <returns>HashiCorp <see cref="TokenResponse"/> token.</returns>
-            private async Task<TokenResponse?> GetToken()
-            {
-                if (JsonSerializer.Deserialize<HashiCorpIdentity>(utf8Json: Properties.Resources.HashiCorpIdentity) is not { } hashiCorpIdentity)
-                {
-                    return null;
+            /// <value>
+            /// The Azure resource name.
+            /// </value>
+            [JsonPropertyName("name")]
+            public string Name { get; init; }
+
+            /// <summary>
+            /// Gets the resource type.
+            /// </summary>
+            /// <value>
+            /// The Azure resource type.
+            /// </value>
+            [JsonPropertyName("type")]
+            public string Type { get; init; }
+
+            /// <summary>
+            /// Gets the resource location.
+            /// </summary>
+            /// <value>
+            /// The Azure resource location.
+            /// </value>
+            [JsonPropertyName("location")]
+            public string Location { get; init; }
+
+            /// <summary>
+            /// Gets the resource tags.
+            /// </summary>
+            /// <value>
+            /// The Azure resource tags.
+            /// </value>
+            [JsonPropertyName("tags")]
+            public Dictionary<string, string> Tags { get; init; }
+
+            /// <summary>
+            /// Gets the kind of the resource.
+            /// </summary>
+            /// <value>
+            /// The kind of the Azure resource.
+            /// </value>
+            [JsonPropertyName("kind")]
+            public string Kind { get; init; }
+
+            /// <summary>
+            /// Gets the resource etag.
+            /// </summary>
+            /// <value>
+            /// The Azure resource etag.
+            /// </value>
+            [JsonPropertyName("etag")]
+            public string Etag { get; init; }
+
+            /// <summary>
+            /// Gets the properties.
+            /// </summary>
+            /// <value>
+            /// The properties.
+            /// </value>
+            [JsonPropertyName("properties")]
+            public ResourceProperties Properties { get; init; }
                 }
                 var options = new RestClientOptions("https://auth.hashicorp.com");
                 using var client = new RestClient(options);
@@ -68,30 +124,191 @@ namespace BaXmlSplitter
                 return await client.PostAsync<TokenResponse>(request).ConfigureAwait(false);
             }
             /// <summary>
-            /// Exception to indicate failed token acquisition.
+        /// Azure Application Insights properties.
             /// </summary>
-            /// <seealso cref="Exception" />
-            public class TokenAcquisitionException : Exception
+        internal record ResourceProperties
             {
                 /// <summary>
-                /// The base message
+            /// Gets the human-readable remote application identifier.
                 /// </summary>
-                private const string BaseMessage = "Failed to get token";
-                /// <summary>
-                /// Initializes a new instance of the <see cref="TokenAcquisitionException" /> class.
-                /// </summary>
-                public TokenAcquisitionException() : base($"{BaseMessage}.")
-                {
-
-                }
+            /// <value>
+            /// The application identifier.
+            /// </value>
+            [JsonPropertyName("ApplicationId")]
+            public string ApplicationId { get; init; }
 
                 /// <summary>
-                /// Initializes a new instance of the <see cref="TokenAcquisitionException" /> class.
+            /// Gets the machine-readable remote application identifier.
                 /// </summary>
-                /// <param name="specificMessage">The specific message.</param>
-                public TokenAcquisitionException(string specificMessage) : base($"{BaseMessage}: {specificMessage}")
+            /// <value>
+            /// The application identifier as <see cref="Guid"/>.
+            /// </value>
+            [JsonPropertyName("AppId")]
+            public Guid AppId { get; init; }
+
+            /// <summary>
+            /// Gets the type of the remote application.
+            /// </summary>
+            /// <value>
+            /// The type of the application.
+            /// </value>
+            [JsonPropertyName("Application_Type")]
+            public string ApplicationType { get; init; }
+
+                /// <summary>
+            /// Gets the type of the flow.
+                /// </summary>
+            /// <value>
+            /// The type of the flow.
+            /// </value>
+            [JsonPropertyName("Flow_Type")]
+            public string FlowType { get; init; }
+
+            /// <summary>
+            /// Gets the request source.
+            /// </summary>
+            /// <value>
+            /// The request source.
+            /// </value>
+            [JsonPropertyName("Request_Source")]
+            public string RequestSource { get; init; }
+
+            /// <summary>
+            /// Gets the instrumentation key.
+            /// </summary>
+            /// <value>
+            /// The instrumentation key.
+            /// </value>
+            [JsonPropertyName("InstrumentationKey")]
+            public Guid InstrumentationKey { get; init; }
+
+            /// <summary>
+            /// Gets the connection string.
+            /// </summary>
+            /// <value>
+            /// The connection string.
+            /// </value>
+            [JsonPropertyName("ConnectionString")]
+            public string ConnectionString { get; init; }
+
+            /// <summary>
+            /// Gets the name.
+            /// </summary>
+            /// <value>
+            /// The name.
+            /// </value>
+            [JsonPropertyName("Name")]
+            public string Name { get; init; }
+
+            /// <summary>
+            /// Gets the resource creation date.
+            /// </summary>
+            /// <value>
+            /// The creation date.
+            /// </value>
+            [JsonPropertyName("CreationDate")]
+            public DateTime CreationDate { get; init; }
+
+            /// <summary>
+            /// Gets the tenant identifier.
+            /// </summary>
+            /// <value>
+            /// The tenant identifier.
+            /// </value>
+            [JsonPropertyName("TenantId")]
+            public Guid TenantId { get; init; }
+
+            /// <summary>
+            /// Gets the provisioning state.
+            /// </summary>
+            /// <value>
+            /// The provisioning state.
+            /// </value>
+            [JsonPropertyName("provisioningState")]
+            public string ProvisioningState { get; init; }
+
+            /// <summary>
+            /// Gets the sampling percentage.
+            /// </summary>
+            /// <value>
+            /// The sampling percentage.
+            /// </value>
+            [JsonPropertyName("SamplingPercentage")]
+            public double? SamplingPercentage { get; init; }
+
+            /// <summary>
+            /// Gets the retention duration in days.
+            /// </summary>
+            /// <value>
+            /// The retention duration in days.
+            /// </value>
+            [JsonPropertyName("RetentionInDays")]
+            public int RetentionInDays { get; init; }
+
+            /// <summary>
+            /// Gets the workspace resource identifier relative to https://management.azure.com/.
+            /// </summary>
+            /// <value>
+            /// The workspace resource identifier.
+            /// </value>
+            [JsonPropertyName("WorkspaceResourceId")]
+            public string WorkspaceResourceId { get; init; }
+
+            /// <summary>
+            /// Gets the ingestion mode.
+            /// </summary>
+            /// <value>
+            /// The ingestion mode.
+            /// </value>
+            [JsonPropertyName("IngestionMode")]
+            public string IngestionMode { get; init; }
+
+            /// <summary>
+            /// Gets or sets the public network access for ingestion.
+            /// </summary>
+            /// <value>
+            /// The public network access for ingestion.
+            /// </value>
+            [JsonPropertyName("publicNetworkAccessForIngestion")]
+            public string PublicNetworkAccessForIngestion { get; init; }
+
+            /// <summary>
+            /// Gets or sets the public network access for query.
+            /// </summary>
+            /// <value>
+            /// The public network access for query.
+            /// </value>
+            [JsonPropertyName("publicNetworkAccessForQuery")]
+            public string PublicNetworkAccessForQuery { get; init; }
+
+            /// <summary>
+            /// Gets or sets the version.
+            /// </summary>
+            /// <value>
+            /// The version.
+            /// </value>
+            [JsonPropertyName("Ver")]
+            public string Version { get; init; }
+        }
+
+        class UnitOfWork
                 {
                 }
+        /// <summary>
+        /// HashiCorp <see cref="RestSharp"/> client for retrieving secrets from HashiCorp Cloud Platform Vault Secrets.
+        /// </summary>
+        /// <seealso cref="System.IDisposable" />
+        /// <seealso href="https://developer.hashicorp.com/hcp/api-docs/vault-secrets"/>
+        internal class HashiCorpClient : IDisposable
+        {
+            /// <summary>
+            /// The HashiCorp identity
+            /// </summary>
+            private readonly HashiCorpIdentity identity = JsonSerializer.Deserialize<HashiCorpIdentity>(utf8Json: Properties.Resources.HashiCorpIdentity) ?? throw new ArgumentNullException();
+            /// <summary>
+            /// The internal <see cref="RestClient"/> client for receiving the HashiCorp secrets
+            /// </summary>
+            private readonly RestClient hashiCorpClient;
 
                 /// <summary>
                 /// Initializes a new instance of the <see cref="TokenAcquisitionException" /> class.
