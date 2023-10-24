@@ -258,7 +258,6 @@ namespace BaXmlSplitter
             xpathTextBox.ScrollBars = ScrollBars.Vertical;
             xpathTextBox.Size = new Size(534, 158);
             xpathTextBox.TabIndex = 1;
-            xpathTextBox.TextChanged += CheckExecuteSplitIsReady;
             xpathTextBox.TextChanged += XPathTextBox_TextChanged;
             // 
             // xpathLabel
@@ -353,7 +352,6 @@ namespace BaXmlSplitter
             outDirTextBox.Name = "outDirTextBox";
             outDirTextBox.Size = new Size(402, 24);
             outDirTextBox.TabIndex = 4;
-            outDirTextBox.TextChanged += CheckExecuteSplitIsReady;
             outDirTextBox.TextChanged += OutDirTextBox_TextChanged;
             // 
             // dirOutLabel

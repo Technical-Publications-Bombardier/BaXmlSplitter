@@ -1,0 +1,298 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>System.Collections.Generic.Dictionary`2[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]</T>
+      <T>System.Object</T>
+    </TN>
+    <DCT>
+      <En>
+        <I32 N="Key">916</I32>
+        <S N="Value">&amp;Dgr;</S>
+      </En>
+      <En>
+        <I32 N="Key">9662</I32>
+        <S N="Value">&amp;dtrif;</S>
+      </En>
+      <En>
+        <I32 N="Key">9660</I32>
+        <S N="Value">&amp;dtrif;</S>
+      </En>
+      <En>
+        <I32 N="Key">8592</I32>
+        <S N="Value">&amp;larr;</S>
+      </En>
+      <En>
+        <I32 N="Key">8594</I32>
+        <S N="Value">&amp;rarr;</S>
+      </En>
+      <En>
+        <I32 N="Key">176</I32>
+        <S N="Value">&amp;deg;</S>
+      </En>
+      <En>
+        <I32 N="Key">37</I32>
+        <S N="Value">&amp;percnt;</S>
+      </En>
+      <En>
+        <I32 N="Key">8220</I32>
+        <S N="Value">&amp;ldquo;</S>
+      </En>
+      <En>
+        <I32 N="Key">8221</I32>
+        <S N="Value">&amp;rdquo;</S>
+      </En>
+      <En>
+        <I32 N="Key">160</I32>
+        <S N="Value">&amp;nbsp;</S>
+      </En>
+      <En>
+        <I32 N="Key">8211</I32>
+        <S N="Value">&amp;ndash;</S>
+      </En>
+      <En>
+        <I32 N="Key">8593</I32>
+        <S N="Value">&amp;uarr;</S>
+      </En>
+      <En>
+        <I32 N="Key">8595</I32>
+        <S N="Value">&amp;darr</S>
+      </En>
+      <En>
+        <I32 N="Key">8208</I32>
+        <S N="Value">&amp;dash;</S>
+      </En>
+      <En>
+        <I32 N="Key">8804</I32>
+        <S N="Value">&amp;le;</S>
+      </En>
+      <En>
+        <I32 N="Key">8805</I32>
+        <S N="Value">&amp;ge;</S>
+      </En>
+      <En>
+        <I32 N="Key">8722</I32>
+        <S N="Value">&amp;minus;</S>
+      </En>
+      <En>
+        <I32 N="Key">8764</I32>
+        <S N="Value">&amp;sim;</S>
+      </En>
+      <En>
+        <I32 N="Key">9633</I32>
+        <S N="Value">&amp;squ;</S>
+      </En>
+      <En>
+        <I32 N="Key">9653</I32>
+        <S N="Value">&amp;utri;</S>
+      </En>
+      <En>
+        <I32 N="Key">9722</I32>
+        <S N="Value">&amp;lltri;</S>
+      </En>
+      <En>
+        <I32 N="Key">8776</I32>
+        <S N="Value">&amp;asymp;</S>
+      </En>
+      <En>
+        <I32 N="Key">948</I32>
+        <S N="Value">&amp;delta;</S>
+      </En>
+      <En>
+        <I32 N="Key">9830</I32>
+        <S N="Value">&amp;diams;</S>
+      </En>
+      <En>
+        <I32 N="Key">8199</I32>
+        <S N="Value">&amp;numsp;</S>
+      </En>
+      <En>
+        <I32 N="Key">247</I32>
+        <S N="Value">&amp;divide;</S>
+      </En>
+      <En>
+        <I32 N="Key">177</I32>
+        <S N="Value">&amp;plusmn;</S>
+      </En>
+      <En>
+        <I32 N="Key">8216</I32>
+        <S N="Value">&amp;lsquo;</S>
+      </En>
+      <En>
+        <I32 N="Key">169</I32>
+        <S N="Value">&amp;copy;</S>
+      </En>
+      <En>
+        <I32 N="Key">174</I32>
+        <S N="Value">&amp;reg;</S>
+      </En>
+      <En>
+        <I32 N="Key">215</I32>
+        <S N="Value">&amp;times;</S>
+      </En>
+      <En>
+        <I32 N="Key">8224</I32>
+        <S N="Value">&amp;dagger;</S>
+      </En>
+      <En>
+        <I32 N="Key">167</I32>
+        <S N="Value">&amp;sect;</S>
+      </En>
+      <En>
+        <I32 N="Key">189</I32>
+        <S N="Value">&amp;frac12;</S>
+      </En>
+      <En>
+        <I32 N="Key">8212</I32>
+        <S N="Value">&amp;mdash;</S>
+      </En>
+      <En>
+        <I32 N="Key">126</I32>
+        <S N="Value">&amp;tilde;</S>
+      </En>
+      <En>
+        <I32 N="Key">12296</I32>
+        <S N="Value">&amp;lang;</S>
+      </En>
+      <En>
+        <I32 N="Key">96</I32>
+        <S N="Value">&amp;grave;</S>
+      </En>
+      <En>
+        <I32 N="Key">8217</I32>
+        <S N="Value">&amp;rsquo;</S>
+      </En>
+      <En>
+        <I32 N="Key">8226</I32>
+        <S N="Value">&amp;bull;</S>
+      </En>
+      <En>
+        <I32 N="Key">8195</I32>
+        <S N="Value">&amp;emsp;</S>
+      </En>
+      <En>
+        <I32 N="Key">188</I32>
+        <S N="Value">&amp;frac14;</S>
+      </En>
+      <En>
+        <I32 N="Key">8743</I32>
+        <S N="Value">&amp;and;</S>
+      </En>
+      <En>
+        <I32 N="Key">186</I32>
+        <S N="Value">&amp;ordm;</S>
+      </En>
+      <En>
+        <I32 N="Key">124</I32>
+        <S N="Value">&amp;verbar;</S>
+      </En>
+      <En>
+        <I32 N="Key">185</I32>
+        <S N="Value">&amp;sup1;</S>
+      </En>
+      <En>
+        <I32 N="Key">178</I32>
+        <S N="Value">&amp;sup2;</S>
+      </En>
+      <En>
+        <I32 N="Key">172</I32>
+        <S N="Value">&amp;not;</S>
+      </En>
+      <En>
+        <I32 N="Key">8532</I32>
+        <S N="Value">&amp;frac23;</S>
+      </En>
+      <En>
+        <I32 N="Key">10003</I32>
+        <S N="Value">&amp;check;</S>
+      </En>
+      <En>
+        <I32 N="Key">12297</I32>
+        <S N="Value">&amp;rang;</S>
+      </En>
+      <En>
+        <I32 N="Key">952</I32>
+        <S N="Value">&amp;thgr;</S>
+      </En>
+      <En>
+        <I32 N="Key">8727</I32>
+        <S N="Value">&amp;lowast;</S>
+      </En>
+      <En>
+        <I32 N="Key">8482</I32>
+        <S N="Value">&amp;trade;</S>
+      </En>
+      <En>
+        <I32 N="Key">8201</I32>
+        <S N="Value">&amp;thinsp;</S>
+      </En>
+      <En>
+        <I32 N="Key">179</I32>
+        <S N="Value">&amp;sup;</S>
+      </En>
+      <En>
+        <I32 N="Key">190</I32>
+        <S N="Value">&amp;frac34;</S>
+      </En>
+      <En>
+        <I32 N="Key">9839</I32>
+        <S N="Value">&amp;sharp;</S>
+      </En>
+      <En>
+        <I32 N="Key">937</I32>
+        <S N="Value">&amp;Omega;</S>
+      </En>
+      <En>
+        <I32 N="Key">8486</I32>
+        <S N="Value">&amp;ohm;</S>
+      </En>
+      <En>
+        <I32 N="Key">8243</I32>
+        <S N="Value">&amp;Prime;</S>
+      </En>
+      <En>
+        <I32 N="Key">9652</I32>
+        <S N="Value">&amp;utrif;</S>
+      </En>
+      <En>
+        <I32 N="Key">181</I32>
+        <S N="Value">&amp;micro;</S>
+      </En>
+      <En>
+        <I32 N="Key">8734</I32>
+        <S N="Value">&amp;infin;</S>
+      </En>
+      <En>
+        <I32 N="Key">955</I32>
+        <S N="Value">&amp;lambda;</S>
+      </En>
+      <En>
+        <I32 N="Key">956</I32>
+        <S N="Value">&amp;mu;</S>
+      </En>
+      <En>
+        <I32 N="Key">966</I32>
+        <S N="Value">&amp;phi;</S>
+      </En>
+      <En>
+        <I32 N="Key">919</I32>
+        <S N="Value">&amp;Eta;</S>
+      </En>
+      <En>
+        <I32 N="Key">171</I32>
+        <S N="Value">&amp;laquo;</S>
+      </En>
+      <En>
+        <I32 N="Key">8730</I32>
+        <S N="Value">&amp;radic;</S>
+      </En>
+      <En>
+        <I32 N="Key">920</I32>
+        <S N="Value">&amp;Theta;</S>
+      </En>
+      <En>
+        <I32 N="Key">9674</I32>
+        <S N="Value">&amp;loz;</S>
+      </En>
+    </DCT>
+  </Obj>
+</Objs>

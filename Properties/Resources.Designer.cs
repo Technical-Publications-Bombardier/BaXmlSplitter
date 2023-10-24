@@ -208,6 +208,24 @@ namespace BaXmlSplitter.Properties {
         ///   Looks up a localized string similar to &lt;Objs Version=&quot;1.1.0.1&quot; xmlns=&quot;http://schemas.microsoft.com/powershell/2004/04&quot;&gt;
         ///  &lt;Obj RefId=&quot;0&quot;&gt;
         ///    &lt;TN RefId=&quot;0&quot;&gt;
+        ///      &lt;T&gt;System.Collections.Generic.Dictionary`2[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]&lt;/T&gt;
+        ///      &lt;T&gt;System.Object&lt;/T&gt;
+        ///    &lt;/TN&gt;
+        ///    &lt;DCT&gt;
+        ///      &lt;En&gt;
+        ///        &lt;I32 N=&quot;Key&quot;&gt;916&lt;/I32&gt;
+        ///        &lt;S N=&quot;Value&quot;&gt;&amp;amp;Dgr [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string LookupEntities {
+            get {
+                return ResourceManager.GetString("LookupEntities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;Objs Version=&quot;1.1.0.1&quot; xmlns=&quot;http://schemas.microsoft.com/powershell/2004/04&quot;&gt;
+        ///  &lt;Obj RefId=&quot;0&quot;&gt;
+        ///    &lt;TN RefId=&quot;0&quot;&gt;
         ///      &lt;T&gt;System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.Dictionary`2[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Management.Automation.PSObject, System.Management.Automation, Version=7.4.0.5, C [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string StatesPerProgram {

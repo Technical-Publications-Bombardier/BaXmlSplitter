@@ -11,9 +11,15 @@ namespace BaXmlSplitter
 {
     internal class Remote
     {
-        /// <summary>
-        /// The Azure Application Insights properties
-        /// </summary>
+        /// <summary>The Azure Application Insights properties</summary>
+        /// <remarks>
+        /// Note that this requires that the GitHub build environment provides the JSON for Application Insights. Alternatively, it is possible to query HashiCorp Cloud Platform Vault Secrets for the JSON using the <c>OpenAppSecret</c> endpoint for secret <c>AzureApplicationInsights</c>:
+        /// <code language="powershell">
+        /// #Requires -Modules WindowsCredentialManager, Microsoft.PowerShell.SecretManagement
+        /// $hcp = Get-Content -Path ".\BaXmlSplitter\Resources\HashiCorpIdentity.json" | ConvertFrom-Json
+        /// Invoke-RestMethod -Uri https://auth.hashicorp.com/oauth/token -Headers @{ Accept='application/json'; 'Content-Type'='application/json'; } -Body (@{ audience='https://api.hashicorp.cloud';grant_type='client_credentials';client_id=$hcp.client_id;client_secret=(Get-Secret -Name HcpClientSecret -Vault CredMan -AsPlainText ) } | ConvertTo-Json -Compress) -Method Post | Set-Variable -Name HcpAuth
+        /// Invoke-RestMethod -Uri "https://api.cloud.hashicorp.com/secrets/2023-06-13/organizations/$($hcp.org_id)/projects/$($hcp.proj_id)/apps/$($hcp.app_name)/open/AzureApplicationInsights" -Headers @{Accept='application/json'; 'Content-Type'='application/json'; Authorization="Bearer $($HcpAuth.access_token)"} -Verbose -Debug | Set-Variable -Name AzureApplicationInsightsJson
+        /// </code></remarks>
         internal static readonly AzureResource? ApplicationInsights = JsonSerializer.Deserialize<AzureResource>(Properties.Resources.ApplicationInsights);
         internal class ManualContext(CsdbProgram program) : DbContext
         {
