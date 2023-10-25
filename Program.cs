@@ -43,7 +43,8 @@ namespace BaXmlSplitter
                     // Add Application Insights as a logger provider
                     configureTelemetryConfiguration: config => config.ConnectionString = applicationInsights?.Properties.ConnectionString,
                     // Use the same connection string as before
-                    configureApplicationInsightsLoggerOptions: _ => {
+                    configureApplicationInsightsLoggerOptions: _ =>
+                    {
                         /* Default options are fine, hence discard */
                     }
                 );
@@ -78,7 +79,7 @@ namespace BaXmlSplitter
             };
 
             // Create an instance of XmlSplitter and pass the telemetry client and channel as parameters
-            using var xmlSplitter = new XmlSplitter(telemetryClient, channel);
+            using var xmlSplitter = new XmlSplitter(telemetryClient, channel, logger);
 
             // Run the XmlSplitter as the main form of the application
             Application.Run(xmlSplitter);
@@ -90,10 +91,11 @@ namespace BaXmlSplitter
     /// </summary>
     internal static class ProgramLog
     {
+        private const int EventIdOffset = 000;
         /// <summary>
         /// The unhandled exception
         /// </summary>
         public static readonly Action<ILogger, object, Exception?> UnhandledException =
-            LoggerMessage.Define<object>(LogLevel.Error, new EventId(0, nameof(UnhandledException)), "Unhandled exception {Object}");
+            LoggerMessage.Define<object>(LogLevel.Error, new EventId(EventIdOffset + 0, nameof(UnhandledException)), "Unhandled exception {Object}");
     }
 }

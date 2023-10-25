@@ -4,6 +4,9 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Runtime.Versioning;
+using Microsoft.Extensions.Logging;
+using Microsoft.ApplicationInsights;
+using System;
 
 namespace BaXmlSplitter
 {
@@ -11,6 +14,8 @@ namespace BaXmlSplitter
     public partial class SettingsPage : Form
     {
         private readonly Remote.HashiCorpClient hcpClient;
+        private readonly TelemetryClient telemetryClient;
+        private readonly ILogger logger;
         /// <summary>
         /// Exception to indicate that the secret was incorrect.
         /// </summary>
@@ -126,14 +131,27 @@ namespace BaXmlSplitter
                 }
                 fromSettings = Settings.Default[property.Name].ToString();
             }
-            catch (SettingsPropertyNotFoundException)
+            catch (SettingsPropertyNotFoundException exception)
             {
                 // Handle the case when the property does not exist
+
+                Debug.WriteLine(exception);
+                telemetryClient.TrackException(exception);
+                SettingsLog.SettingsProblem(logger, exception.InnerException, exception);
+                if (Debugger.IsAttached)
+                    throw;
+                XmlSplitterHelpers.ShowWarningBox(exception.Message, "The settings property does not exist.");
                 return string.Empty;
             }
-            catch (ConfigurationErrorsException)
+            catch (ConfigurationErrorsException exception)
             {
                 // Handle the case when the configuration file is invalid
+                Debug.WriteLine(exception);
+                telemetryClient.TrackException(exception);
+                SettingsLog.ConfigurationProblem(logger, exception.InnerException, exception);
+                if (Debugger.IsAttached)
+                    throw;
+                XmlSplitterHelpers.ShowWarningBox(exception.Message, "The configuration file is invalid.");
                 return string.Empty;
             }
             var secretValue = secret ?? fromSettings;
@@ -226,9 +244,11 @@ namespace BaXmlSplitter
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsPage" /> class.
         /// </summary>
-        public SettingsPage()
+        public SettingsPage(TelemetryClient telemetryClient, ILogger logger)
         {
             InitializeComponent();
+            this.telemetryClient = telemetryClient;
+            this.logger = logger;
 
 
             // Collection of secrets to iterate over
@@ -265,19 +285,21 @@ namespace BaXmlSplitter
                     {
                         result = await hcpClient.GetSecret(name).ConfigureAwait(true);
                     }
-                    catch (HttpRequestException exception)
-                    {
-                        Debug.WriteLine(exception);
-                        throw;
-                    }
                     catch (Exception exception)
                     {
                         Debug.WriteLine(exception);
-                        throw;
+                        telemetryClient.TrackException(exception);
+                        Remote.RemoteLog.TokenAcquisitionProblem(logger, exception.InnerException, exception);
+                        if (Debugger.IsAttached)
+                            throw;
+                        XmlSplitterHelpers.ShowWarningBox(exception.Message, "Unable to acquire HashiCorp Cloud Platform authentication token.");
+                        return;
                     }
                     if (result is { Version.Value: { } value })
+                    {
                         // set the secret using the HashiCorp client
                         secrets[name](value);
+                    }
                 }
                 else
                 {
@@ -285,7 +307,7 @@ namespace BaXmlSplitter
                     secrets[name](secret);
                 }
             }
-            this.Invoke((MethodInvoker)delegate
+            Invoke((MethodInvoker)delegate
             {
                 // Set secret TextBox values from the properties
                 HashiCorpClientSecretTextBox.Text = HashiCorpClientSecret;
@@ -428,6 +450,24 @@ namespace BaXmlSplitter
         {
             AzureStorageKeyTwoTextBox.UseSystemPasswordChar = !AzureStorageKeyTwoTextBox.UseSystemPasswordChar;
         }
+
+    }
+
+    internal static class SettingsLog
+    {
+
+        private const int EventIdOffset = 200;
+        /// <summary>
+        /// The SettingsPropertyNotFoundException logging
+        /// </summary>
+        internal static readonly Action<ILogger, Exception?, Exception> SettingsProblem =
+            LoggerMessage.Define<Exception?>(LogLevel.Error, new EventId(EventIdOffset + 0, nameof(SettingsProblem)), "Unable to retrieve setting property {Exception}");
+        /// <summary>
+        /// The ConfigurationErrorsException logging
+        /// </summary>
+        internal static readonly Action<ILogger, Exception?, Exception> ConfigurationProblem =
+            LoggerMessage.Define<Exception?>(LogLevel.Error, new EventId(EventIdOffset + 1, nameof(SettingsProblem)), "Corrupted configuration {Exception}");
+
 
     }
 }

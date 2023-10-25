@@ -3,9 +3,11 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Windows.Forms;
 using System.Xml;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Channel;
+using Microsoft.Extensions.Logging;
 #pragma warning disable CA1308
 
 namespace BaXmlSplitter
@@ -22,8 +24,9 @@ namespace BaXmlSplitter
         /// <summary>
         /// The <see cref="Microsoft.ApplicationInsights"/> telemetry client
         /// </summary>
-        internal readonly TelemetryClient TelemetryClient;
-        internal readonly InMemoryChannel Channel;
+        private readonly TelemetryClient telemetryClient;
+        private readonly InMemoryChannel channel;
+        private readonly ILogger logger;
         /// <summary>The log file path
         /// for the XML splitting.</summary>
         private readonly string logFile;
@@ -83,11 +86,12 @@ namespace BaXmlSplitter
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlSplitter"/> class.
         /// </summary>
-        public XmlSplitter(TelemetryClient telemetryClient, InMemoryChannel channel)
+        public XmlSplitter(TelemetryClient telemetryClient, InMemoryChannel channel, ILogger logger)
         {
             InitializeComponent();
-            TelemetryClient = telemetryClient;
-            Channel = channel;
+            this.telemetryClient = telemetryClient;
+            this.channel = channel;
+            this.logger = logger;
             logFile = Path.Combine(Path.GetTempPath(), $"BaXmlSplitter-{DateTime.Now:yyyy-MM-dd-HH-mm-ss-fffffff}.log");
             File.Move(Path.GetTempFileName(), logFile);
             logTextBox.SuspendLayout();
@@ -118,6 +122,7 @@ namespace BaXmlSplitter
                 statesPerProgram = XmlSplitterHelpers.DeserializeStates();
                 checkoutItems = XmlSplitterHelpers.DeserializeCheckoutItems();
                 manualFromDocnbr = XmlSplitterHelpers.DeserializeDocnbrManualFromProgram();
+                telemetryClient.TrackEvent("Started XML splitting tool with real time log at '{logFile}'");
             }).ConfigureAwait(false);
             WriteLog("Finished initializing.");
         }
@@ -129,12 +134,22 @@ namespace BaXmlSplitter
         /// <param name="severity">The severity.</param>
         /// <param name="noNewLine">if set to <c>true</c> [no new line].</param>
         /// <param name="skipFile">if set to <c>true</c> [skip file].</param>
-        /// <returns></returns>
         private void WriteLog(string message, Severity severity = Severity.Hint, bool noNewLine = false, bool skipFile = false)
         {
-            if (logTextBox.InvokeRequired)
+
+            // send same to logger and telemetryClient
+            switch (severity)
             {
-                logTextBox.Invoke(LogDelegate);
+                case Severity.Hint: telemetryClient.TrackTrace(message); logger.LogInformation(message); break;
+                case Severity.Warning: telemetryClient.TrackEvent($"Warning: {message}"); logger.LogWarning(message); break;
+                case Severity.Error: logger.LogError(message); break;
+                case Severity.Fatal: logger.LogCritical(message); break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
+            }
+            if (InvokeRequired)
+            {
+                Invoke(LogDelegate);
             }
             else
             {
@@ -173,6 +188,8 @@ namespace BaXmlSplitter
                     catch (Exception e)
                     {
                         WriteLog($"Unable to write to log file at {logFile}: {e.Message}", Severity.Error, false, true);
+                        logger.LogError($"Unable to write to log file at {logFile}: {e.Message}");
+                        telemetryClient.TrackException(e);
                     }
                 }
                 logTextBox.SuspendLayout();
@@ -188,6 +205,16 @@ namespace BaXmlSplitter
                 logTextBox.ScrollToCaret();
                 logTextBox.ResumeLayout();
             }
+        }
+        /// <summary>
+        /// Writes the log.
+        /// </summary>
+        /// <param name="exception">The exception.</param>
+        /// <param name="severity">The severity.</param>
+        private void WriteLog(Exception exception, Severity severity)
+        {
+            telemetryClient.TrackException(exception);
+            WriteLog(exception.Message, severity);
         }
 
         /// <summary>
@@ -320,7 +347,7 @@ namespace BaXmlSplitter
             }
             catch (Exception exception)
             {
-                WriteLog(exception.Message, Severity.Error);
+                WriteLog(exception, Severity.Error);
             }
         }
         /// <summary>
@@ -362,7 +389,7 @@ namespace BaXmlSplitter
             }
             catch (Exception exception)
             {
-                WriteLog(exception.Message, Severity.Error);
+                WriteLog(exception, Severity.Error);
             }
         }
 
@@ -395,7 +422,7 @@ namespace BaXmlSplitter
             }
             catch (Exception exception)
             {
-                WriteLog(exception.Message, Severity.Error);
+                WriteLog(exception, Severity.Error);
             }
             if (Path.GetDirectoryName(outputDir) is { } outputDirPath && Path.GetDirectoryName(outputDirPath) is { } outputDirParent && Path.GetFileNameWithoutExtension(outputDirPath) is { } wipDirLeafBase)
             {
@@ -405,7 +432,7 @@ namespace BaXmlSplitter
             }
             else
             {
-                wipFolderWatcher.Path = string.Empty;
+                wipFolderWatcher.Path = null;
                 wipFolderWatcher.Filter = string.Empty;
                 wipFolderWatcher.EnableRaisingEvents = false;
             }
@@ -513,7 +540,7 @@ namespace BaXmlSplitter
             if (string.IsNullOrEmpty(xmlContent) || string.IsNullOrEmpty(xmlSourceFile)) return;
             execButton.Visible = false;
             // show the progress bar
-            using ProgressBar progressBar = new();
+            ProgressBar progressBar = new();
             progressBar.Location = execButton.Location;
             progressBar.Size = execButton.Size;
             progressBar.Dock = execButton.Dock;
@@ -539,9 +566,13 @@ namespace BaXmlSplitter
                     foreach (var logMessage in logMessages)
                     {
                         WriteLog(logMessage.Message, logMessage.Severity);
-                        if (logMessage.Severity > Severity.Hint)
+                        switch (logMessage.Severity)
                         {
-                            XmlSplitterHelpers.ShowWarningBox(logMessage.Message, Enum.GetName(logMessage.Severity));
+                            case Severity.Hint: break;
+                            case Severity.Fatal:
+                            case Severity.Error:
+                            case Severity.Warning:
+                            default: XmlSplitterHelpers.ShowWarningBox(logMessage.Message, Enum.GetName(logMessage.Severity)); break;
                         }
                     }
                 }
@@ -686,7 +717,7 @@ namespace BaXmlSplitter
                         Dictionary<XmlNode, List<(UowState, XmlNode)>> childrenPerCheckoutItem = new(nodes.Length);
                         for (var i = 0; i < sourceStates.Length; i++)
                         {
-                            progressBar.Value = 100 * (i + 1) / sourceStates.Length;
+                            Invoke((MethodInvoker)delegate { progressBar.Value = 100 * (i + 1) / sourceStates.Length; });
                             var foundParent = false;
                             if (sourceStates[i] is { XPath: { } curXPath } curState && xml.SelectSingleNode(curXPath) is { } curNode)
                             {
@@ -794,14 +825,22 @@ namespace BaXmlSplitter
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex);
-                WriteLog(ex.Message, Severity.Fatal);
+                if (Debugger.IsAttached)
+                {
+                    Debug.WriteLine(ex);
+                    throw;
+                }
+                WriteLog(ex, Severity.Fatal);
             }
             finally
             {
-                progressBar.Visible = false;
-                stepsPanel.Controls.Remove(progressBar);
-                execButton.Visible = true;
+                Invoke((MethodInvoker)delegate
+                {
+                    progressBar.Visible = false;
+                    stepsPanel.Controls.Remove(progressBar);
+                    execButton.Visible = true;
+                    progressBar.Dispose();
+                });
             }
 
         }
@@ -1057,56 +1096,71 @@ namespace BaXmlSplitter
         private void OptionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // show the settings page
-            using var settingsPage = new SettingsPage();
+            using var settingsPage = new SettingsPage(telemetryClient, logger);
             settingsPage.ShowDialog();
         }
 
         [GeneratedRegex("[_-]$")]
         private static partial Regex TerminusChars();
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // quit the app
             Application.Exit();
         }
 
-        private void printPreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        private void PrintPreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // show print preview
-            PrintPreviewDialog printPreviewDialog = new();
+            // TODO: not implemented yet
+            XmlSplitterHelpers.ShowWarningBox("This feature is not yet implemented", "Not implemented");
         }
 
-        private void printToolStripMenuItem_Click(object sender, EventArgs e)
+        private void PrintToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // show print dialog
-            PrintDialog printDialog = new();
+            // TODO: not implemented yet
+            XmlSplitterHelpers.ShowWarningBox("This feature is not yet implemented", "Not implemented");
         }
 
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // save the xpath
-            SaveFileDialog saveFileDialog = new();
-
+            if (string.IsNullOrEmpty(xpath))
+            {
+                XmlSplitterHelpers.ShowWarningBox("There is no XPath to save", "No XPath");
+                return;
+            }
+            using SaveFileDialog saveFileDialog = new();
+            // TODO: Localize
+            saveFileDialog.Title = "Select XPath output file:";
+            saveFileDialog.Filter = "Text Files (*.txt)|*.txt";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllText(saveFileDialog.FileName, xpath);
+            }
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            // TODO: not implemented yet
+            XmlSplitterHelpers.ShowWarningBox("This feature is not yet implemented", "Not implemented");
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            // TODO: not implemented yet
+            XmlSplitterHelpers.ShowWarningBox("This feature is not yet implemented", "Not implemented");
         }
 
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        private void NewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            // TODO: not implemented yet
+            XmlSplitterHelpers.ShowWarningBox("This feature is not yet implemented", "Not implemented");
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            using var aboutForm = new AboutBox();
+            aboutForm.ShowDialog();
         }
     }
 }

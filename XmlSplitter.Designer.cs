@@ -18,8 +18,8 @@ namespace BaXmlSplitter
         {
             if (disposing)
             {
-                TelemetryClient.Flush();
-                Channel.Flush();
+                telemetryClient.Flush();
+                channel.Flush();
                 if (components is not null)
                     components.Dispose();
             }
@@ -400,7 +400,7 @@ namespace BaXmlSplitter
             newToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
             newToolStripMenuItem.Size = new Size(146, 22);
             newToolStripMenuItem.Text = "&New";
-            newToolStripMenuItem.Click += newToolStripMenuItem_Click;
+            newToolStripMenuItem.Click += NewToolStripMenuItem_Click;
             // 
             // openToolStripMenuItem
             // 
@@ -410,7 +410,7 @@ namespace BaXmlSplitter
             openToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
             openToolStripMenuItem.Size = new Size(146, 22);
             openToolStripMenuItem.Text = "&Open";
-            openToolStripMenuItem.Click += openToolStripMenuItem_Click;
+            openToolStripMenuItem.Click += OpenToolStripMenuItem_Click;
             // 
             // toolStripSeparator
             // 
@@ -425,14 +425,14 @@ namespace BaXmlSplitter
             saveToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.S;
             saveToolStripMenuItem.Size = new Size(146, 22);
             saveToolStripMenuItem.Text = "&Save";
-            saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
+            saveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
             // 
             // saveAsToolStripMenuItem
             // 
             saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
             saveAsToolStripMenuItem.Size = new Size(146, 22);
             saveAsToolStripMenuItem.Text = "Save &As";
-            saveAsToolStripMenuItem.Click += saveAsToolStripMenuItem_Click;
+            saveAsToolStripMenuItem.Click += SaveAsToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
@@ -447,7 +447,7 @@ namespace BaXmlSplitter
             printToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.P;
             printToolStripMenuItem.Size = new Size(146, 22);
             printToolStripMenuItem.Text = "&Print";
-            printToolStripMenuItem.Click += printToolStripMenuItem_Click;
+            printToolStripMenuItem.Click += PrintToolStripMenuItem_Click;
             // 
             // printPreviewToolStripMenuItem
             // 
@@ -456,7 +456,7 @@ namespace BaXmlSplitter
             printPreviewToolStripMenuItem.Name = "printPreviewToolStripMenuItem";
             printPreviewToolStripMenuItem.Size = new Size(146, 22);
             printPreviewToolStripMenuItem.Text = "Print Pre&view";
-            printPreviewToolStripMenuItem.Click += printPreviewToolStripMenuItem_Click;
+            printPreviewToolStripMenuItem.Click += PrintPreviewToolStripMenuItem_Click;
             // 
             // toolStripSeparator2
             // 
@@ -468,7 +468,7 @@ namespace BaXmlSplitter
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.Size = new Size(146, 22);
             exitToolStripMenuItem.Text = "E&xit";
-            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
+            exitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
             // 
             // editToolStripMenuItem
             // 
@@ -589,7 +589,7 @@ namespace BaXmlSplitter
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.Size = new Size(122, 22);
             aboutToolStripMenuItem.Text = "&About...";
-            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
+            aboutToolStripMenuItem.Click += AboutToolStripMenuItem_Click;
             // 
             // execButton
             // 

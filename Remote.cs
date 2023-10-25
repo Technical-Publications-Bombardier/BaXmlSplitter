@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using BaXmlSplitter.Resources;
 using Google.Protobuf.WellKnownTypes;
 using CsdbProgram = BaXmlSplitter.XmlSplitterHelpers.CsdbProgram;
+using Microsoft.Extensions.Logging;
 
 namespace BaXmlSplitter
 {
@@ -15,10 +16,11 @@ namespace BaXmlSplitter
         /// <remarks>
         /// Note that this requires that the GitHub build environment provides the JSON for Application Insights. Alternatively, it is possible to query HashiCorp Cloud Platform Vault Secrets for the JSON using the <c>OpenAppSecret</c> endpoint for secret <c>AzureApplicationInsights</c>:
         /// <code language="powershell">
-        /// #Requires -Modules WindowsCredentialManager, Microsoft.PowerShell.SecretManagement
+        /// #Requires -Modules Microsoft.PowerShell.SecretManagement, Microsoft.PowerShell.SMicrosoft.PowerShell.SecretStore, SecretManagement.JSecretManagement.JustinGrote.CredMan
         /// $hcp = Get-Content -Path ".\BaXmlSplitter\Resources\HashiCorpIdentity.json" | ConvertFrom-Json
         /// Invoke-RestMethod -Uri https://auth.hashicorp.com/oauth/token -Headers @{ Accept='application/json'; 'Content-Type'='application/json'; } -Body (@{ audience='https://api.hashicorp.cloud';grant_type='client_credentials';client_id=$hcp.client_id;client_secret=(Get-Secret -Name HcpClientSecret -Vault CredMan -AsPlainText ) } | ConvertTo-Json -Compress) -Method Post | Set-Variable -Name HcpAuth
-        /// Invoke-RestMethod -Uri "https://api.cloud.hashicorp.com/secrets/2023-06-13/organizations/$($hcp.org_id)/projects/$($hcp.proj_id)/apps/$($hcp.app_name)/open/AzureApplicationInsights" -Headers @{Accept='application/json'; 'Content-Type'='application/json'; Authorization="Bearer $($HcpAuth.access_token)"} -Verbose -Debug | Set-Variable -Name AzureApplicationInsightsJson
+        /// Invoke-RestMethod -Uri "https://api.cloud.hashicorp.com/secrets/2023-06-13/organizations/$($hcp.org_id)/projects/$($hcp.proj_id)/apps/$($hcp.app_name)/open/AzureApplicationInsights" -Headers @{Accept='application/json'; 'Content-Type'='application/json'; Authorization="Bearer $($HcpAuth.access_token)"} -Verbose -Debug | ConvertTo-Json | Tee-Object -FilePath .\Resources\ApplicationInsights.json | Set-Variable -Name AzureApplicationInsightsJson
+        ///  $AzureApplicationInsightsJson.secret.version.value | ConvertFrom-Json | ConvertTo-Json | Tee-Object -FilePath .\Resources\ApplicationInsights.json
         /// </code></remarks>
         internal static readonly AzureResource? ApplicationInsights = JsonSerializer.Deserialize<AzureResource>(Properties.Resources.ApplicationInsights);
         internal class ManualContext(CsdbProgram program) : DbContext
@@ -470,11 +472,11 @@ namespace BaXmlSplitter
             /// Gets the secret.
             /// </summary>
             /// <param name="secretName">Name of the secret.</param>
-            /// <returns></returns>
+            /// <returns>The <see cref="OpenAppSecret"/> secret</returns>
+            /// <exception cref="HashiCorpContext.TokenAcquisitionException">Failed to acquire <see cref="HashiCorpContext"/> bearer token.</exception>
             public async Task<OpenAppSecret> GetSecret(string secretName)
             {
                 var secret = new OpenAppSecret();
-                // check if we are in debugging mode
                 if (await hashiCorpClient.GetJsonAsync<OpenAppSecretResponse>($"open/{secretName}").ConfigureAwait(false) is { } response)
                 {
                     secret = response.Secret;
@@ -675,6 +677,18 @@ namespace BaXmlSplitter
                 }
             }
 
+        }
+        /// <summary>
+        /// A reusable log action for unhandled exceptions with a specific log level, event id, and message template.
+        /// </summary>
+        internal static class RemoteLog
+        {
+            private const int EventIdOffset = 100;
+            /// <summary>
+            /// The token acquisition exception
+            /// </summary>
+            internal static readonly Action<ILogger, Exception?, Exception> TokenAcquisitionProblem =
+                LoggerMessage.Define<Exception?>(LogLevel.Error, new EventId(EventIdOffset + 0, nameof(TokenAcquisitionProblem)), "Unable to acquire HashiCorp Cloud Platform token {Exception}");
         }
     }
 }

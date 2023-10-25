@@ -31,6 +31,12 @@
     <PackageProjectUrl>https://github.com/Technical-Publications-Bombardier/BaXmlSplitter</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <SignAssembly>False</SignAssembly>
+    <PackageReleaseNotes>Added Application Insights.
+Added Azure Blob Store.</PackageReleaseNotes>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
+    <Authors>Mavaddat Javid</Authors>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
