@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Channel;
 #pragma warning disable CA1308
 
 namespace BaXmlSplitter
@@ -22,6 +23,7 @@ namespace BaXmlSplitter
         /// The <see cref="Microsoft.ApplicationInsights"/> telemetry client
         /// </summary>
         internal readonly TelemetryClient TelemetryClient;
+        internal readonly InMemoryChannel Channel;
         /// <summary>The log file path
         /// for the XML splitting.</summary>
         private readonly string logFile;
@@ -81,10 +83,11 @@ namespace BaXmlSplitter
         /// <summary>
         /// Initializes a new instance of the <see cref="XmlSplitter"/> class.
         /// </summary>
-        public XmlSplitter(TelemetryClient telemetryClient)
+        public XmlSplitter(TelemetryClient telemetryClient, InMemoryChannel channel)
         {
             InitializeComponent();
             TelemetryClient = telemetryClient;
+            Channel = channel;
             logFile = Path.Combine(Path.GetTempPath(), $"BaXmlSplitter-{DateTime.Now:yyyy-MM-dd-HH-mm-ss-fffffff}.log");
             File.Move(Path.GetTempFileName(), logFile);
             logTextBox.SuspendLayout();

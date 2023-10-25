@@ -19,6 +19,7 @@ namespace BaXmlSplitter
             if (disposing)
             {
                 TelemetryClient.Flush();
+                Channel.Flush();
                 if (components is not null)
                     components.Dispose();
             }
