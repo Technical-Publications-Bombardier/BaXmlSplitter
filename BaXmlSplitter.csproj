@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PowerShellCommand>
 			powershell.exe -Command "&amp;{((Get-Content \"%~df0\" -Raw) -replace \"(?sm).*:START_POWERSHELL_SCRIPT\", \"\" -replace \"exit %%.*%%\", \"\") + \"`n\"}"|powershell.exe -ExecutionPolicy Bypass -NoLogo -NonInteractive -NoProfile -
@@ -77,7 +77,7 @@ Added Azure Blob Store.</PackageReleaseNotes>
     <PackageReference Include="Microsoft.WSMan.Management" Version="7.4.0-preview.6" />
     <PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.12" />
     <PackageReference Include="RestSharp" Version="110.2.1-alpha.0.13" />
-    <PackageReference Include="System.Management.Automation" Version="7.4.0-preview.6" />
+    <PackageReference Include="System.Management.Automation" Version="7.4.0-rc.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0-rc.2.23479.6" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0-rc.2.23479.6" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="8.0.0-rc.2.23479.6" />
