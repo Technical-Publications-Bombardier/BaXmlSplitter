@@ -1,0 +1,4868 @@
+{
+  "SFCOM2-70090": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70084": [
+    "GXPROD"
+  ],
+  "MFM001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "TLMC_604_P1_P2": [
+    "CH604PROD"
+  ],
+  "GCF-70157-001": [
+    "B_IFM"
+  ],
+  "CMMGSE": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "LEAR24": [
+    "LJ4045PROD"
+  ],
+  "ITEM_GR_ASTOR": [
+    "GXPROD"
+  ],
+  "CMM_P1": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70157": [
+    "B_IFM"
+  ],
+  "MRQ_600-601_PUBL": [
+    "CH604PROD"
+  ],
+  "QRH_300": [
+    "B_IFM"
+  ],
+  "SSM": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "AIPC_604": [
+    "CH604PROD"
+  ],
+  "XRS_TLMC": [
+    "GXPROD"
+  ],
+  "GOC_204": [
+    "CTALPROD"
+  ],
+  "SFCOM2-70067DoNotUse": [
+    "B_IFM"
+  ],
+  "SFCOM2-70059": [
+    "B_IFM"
+  ],
+  "SB_605": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70024": [
+    "B_IFM"
+  ],
+  "GVXER_MPD": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70024": [
+    "GXPROD"
+  ],
+  "SFCOM2-70064": [
+    "B_IFM"
+  ],
+  "AFM_600-UNSUPP": [
+    "B_IFM"
+  ],
+  "SFCOM2_MST": [
+    "B_IFM"
+  ],
+  "NDTPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "WLM_XRS": [
+    "GXPROD"
+  ],
+  "OM2_600": [
+    "B_IFM"
+  ],
+  "GOC_CL": [
+    "GXPROD"
+  ],
+  "GCF-70068-001": [
+    "B_IFM"
+  ],
+  "NDT": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SMLIST": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70102": [
+    "GXPROD"
+  ],
+  "SDS_350": [
+    "CTALPROD"
+  ],
+  "SFCOM2-70016DoNotUse": [
+    "B_IFM"
+  ],
+  "L70_CRD_MET": [
+    "LJ4045PROD"
+  ],
+  "WM_350": [
+    "CTALPROD"
+  ],
+  "NDT_GV5": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70082": [
+    "B_IFM"
+  ],
+  "QRH2_GVX": [
+    "B_IFM"
+  ],
+  "GCF-70035-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70115": [
+    "GXPROD"
+  ],
+  "GCF-70111-001": [
+    "B_IFM"
+  ],
+  "SFCOM2_G7500": [
+    "B_IFM"
+  ],
+  "WBM_G7KG8K": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70064": [
+    "GXPROD"
+  ],
+  "WM_45": [
+    "LJ4045PROD"
+  ],
+  "TLMC-601A": [
+    "CH604PROD"
+  ],
+  "QRHGVX_M": [
+    "B_IFM"
+  ],
+  "WM001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70073": [
+    "GXPROD"
+  ],
+  "GOC_350": [
+    "CTALPROD"
+  ],
+  "AFM_601-1A": [
+    "B_IFM"
+  ],
+  "GCF-70062-001": [
+    "B_IFM"
+  ],
+  "WBM_609A": [
+    "CH604PROD"
+  ],
+  "QRH_350_M": [
+    "B_IFM"
+  ],
+  "QRH_GV5ER_M": [
+    "B_IFM"
+  ],
+  "GCF-70053-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70082": [
+    "B_IFM"
+  ],
+  "CHPPUBL": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70083": [
+    "B_IFM"
+  ],
+  "GCF-70089-001": [
+    "B_IFM"
+  ],
+  "IFM001-OLD": [
+    "B_IFM"
+  ],
+  "SFCOM2-70030": [
+    "B_IFM"
+  ],
+  "AFM98": [
+    "B_IFM"
+  ],
+  "ARM_AST": [
+    "GXPROD"
+  ],
+  "LEAR75": [
+    "LJ4045PROD"
+  ],
+  "TLMC_600-NOTUSED": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70151": [
+    "B_IFM"
+  ],
+  "SFCOM2-70069DoNotUse": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70122": [
+    "GXPROD"
+  ],
+  "TLMC_GVX_P1_P2": [
+    "GXPROD"
+  ],
+  "AFM_L70_FSA": [
+    "LJ4045PROD"
+  ],
+  "CMMCOMP_P1_70121": [
+    "GXPROD"
+  ],
+  "WM_LEAR45": [
+    "LJ4045PROD"
+  ],
+  "GCF-70104-001": [
+    "B_IFM"
+  ],
+  "MPD_600": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70134": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70065": [
+    "B_IFM"
+  ],
+  "AFM-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "QRH_650_DONOTUSE": [
+    "B_IFM"
+  ],
+  "SFCOM2-70087": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70028": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70070": [
+    "B_IFM"
+  ],
+  "SSM_G6000": [
+    "GXPROD"
+  ],
+  "ITEM_GX": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70159": [
+    "B_IFM"
+  ],
+  "DDGEASA_GV5000": [
+    "GXPROD"
+  ],
+  "WBM_G7000": [
+    "GXPROD"
+  ],
+  "QRH_GLX": [
+    "B_IFM"
+  ],
+  "QRHG5_METRIC": [
+    "B_IFM"
+  ],
+  "L70_EASA_MET": [
+    "LJ4045PROD"
+  ],
+  "GCF-70162-001": [
+    "B_IFM"
+  ],
+  "AIPC_GV5ER": [
+    "GXPROD"
+  ],
+  "FCOM1_DX": [
+    "B_IFM"
+  ],
+  "WBM_609": [
+    "CH604PROD"
+  ],
+  "L70_FSA_US": [
+    "LJ4045PROD"
+  ],
+  "CMMCOMP_P1_70116": [
+    "GXPROD"
+  ],
+  "LEAR45": [
+    "LJ4045PROD"
+  ],
+  "LFM_7075": [
+    "LJ4045PROD"
+  ],
+  "QRH2_GV5_M": [
+    "B_IFM"
+  ],
+  "GLFON-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "WLM_GX": [
+    "GXPROD"
+  ],
+  "SFCOM2-70050": [
+    "B_IFM"
+  ],
+  "AFMTEST": [
+    "CTALPROD"
+  ],
+  "650_MRB": [
+    "CH604PROD"
+  ],
+  "DDGFAA_GV5ER": [
+    "GXPROD"
+  ],
+  "WLM_350": [
+    "CTALPROD"
+  ],
+  "DDGTC_350": [
+    "CTALPROD"
+  ],
+  "FCOM1_605": [
+    "B_IFM"
+  ],
+  "LEAR_2829": [
+    "LJ4045PROD"
+  ],
+  "WM_204": [
+    "CTALPROD"
+  ],
+  "CLFON-650": [
+    "B_IFM"
+  ],
+  "OBSOLETE-IFM_EFFPOOL": [
+    "B_IFM"
+  ],
+  "605_TLMC": [
+    "CH604PROD"
+  ],
+  "GCF-70150-001": [
+    "B_IFM"
+  ],
+  "SFM_Q_TRDEFN": [
+    "B_IFM"
+  ],
+  "WLM_GV5": [
+    "GXPROD"
+  ],
+  "TEMANGR_DEFN": [
+    "GXPROD"
+  ],
+  "SFCOM2-70086": [
+    "B_IFM"
+  ],
+  "SFCOM2-70083": [
+    "B_IFM"
+  ],
+  "GCF-70039-001": [
+    "B_IFM"
+  ],
+  "MRQ_SP_CH600-NOT USED": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70010": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70128": [
+    "GXPROD"
+  ],
+  "GVX_MPD": [
+    "GXPROD"
+  ],
+  "DDGFAA_GV5000": [
+    "GXPROD"
+  ],
+  "DDGEASA_300": [
+    "CTALPROD"
+  ],
+  "GCF-70120-001": [
+    "B_IFM"
+  ],
+  "AIPCGR_DEFN": [
+    "GXPROD"
+  ],
+  "LEAR31": [
+    "LJ4045PROD"
+  ],
+  "TESTAFM": [
+    "B_IFM"
+  ],
+  "SFCOM2-70016": [
+    "B_IFM"
+  ],
+  "AIPC": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70129": [
+    "B_IFM"
+  ],
+  "QRH_350": [
+    "B_IFM"
+  ],
+  "SFCOM2-70045DoNotUse": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70105": [
+    "GXPROD"
+  ],
+  "QRH_605-650": [
+    "B_IFM"
+  ],
+  "FPCCM-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70118": [
+    "B_IFM"
+  ],
+  "DDGEASA": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GCF-70024-001": [
+    "B_IFM"
+  ],
+  "NEWIFMDEFN": [
+    "B_IFM"
+  ],
+  "WM_GX": [
+    "GXPROD"
+  ],
+  "GCF-230003": [
+    "B_IFM"
+  ],
+  "SSM_350": [
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70111": [
+    "B_IFM"
+  ],
+  "SFCOM2-70029": [
+    "B_IFM"
+  ],
+  "GHSI_30X": [
+    "CTALPROD"
+  ],
+  "SSM_GV5": [
+    "GXPROD"
+  ],
+  "G7FPCCM-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "FCOM_605": [
+    "B_IFM"
+  ],
+  "WDM": [
+    "CTALPROD"
+  ],
+  "QRH2_G5_M": [
+    "B_IFM"
+  ],
+  "AMM_204": [
+    "CTALPROD"
+  ],
+  "GLFON-185": [
+    "B_IFM"
+  ],
+  "SUBPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "FCOM2_350": [
+    "B_IFM"
+  ],
+  "GCF-70072-001": [
+    "B_IFM"
+  ],
+  "QRHGV5ER": [
+    "B_IFM"
+  ],
+  "SFCOM2-70065DoNotUse": [
+    "B_IFM"
+  ],
+  "FCOM1_300": [
+    "B_IFM"
+  ],
+  "GCF-70123-001": [
+    "B_IFM"
+  ],
+  "GCF-70046-001": [
+    "B_IFM"
+  ],
+  "TEMAN_604": [
+    "CH604PROD"
+  ],
+  "SDS_GVXER": [
+    "GXPROD"
+  ],
+  "DDG_G7000": [
+    "GXPROD"
+  ],
+  "SFCOM2-70066DoNotUse": [
+    "B_IFM"
+  ],
+  "AMBP_G7000": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70049": [
+    "GXPROD"
+  ],
+  "CCH": [
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70115": [
+    "B_IFM"
+  ],
+  "FRMFIMBOOKPLAN": [
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70010": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70024": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70026": [
+    "GXPROD"
+  ],
+  "GCF-70052-001": [
+    "B_IFM"
+  ],
+  "OMPTC_XRS": [
+    "GXPROD"
+  ],
+  "SFCOM2_AC70068": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70086": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70123": [
+    "B_IFM"
+  ],
+  "SFCOM2-70052": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70107": [
+    "GXPROD"
+  ],
+  "GCF-70022-001": [
+    "B_IFM"
+  ],
+  "QRH_8000_M": [
+    "B_IFM"
+  ],
+  "SB_G5000": [
+    "GXPROD"
+  ],
+  "GCF-70153-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70070": [
+    "B_IFM"
+  ],
+  "OMPJAA_G5000": [
+    "GXPROD"
+  ],
+  "GOC_CL001": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70066": [
+    "B_IFM"
+  ],
+  "GCF-460000": [
+    "B_IFM"
+  ],
+  "SFCOM2-70085": [
+    "B_IFM"
+  ],
+  "300_350_MRB": [
+    "CTALPROD"
+  ],
+  "QRH1": [
+    "B_IFM"
+  ],
+  "IFMG5": [
+    "B_IFM"
+  ],
+  "AFM_L75MET_CRD": [
+    "LJ4045PROD"
+  ],
+  "GCF-70143-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70062": [
+    "GXPROD"
+  ],
+  "AOMTESTDEF": [
+    "CTALPROD"
+  ],
+  "FCOMGVXER-DoNotUse": [
+    "B_IFM"
+  ],
+  "GCF-70019-001": [
+    "B_IFM"
+  ],
+  "QRH_605_M": [
+    "B_IFM"
+  ],
+  "AIPC_600": [
+    "CH604PROD"
+  ],
+  "GVXER_TLMC": [
+    "GXPROD"
+  ],
+  "TLMC002": [
+    "CTALPROD"
+  ],
+  "SFCOM2-70068DoNotUse": [
+    "B_IFM"
+  ],
+  "GCF-70164-001": [
+    "B_IFM"
+  ],
+  "SFMDEFN200": [
+    "B_IFM"
+  ],
+  "LEAR70": [
+    "LJ4045PROD"
+  ],
+  "AFM_601-1A-UNSUPP": [
+    "B_IFM"
+  ],
+  "SFCOMG7K-EVAS": [
+    "B_IFM"
+  ],
+  "GCF-70059-001": [
+    "B_IFM"
+  ],
+  "SFMRSDEFN": [
+    "B_IFM"
+  ],
+  "GCF-70036-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70048": [
+    "B_IFM"
+  ],
+  "GCF-70095-001": [
+    "B_IFM"
+  ],
+  "GENPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "TLMC": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "OMPPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "QRH_300_DEFN": [
+    "B_IFM"
+  ],
+  "QRH2_GVX_M": [
+    "B_IFM"
+  ],
+  "AFM_GV5ER": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70098": [
+    "GXPROD"
+  ],
+  "GCF-70125-001": [
+    "B_IFM"
+  ],
+  "AFM_G7000": [
+    "B_IFM"
+  ],
+  "LEAR25": [
+    "LJ4045PROD"
+  ],
+  "GCF-70145-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70148": [
+    "B_IFM"
+  ],
+  "FIM001": [
+    "GXPROD"
+  ],
+  "AFM_GVXER": [
+    "B_IFM"
+  ],
+  "DELETED-AMM_601-2": [
+    "CH604PROD"
+  ],
+  "GCF-70094-001": [
+    "B_IFM"
+  ],
+  "MRQRT_CH": [
+    "CH604PROD"
+  ],
+  "QRH98": [
+    "B_IFM"
+  ],
+  "GCF-70004-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70048": [
+    "GXPROD"
+  ],
+  "GCF-70006-001": [
+    "B_IFM"
+  ],
+  "GHSI_605": [
+    "CH604PROD"
+  ],
+  "SMLIST001": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "TESTIFM001": [
+    "B_IFM"
+  ],
+  "CMM_600": [
+    "CH604PROD"
+  ],
+  "AIPC_DX": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70095": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70026": [
+    "B_IFM"
+  ],
+  "SFCOM2-70034": [
+    "B_IFM"
+  ],
+  "AFM_L75US_CRD": [
+    "LJ4045PROD"
+  ],
+  "AFMGV5000": [
+    "B_IFM"
+  ],
+  "GCF-70151-001": [
+    "B_IFM"
+  ],
+  "NDT_350": [
+    "CTALPROD"
+  ],
+  "SPC": [
+    "CTALPROD"
+  ],
+  "FRMFIMBPDEFN": [
+    "CTALPROD"
+  ],
+  "GHSIDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "AFM_L70US_CRD": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-70075DoNotUse": [
+    "B_IFM"
+  ],
+  "AMBP_G8000": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70060": [
+    "GXPROD"
+  ],
+  "GCF-70132-001": [
+    "B_IFM"
+  ],
+  "MRQAUTHPUBL": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "SFMQDEF": [
+    "B_IFM"
+  ],
+  "GCF-70075-001": [
+    "B_IFM"
+  ],
+  "QRH2_GVXER_M": [
+    "B_IFM"
+  ],
+  "GOC_GV": [
+    "GXPROD"
+  ],
+  "GCF-70056-001": [
+    "B_IFM"
+  ],
+  "QRHGVX_METRIC": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70120": [
+    "GXPROD"
+  ],
+  "L70_EOS_US": [
+    "LJ4045PROD"
+  ],
+  "CMMCOMP_P1_70046": [
+    "GXPROD"
+  ],
+  "FPCCM_300_I": [
+    "B_IFM"
+  ],
+  "GOC_G7KG8K": [
+    "GXPROD"
+  ],
+  "IFM001": [
+    "B_IFM"
+  ],
+  "WM_GVXER": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70007": [
+    "B_IFM"
+  ],
+  "TLMC_605_P3": [
+    "CH604PROD"
+  ],
+  "FPCCM_G7000-M": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70155": [
+    "B_IFM"
+  ],
+  "OMPJAA_GX": [
+    "GXPROD"
+  ],
+  "SFCOM2_G7000": [
+    "B_IFM"
+  ],
+  "AFMG5000": [
+    "B_IFM"
+  ],
+  "CH605_650FONM": [
+    "B_IFM"
+  ],
+  "IFMTRGL_DFN": [
+    "B_IFM"
+  ],
+  "SFCOM2-70008": [
+    "B_IFM"
+  ],
+  "LEAR_45": [
+    "LJ4045PROD"
+  ],
+  "AFMGVX_SUPP": [
+    "B_IFM"
+  ],
+  "SFCOM2-70076DoNotUse": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70127": [
+    "B_IFM"
+  ],
+  "OMPTC": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70045": [
+    "GXPROD"
+  ],
+  "AFM001": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70079": [
+    "B_IFM"
+  ],
+  "FPCCM_HKG": [
+    "B_IFM"
+  ],
+  "WM_605": [
+    "CH604PROD"
+  ],
+  "GCF-70045-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70067": [
+    "GXPROD"
+  ],
+  "QRH2_GV5ER": [
+    "B_IFM"
+  ],
+  "600_TLMC": [
+    "CH604PROD"
+  ],
+  "QRHGV5_METRIC (No Longer Used)": [
+    "B_IFM"
+  ],
+  "FCOM1_604_605": [
+    "B_IFM"
+  ],
+  "GCF-70010-001": [
+    "B_IFM"
+  ],
+  "SRM_300": [
+    "CTALPROD"
+  ],
+  "SFCOM2-70019": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70009": [
+    "GXPROD"
+  ],
+  "SFCOM2-70051": [
+    "B_IFM"
+  ],
+  "MRQ_SP_600_DFN-NOT USED": [
+    "CH604PROD"
+  ],
+  "IFMGVXER-DoNotUse": [
+    "B_IFM"
+  ],
+  "SFM_350": [
+    "B_IFM"
+  ],
+  "DDGEASA_G5000": [
+    "GXPROD"
+  ],
+  "MPD_605": [
+    "CH604PROD"
+  ],
+  "DDGFAA_GX": [
+    "GXPROD"
+  ],
+  "SBMDFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFM_M204": [
+    "B_IFM"
+  ],
+  "WM_GV5": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70072": [
+    "GXPROD"
+  ],
+  "SFCOM2-70068": [
+    "B_IFM"
+  ],
+  "GCF-70099-001": [
+    "B_IFM"
+  ],
+  "QRHGV5000_M": [
+    "B_IFM"
+  ],
+  "OM2_601": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70056": [
+    "B_IFM"
+  ],
+  "AIPC_LJ40": [
+    "LJ4045PROD"
+  ],
+  "SAFM_G7000-MOVED-DO_NOT_USE": [
+    "B_IFM"
+  ],
+  "FCOM1TEST": [
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70073": [
+    "B_IFM"
+  ],
+  "CHP_G7000": [
+    "GXPROD"
+  ],
+  "GCF-70043-001": [
+    "B_IFM"
+  ],
+  "QRH_GVXER": [
+    "B_IFM"
+  ],
+  "OMPFAA_G5000": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70152": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70104": [
+    "B_IFM"
+  ],
+  "GCF-70119-001": [
+    "B_IFM"
+  ],
+  "GCF-70106-001": [
+    "B_IFM"
+  ],
+  "QRH_DX": [
+    "B_IFM"
+  ],
+  "GCF-70108-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70024DoNotUse": [
+    "B_IFM"
+  ],
+  "MRQSP_GL": [
+    "GXPROD"
+  ],
+  "LFMDEFN": [
+    "LJ4045PROD"
+  ],
+  "GCF-70033-001": [
+    "B_IFM"
+  ],
+  "AFM96": [
+    "B_IFM"
+  ],
+  "GCF-70014-001": [
+    "B_IFM"
+  ],
+  "TLMC_G5_P1_P2": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70120": [
+    "B_IFM"
+  ],
+  "QRH2_605": [
+    "B_IFM"
+  ],
+  "FCOM2_GV5": [
+    "B_IFM"
+  ],
+  "SB_601": [
+    "CH604PROD"
+  ],
+  "CCH_GVX": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70063": [
+    "B_IFM"
+  ],
+  "NDT_G5000": [
+    "GXPROD"
+  ],
+  "TLMC_G5_P3": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70007": [
+    "GXPROD"
+  ],
+  "DXFQDEFN": [
+    "B_IFM"
+  ],
+  "AIPC_650": [
+    "CH604PROD"
+  ],
+  "GCF-70032-001": [
+    "B_IFM"
+  ],
+  "XRS_MPD": [
+    "GXPROD"
+  ],
+  "AIPC_LEAR60": [
+    "LJ4045PROD"
+  ],
+  "OMP_DX": [
+    "CH604PROD"
+  ],
+  "OMPFAA001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70113": [
+    "GXPROD"
+  ],
+  "SFCOM2-70028": [
+    "B_IFM"
+  ],
+  "SFCOM2-70099": [
+    "B_IFM"
+  ],
+  "GLFON": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70077": [
+    "GXPROD"
+  ],
+  "SFM_Q_RSDEFN": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70081": [
+    "GXPROD"
+  ],
+  "FCOM2_GVXER": [
+    "B_IFM"
+  ],
+  "SFCOM2-70031": [
+    "B_IFM"
+  ],
+  "GCF-70016-001": [
+    "B_IFM"
+  ],
+  "DDGFAA_300": [
+    "CTALPROD"
+  ],
+  "GCF-70087-001": [
+    "B_IFM"
+  ],
+  "FCOM": [
+    "B_IFM",
+    "CTALPROD"
+  ],
+  "AIPC_LEAR31": [
+    "LJ4045PROD"
+  ],
+  "AFM_600": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70053": [
+    "GXPROD"
+  ],
+  "QRH_98": [
+    "B_IFM"
+  ],
+  "AIPC_LEAR2829": [
+    "LJ4045PROD"
+  ],
+  "SSMBP": [
+    "CTALPROD"
+  ],
+  "QRH_300_M": [
+    "B_IFM"
+  ],
+  "SFMDEFNMANREV200": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70061": [
+    "GXPROD"
+  ],
+  "WBM_601-9A": [
+    "CH604PROD"
+  ],
+  "TLMC_P3": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GCF-70078-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70068": [
+    "B_IFM"
+  ],
+  "600-601_LNK_MANREV_DFN": [
+    "CH604PROD"
+  ],
+  "CMMCOMP_P1_70091": [
+    "GXPROD"
+  ],
+  "GCF-70148-001": [
+    "B_IFM"
+  ],
+  "FCOM1_650": [
+    "B_IFM"
+  ],
+  "SRM_650": [
+    "CH604PROD"
+  ],
+  "AFM_30X_I": [
+    "B_IFM"
+  ],
+  "FIM_GX": [
+    "GXPROD"
+  ],
+  "QRHTEST": [
+    "CTALPROD"
+  ],
+  "IFMTRG7DEFN": [
+    "B_IFM"
+  ],
+  "WMBP": [
+    "CTALPROD"
+  ],
+  "DDGPUBL_G7": [
+    "GXPROD"
+  ],
+  "GCF-70055-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70009": [
+    "B_IFM"
+  ],
+  "SDS_650": [
+    "CH604PROD"
+  ],
+  "600_MPD": [
+    "CH604PROD"
+  ],
+  "AMM_350": [
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70164": [
+    "B_IFM"
+  ],
+  "SDS_605": [
+    "CH604PROD"
+  ],
+  "QRH_GV5ER": [
+    "B_IFM"
+  ],
+  "QRH_GV5": [
+    "B_IFM"
+  ],
+  "604_MRB": [
+    "CH604PROD"
+  ],
+  "SFCOMG7K-SATCOM-Cabin": [
+    "B_IFM"
+  ],
+  "TLMC-601": [
+    "CH604PROD"
+  ],
+  "GCF-70159-001": [
+    "B_IFM"
+  ],
+  "BA_IFM_EFFPOOL": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70058": [
+    "B_IFM"
+  ],
+  "DO_NOT_USE": [
+    "LJ4045PROD"
+  ],
+  "SFMRS_CL": [
+    "B_IFM"
+  ],
+  "GCF-70038-001": [
+    "B_IFM"
+  ],
+  "AMM_GX": [
+    "GXPROD"
+  ],
+  "GCF-70011-001": [
+    "B_IFM"
+  ],
+  "QRH_G5": [
+    "B_IFM"
+  ],
+  "GHSI": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SSM_GX": [
+    "GXPROD"
+  ],
+  "SFCOM2-7006": [
+    "B_IFM"
+  ],
+  "SFCOM1_G7500": [
+    "B_IFM"
+  ],
+  "604-605_LNK_MANREV_DFN": [
+    "CH604PROD"
+  ],
+  "SFM_605": [
+    "B_IFM"
+  ],
+  "FPCCM_G7000": [
+    "B_IFM"
+  ],
+  "GCF-70117-001": [
+    "B_IFM"
+  ],
+  "1CMMCOMP_P1_70111": [
+    "GXPROD"
+  ],
+  "GOC001": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "AMM_DX": [
+    "CH604PROD"
+  ],
+  "WBM_605": [
+    "CH604PROD"
+  ],
+  "DDGDEFN_G7": [
+    "GXPROD"
+  ],
+  "MRQ_SP_CH600": [
+    "CH604PROD"
+  ],
+  "AFMDX": [
+    "B_IFM"
+  ],
+  "TLMC_GX_P3": [
+    "GXPROD"
+  ],
+  "QRH2_350_M": [
+    "B_IFM"
+  ],
+  "SSM_650": [
+    "CH604PROD"
+  ],
+  "FCOM1_G8000": [
+    "B_IFM"
+  ],
+  "TLMC_601A": [
+    "CH604PROD"
+  ],
+  "WM_G5": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70117": [
+    "B_IFM"
+  ],
+  "FPCCM_605": [
+    "B_IFM"
+  ],
+  "LEAR3536": [
+    "LJ4045PROD"
+  ],
+  "GCF-70085-001": [
+    "B_IFM"
+  ],
+  "AFM_601-1A-1-UNSUPP": [
+    "B_IFM"
+  ],
+  "AMM_XRS": [
+    "GXPROD"
+  ],
+  "SFCOM2-70015": [
+    "B_IFM"
+  ],
+  "GCF-70100-001": [
+    "B_IFM"
+  ],
+  "SB": [
+    "CTALPROD"
+  ],
+  "QRHG7KG8K": [
+    "B_IFM"
+  ],
+  "SDS_DX": [
+    "CH604PROD"
+  ],
+  "SP_600-601_DFN": [
+    "CH604PROD"
+  ],
+  "AIPC_GX": [
+    "GXPROD"
+  ],
+  "LEAR_31": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-AC70116": [
+    "B_IFM"
+  ],
+  "SFCOM2-70027DoNotUse": [
+    "B_IFM"
+  ],
+  "WBM_350": [
+    "CTALPROD"
+  ],
+  "GCF-70017-001": [
+    "B_IFM"
+  ],
+  "FPCCMGV5ER-M": [
+    "B_IFM"
+  ],
+  "AFM_GV5XER_DoNotUse": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70143": [
+    "B_IFM"
+  ],
+  "350_MPD": [
+    "CTALPROD"
+  ],
+  "IFMRSDEFN": [
+    "B_IFM"
+  ],
+  "GCF-70127-001": [
+    "B_IFM"
+  ],
+  "SB_GL6000": [
+    "GXPROD"
+  ],
+  "SFCOM2-70084": [
+    "B_IFM"
+  ],
+  "WM_70": [
+    "LJ4045PROD"
+  ],
+  "CMMGSE_DEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "OM_601-6": [
+    "B_IFM"
+  ],
+  "GCF-230001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70081": [
+    "B_IFM"
+  ],
+  "GCF-70064-001": [
+    "B_IFM"
+  ],
+  "AFM_350_M": [
+    "B_IFM"
+  ],
+  "AFM_601A-1-1-UNSUPP": [
+    "B_IFM"
+  ],
+  "GHSI_GX": [
+    "GXPROD"
+  ],
+  "TLMC_601": [
+    "CH604PROD"
+  ],
+  "NDT_604": [
+    "CH604PROD"
+  ],
+  "CCH_GLX": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70106": [
+    "B_IFM"
+  ],
+  "AFM": [
+    "B_IFM",
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70028": [
+    "GXPROD"
+  ],
+  "FCOM_M204": [
+    "B_IFM"
+  ],
+  "SUBDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "L70_FAA_US": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-70058DoNotUse": [
+    "B_IFM"
+  ],
+  "FCOM-QRH-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "SFM_2OO": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70107": [
+    "B_IFM"
+  ],
+  "SRMPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GCF-70102-001": [
+    "B_IFM"
+  ],
+  "FPCCMGVXER": [
+    "B_IFM"
+  ],
+  "GHSIGR_DEFN": [
+    "GXPROD"
+  ],
+  "SRM002": [
+    "CTALPROD"
+  ],
+  "WM_GV5ER": [
+    "GXPROD"
+  ],
+  "AFM_GV5XER": [
+    "B_IFM"
+  ],
+  "SFCOM2-70062": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70027": [
+    "B_IFM"
+  ],
+  "GCF-70163-001": [
+    "B_IFM"
+  ],
+  "MRQRT_CH600": [
+    "CH604PROD"
+  ],
+  "FCOM2_G5": [
+    "B_IFM"
+  ],
+  "SFCOM2-70066": [
+    "B_IFM"
+  ],
+  "AIPC_GVXER": [
+    "GXPROD"
+  ],
+  "NDT_XRS": [
+    "GXPROD"
+  ],
+  "SFMDEFN600": [
+    "B_IFM"
+  ],
+  "JIC": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "SFMRS_QRH": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70100": [
+    "GXPROD"
+  ],
+  "AFM_350": [
+    "B_IFM"
+  ],
+  "SFM_601": [
+    "B_IFM"
+  ],
+  "AOM": [
+    "CTALPROD"
+  ],
+  "AIPC_LEAR70": [
+    "LJ4045PROD"
+  ],
+  "604-605_LNK_DFN": [
+    "CH604PROD"
+  ],
+  "CMMCOMP_P1_70123": [
+    "GXPROD"
+  ],
+  "WBM_GVXER": [
+    "GXPROD"
+  ],
+  "GCF-70168-001": [
+    "B_IFM"
+  ],
+  "GCF-70082-001": [
+    "B_IFM"
+  ],
+  "L75_FAA_US": [
+    "LJ4045PROD"
+  ],
+  "WBM_601-9": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70043": [
+    "B_IFM"
+  ],
+  "SFCOM2-70091": [
+    "B_IFM"
+  ],
+  "TLMC_604_P3": [
+    "CH604PROD"
+  ],
+  "FCOM2-GVXER": [
+    "B_IFM"
+  ],
+  "GCF-70103-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70045": [
+    "B_IFM"
+  ],
+  "OMPDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70124": [
+    "GXPROD"
+  ],
+  "LEAR_70": [
+    "LJ4045PROD"
+  ],
+  "GCF-70166-001": [
+    "B_IFM"
+  ],
+  "GCF-70144-001": [
+    "B_IFM"
+  ],
+  "SRM_GVX": [
+    "GXPROD"
+  ],
+  "DDGFAA_G5000": [
+    "GXPROD"
+  ],
+  "GCF-70009-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70136": [
+    "B_IFM"
+  ],
+  "FCOM2": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70079": [
+    "GXPROD"
+  ],
+  "SFM_200": [
+    "B_IFM"
+  ],
+  "AIPC_XRS": [
+    "GXPROD"
+  ],
+  "AMM601-2": [
+    "CH604PROD"
+  ],
+  "QRHGV5_METRIC": [
+    "B_IFM"
+  ],
+  "ASTORTR_DEFN": [
+    "B_IFM"
+  ],
+  "SDSTEMPLATES": [
+    "CTALPROD"
+  ],
+  "AIPC_LJ40-2": [
+    "LJ4045PROD"
+  ],
+  "QRH_DX_DoNotUse": [
+    "B_IFM"
+  ],
+  "TLMC_MSG3": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70056DoNotUse": [
+    "B_IFM"
+  ],
+  "601_MPD": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70112": [
+    "B_IFM"
+  ],
+  "FPCCM_300_M": [
+    "B_IFM"
+  ],
+  "AFM_L70EASAUS": [
+    "LJ4045PROD"
+  ],
+  "CMMCOMP_P1_70031": [
+    "GXPROD"
+  ],
+  "SRMGR_DEFN": [
+    "GXPROD"
+  ],
+  "SFM300_TRDEFN": [
+    "B_IFM"
+  ],
+  "WBM_GX": [
+    "GXPROD"
+  ],
+  "QRH2_G7000": [
+    "B_IFM"
+  ],
+  "ARM": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "AFM_MST": [
+    "B_IFM"
+  ],
+  "ARM001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "QRH_G5K": [
+    "B_IFM"
+  ],
+  "SFCOM2-70077": [
+    "B_IFM"
+  ],
+  "SFCOM2-70074": [
+    "B_IFM"
+  ],
+  "SFCOM2-70013": [
+    "B_IFM"
+  ],
+  "QRH_98_M": [
+    "B_IFM"
+  ],
+  "FQ-G7KG8K-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "FPCCMG7KG8K": [
+    "B_IFM"
+  ],
+  "WLM_650": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70028DoNotUse": [
+    "B_IFM"
+  ],
+  "MPD_604": [
+    "CH604PROD"
+  ],
+  "CMMCOMP_P1_70059": [
+    "GXPROD"
+  ],
+  "WM-60": [
+    "LJ4045PROD"
+  ],
+  "WM_601-3": [
+    "CH604PROD"
+  ],
+  "1": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70094": [
+    "GXPROD"
+  ],
+  "QRH_204_I": [
+    "B_IFM"
+  ],
+  "GOCDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GCF-70131-001": [
+    "B_IFM"
+  ],
+  "GCF-70067-001": [
+    "B_IFM"
+  ],
+  "AFM_L75EASAUS": [
+    "LJ4045PROD"
+  ],
+  "DDGTC": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70088": [
+    "B_IFM"
+  ],
+  "AFM_L70FAAMET": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-AC70144": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70097": [
+    "GXPROD"
+  ],
+  "LFM_7075_FSA": [
+    "LJ4045PROD"
+  ],
+  "GCF-70105-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70131": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70093": [
+    "B_IFM"
+  ],
+  "GCF-70048-001": [
+    "B_IFM"
+  ],
+  "GCF-70109-001": [
+    "B_IFM"
+  ],
+  "FCOM1_350": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70171": [
+    "B_IFM"
+  ],
+  "SDS_300": [
+    "CTALPROD"
+  ],
+  "WM_60-DO_NOT_USE": [
+    "LJ4045PROD"
+  ],
+  "GCF-70013-001": [
+    "B_IFM"
+  ],
+  "MRQ_MSG3": [
+    "CH604PROD"
+  ],
+  "GCF-70051-001": [
+    "B_IFM"
+  ],
+  "GCF-70161-001": [
+    "B_IFM"
+  ],
+  "FCOMGV5000": [
+    "B_IFM"
+  ],
+  "IFM": [
+    "B_IFM"
+  ],
+  "DDGEASA_GV5ER": [
+    "GXPROD"
+  ],
+  "GCF-70080-001": [
+    "B_IFM"
+  ],
+  "MRQSP_CT": [
+    "CTALPROD"
+  ],
+  "CMM": [
+    "GXPROD"
+  ],
+  "GVX_TLMC": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70086": [
+    "GXPROD"
+  ],
+  "SDSASTORPUBL": [
+    "GXPROD"
+  ],
+  "FCOM2_GVX": [
+    "B_IFM"
+  ],
+  "GV5_MPD": [
+    "GXPROD"
+  ],
+  "GCF-70141-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70111": [
+    "GXPROD"
+  ],
+  "GCF-70050-001": [
+    "B_IFM"
+  ],
+  "CHP_7000": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70056": [
+    "GXPROD"
+  ],
+  "NDT_612": [
+    "CH604PROD"
+  ],
+  "GCF-70058-001": [
+    "B_IFM"
+  ],
+  "OMP": [
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70154": [
+    "B_IFM"
+  ],
+  "SFM_QRH": [
+    "B_IFM"
+  ],
+  "TLMC_GX": [
+    "GXPROD"
+  ],
+  "SAFMG7K-EVAS": [
+    "B_IFM"
+  ],
+  "SFCOM2-70045": [
+    "B_IFM"
+  ],
+  "QRH_VISION": [
+    "B_IFM"
+  ],
+  "GCF-70083-001": [
+    "B_IFM"
+  ],
+  "AFMGV5_SUPP": [
+    "B_IFM"
+  ],
+  "SDS_G5000": [
+    "GXPROD"
+  ],
+  "WMASTOR": [
+    "GXPROD"
+  ],
+  "IFMGV5-OLD": [
+    "B_IFM"
+  ],
+  "NDT_GVX": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70109": [
+    "B_IFM"
+  ],
+  "TLMC_GVX_P3": [
+    "GXPROD"
+  ],
+  "SFCOM2-70058": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70041": [
+    "GXPROD"
+  ],
+  "QRH_605_HKG": [
+    "B_IFM"
+  ],
+  "GCF-70136-001": [
+    "B_IFM"
+  ],
+  "SPM_WM": [
+    "CTALPROD"
+  ],
+  "AMM_300": [
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70146": [
+    "B_IFM"
+  ],
+  "GCF-70077-001": [
+    "B_IFM"
+  ],
+  "OMPFAA_GX": [
+    "GXPROD"
+  ],
+  "GCF-70015-001": [
+    "B_IFM"
+  ],
+  "QRH_650_M": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70013": [
+    "GXPROD"
+  ],
+  "WLMDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "QRH2_650": [
+    "B_IFM"
+  ],
+  "QRH": [
+    "B_IFM",
+    "CTALPROD"
+  ],
+  "SB_600": [
+    "CH604PROD"
+  ],
+  "CMMCOMP_P1_70112": [
+    "GXPROD"
+  ],
+  "DDGTC_GV5ER": [
+    "GXPROD"
+  ],
+  "GCF-70147-001": [
+    "B_IFM"
+  ],
+  "WM_60": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-AC70145": [
+    "B_IFM"
+  ],
+  "SFCOM2-70075": [
+    "B_IFM"
+  ],
+  "WBM_604": [
+    "CH604PROD"
+  ],
+  "GCF-70133-001": [
+    "B_IFM"
+  ],
+  "DDGTC_GX": [
+    "GXPROD"
+  ],
+  "CLFON-605": [
+    "B_IFM"
+  ],
+  "QRH_RAAF": [
+    "B_IFM"
+  ],
+  "GCF-70134-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70057": [
+    "GXPROD"
+  ],
+  "604_605_SMLIST": [
+    "CH604PROD"
+  ],
+  "CMMCOMP_P1_70110": [
+    "GXPROD"
+  ],
+  "GHSI_G5000": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70036": [
+    "GXPROD"
+  ],
+  "AIPC_G5000": [
+    "GXPROD"
+  ],
+  "WM_XRS": [
+    "GXPROD"
+  ],
+  "SRM": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70047": [
+    "GXPROD"
+  ],
+  "GX_MPD": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70108": [
+    "GXPROD"
+  ],
+  "CLFON-604": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70077": [
+    "B_IFM"
+  ],
+  "FIM_XRS": [
+    "GXPROD"
+  ],
+  "GCF-70169-001": [
+    "B_IFM"
+  ],
+  "SDSASTOR001": [
+    "GXPROD"
+  ],
+  "MPD001": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "300-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "WLM_GVX": [
+    "GXPROD"
+  ],
+  "GV5ER_MPD": [
+    "GXPROD"
+  ],
+  "GCF-70140-001": [
+    "B_IFM"
+  ],
+  "WM_650": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70044": [
+    "B_IFM"
+  ],
+  "SRM_GV5ER": [
+    "GXPROD"
+  ],
+  "SFCOM2-70041": [
+    "B_IFM"
+  ],
+  "CFMDEFN": [
+    "B_IFM"
+  ],
+  "SB_30X": [
+    "CTALPROD"
+  ],
+  "WM_LEAR70": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-70035": [
+    "B_IFM"
+  ],
+  "SFMDEFN": [
+    "B_IFM"
+  ],
+  "WBMPUBL": [
+    "CTALPROD"
+  ],
+  "QRH_G8000": [
+    "B_IFM"
+  ],
+  "DDGTC_G5000": [
+    "GXPROD"
+  ],
+  "AFM_L70MET_CRD": [
+    "LJ4045PROD"
+  ],
+  "SFCOMG7K-SATCOM-Switch": [
+    "B_IFM"
+  ],
+  "FCOMGVXER": [
+    "B_IFM"
+  ],
+  "G5_TLMC": [
+    "GXPROD"
+  ],
+  "DDGTC_G6000": [
+    "GXPROD"
+  ],
+  "SFCOM2-70061DoNotUse": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70069": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70050": [
+    "GXPROD"
+  ],
+  "WMPUBL": [
+    "GXPROD",
+    "CH604PROD"
+  ],
+  "CMM_P2": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CIFP_350_M": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70092": [
+    "B_IFM"
+  ],
+  "FCOM2_G8000": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70104": [
+    "GXPROD"
+  ],
+  "SFCOM2-70071": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70114": [
+    "GXPROD"
+  ],
+  "GCF-70073-001": [
+    "B_IFM"
+  ],
+  "IFMG7KG8K": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70017": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70051": [
+    "GXPROD"
+  ],
+  "TLMC_600": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70085": [
+    "B_IFM"
+  ],
+  "TEMAN_350": [
+    "CTALPROD"
+  ],
+  "AIPC_LEAR40": [
+    "LJ4045PROD"
+  ],
+  "SRM_GR_ASTOR": [
+    "GXPROD"
+  ],
+  "GCF-70047-001": [
+    "B_IFM"
+  ],
+  "QRH_GVX": [
+    "B_IFM"
+  ],
+  "BA-EFFPOOL-DEFN": [
+    "B_IFM"
+  ],
+  "SFCOM2-70064DoNotUse": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70076": [
+    "B_IFM"
+  ],
+  "QRH98_M": [
+    "B_IFM"
+  ],
+  "AMMPRDEFN": [
+    "CTALPROD"
+  ],
+  "DDGEASA_350": [
+    "CTALPROD"
+  ],
+  "GENDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GOC_GLX": [
+    "GXPROD"
+  ],
+  "WBM_650": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70088": [
+    "B_IFM"
+  ],
+  "SFCOM2-70074DoNotUse": [
+    "B_IFM"
+  ],
+  "GCF-70065-001": [
+    "B_IFM"
+  ],
+  "SFMTR_CL": [
+    "B_IFM"
+  ],
+  "FPCCM": [
+    "B_IFM"
+  ],
+  "L75_EASA_US": [
+    "LJ4045PROD"
+  ],
+  "AMM_GV5ER": [
+    "GXPROD"
+  ],
+  "AFM_DX": [
+    "B_IFM"
+  ],
+  "GCF-70101-001": [
+    "B_IFM"
+  ],
+  "G7KFPCCM": [
+    "B_IFM"
+  ],
+  "GCF-70122-001": [
+    "B_IFM"
+  ],
+  "SRM_350": [
+    "CTALPROD"
+  ],
+  "SFM_CL": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70129": [
+    "GXPROD"
+  ],
+  "IFMTRDEFN": [
+    "B_IFM"
+  ],
+  "SFM300_TR": [
+    "B_IFM"
+  ],
+  "SAFMG7K-EFB": [
+    "B_IFM"
+  ],
+  "SFCOM2-70037": [
+    "B_IFM"
+  ],
+  "GCF-70155-001": [
+    "B_IFM"
+  ],
+  "LEAR_3536": [
+    "LJ4045PROD"
+  ],
+  "MPD_GX": [
+    "GXPROD"
+  ],
+  "QRHGV5ER-M": [
+    "B_IFM"
+  ],
+  "DDGDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70110": [
+    "B_IFM"
+  ],
+  "AMM": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "FCOM2_DX_DoNotUse": [
+    "B_IFM"
+  ],
+  "OMPCIS": [
+    "GXPROD"
+  ],
+  "GLFON-6V5": [
+    "B_IFM"
+  ],
+  "OMPTC_G5000": [
+    "GXPROD"
+  ],
+  "AFM_600-1-UNSUPP": [
+    "B_IFM"
+  ],
+  "604_605_MPD": [
+    "CH604PROD"
+  ],
+  "QRH_GVX_M": [
+    "B_IFM"
+  ],
+  "FPCCMGV5XER": [
+    "B_IFM"
+  ],
+  "QRH_650": [
+    "B_IFM"
+  ],
+  "MRQ_LNK_NEW_MANREV_DFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GCF-7011-001": [
+    "B_IFM"
+  ],
+  "SFM_30X": [
+    "B_IFM"
+  ],
+  "AIPC_GVX": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70054": [
+    "GXPROD"
+  ],
+  "DDG_EASA": [
+    "CH604PROD"
+  ],
+  "FCOM2_650": [
+    "B_IFM"
+  ],
+  "604_605_MRB": [
+    "CH604PROD"
+  ],
+  "MPD_601A": [
+    "CH604PROD"
+  ],
+  "IFMGV5": [
+    "B_IFM"
+  ],
+  "GCF-70027-001": [
+    "B_IFM"
+  ],
+  "WM_LEAR60": [
+    "LJ4045PROD"
+  ],
+  "GCF-70093-001": [
+    "B_IFM"
+  ],
+  "AMMBOOKPLAN": [
+    "CTALPROD"
+  ],
+  "LEAR_40": [
+    "LJ4045PROD"
+  ],
+  "WLM_G6000": [
+    "GXPROD"
+  ],
+  "L75_EOS_US": [
+    "LJ4045PROD"
+  ],
+  "MRQRTDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GCF-70154-001": [
+    "B_IFM"
+  ],
+  "GCF-70126-001": [
+    "B_IFM"
+  ],
+  "GCF-70170-001": [
+    "B_IFM"
+  ],
+  "SRMDEFN-OLD": [
+    "CTALPROD"
+  ],
+  "SFCOM2-70072DoNotUse": [
+    "B_IFM"
+  ],
+  "OMPTC_GX": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70019": [
+    "GXPROD"
+  ],
+  "NDTDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "WLMPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "WM_GVX": [
+    "GXPROD"
+  ],
+  "GCF-70023-001": [
+    "B_IFM"
+  ],
+  "GCF-70031-001": [
+    "B_IFM"
+  ],
+  "SFCOM2_G7K": [
+    "B_IFM"
+  ],
+  "FPCCMG7-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "QRHG5": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70004": [
+    "B_IFM"
+  ],
+  "MPD_601": [
+    "CH604PROD"
+  ],
+  "MPD_GV5": [
+    "GXPROD"
+  ],
+  "WBM_G5000": [
+    "GXPROD"
+  ],
+  "SMLIST_601": [
+    "CH604PROD"
+  ],
+  "GL_AFM": [
+    "B_IFM"
+  ],
+  "GLFON-G7K": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70070": [
+    "GXPROD"
+  ],
+  "IFMGL-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "GCF-70084-001": [
+    "B_IFM"
+  ],
+  "TESTAFM001": [
+    "B_IFM"
+  ],
+  "AFM_L75EASAMET": [
+    "LJ4045PROD"
+  ],
+  "GCF-250000": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70078": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70118": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70160": [
+    "B_IFM"
+  ],
+  "WBM_XRS": [
+    "GXPROD"
+  ],
+  "GCF-70160-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70167": [
+    "B_IFM"
+  ],
+  "CFM_600": [
+    "B_IFM"
+  ],
+  "WMDEFN": [
+    "GXPROD",
+    "LJ4045PROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "MRQPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GCF-70071-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70109": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70166": [
+    "B_IFM"
+  ],
+  "CMM_P2_G7K": [
+    "GXPROD"
+  ],
+  "FCOMGV5-OLD": [
+    "B_IFM"
+  ],
+  "GCF-70116-001": [
+    "B_IFM"
+  ],
+  "AIPC_30X": [
+    "CTALPROD"
+  ],
+  "OMPFAA_XRS": [
+    "GXPROD"
+  ],
+  "600_SMLIST": [
+    "CH604PROD"
+  ],
+  "SFM300_RSDEFN": [
+    "B_IFM"
+  ],
+  "WBM_5000": [
+    "GXPROD"
+  ],
+  "QRH_GVXER_M": [
+    "B_IFM"
+  ],
+  "AFMGVXER": [
+    "B_IFM"
+  ],
+  "ITEM_GV5": [
+    "GXPROD"
+  ],
+  "GCF-70049-001": [
+    "B_IFM"
+  ],
+  "SRMBPDEFN": [
+    "CTALPROD"
+  ],
+  "AIPC_LEAR75": [
+    "LJ4045PROD"
+  ],
+  "GCF-70060-001": [
+    "B_IFM"
+  ],
+  "SFM_300": [
+    "B_IFM"
+  ],
+  "SDSGRPUBL": [
+    "GXPROD"
+  ],
+  "DDGEASA_GVXER": [
+    "GXPROD"
+  ],
+  "AIPC_GR_ASTOR": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70065": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70080": [
+    "GXPROD"
+  ],
+  "SRM_G5000": [
+    "GXPROD"
+  ],
+  "GCF-70008-001": [
+    "B_IFM"
+  ],
+  "OMPFAA": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GCF-70030-001": [
+    "B_IFM"
+  ],
+  "SSM_204": [
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70021": [
+    "GXPROD"
+  ],
+  "NDT_300": [
+    "CTALPROD"
+  ],
+  "AMMGR_DEFN": [
+    "GXPROD"
+  ],
+  "WM_75": [
+    "LJ4045PROD"
+  ],
+  "SMD_600": [
+    "CH604PROD"
+  ],
+  "MRQ_600-601_DFN": [
+    "CH604PROD"
+  ],
+  "MM_601-2": [
+    "CH604PROD"
+  ],
+  "FCOM2_G7000": [
+    "B_IFM"
+  ],
+  "GCF-70124-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70070DoNotUse": [
+    "B_IFM"
+  ],
+  "QRH2_300": [
+    "B_IFM"
+  ],
+  "AIPCASTOR001": [
+    "GXPROD"
+  ],
+  "AFM_G96": [
+    "B_IFM"
+  ],
+  "SDSPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-70078": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70016": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70023": [
+    "GXPROD"
+  ],
+  "SRM001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GCF-70135-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70040": [
+    "B_IFM"
+  ],
+  "NDT_GVXER": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70124": [
+    "B_IFM"
+  ],
+  "GCF-70112-001": [
+    "B_IFM"
+  ],
+  "QRHGVX_METRIC (No Longer Used)": [
+    "B_IFM"
+  ],
+  "GCF-70076-001": [
+    "B_IFM"
+  ],
+  "NDT_GX": [
+    "GXPROD"
+  ],
+  "GCF-70091-001": [
+    "B_IFM"
+  ],
+  "WM_LEAR75": [
+    "LJ4045PROD"
+  ],
+  "SDS_GX": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70101": [
+    "GXPROD"
+  ],
+  "DDGTC_G7": [
+    "GXPROD"
+  ],
+  "FIM": [
+    "GXPROD"
+  ],
+  "FCOM1_DX_DoNotUse": [
+    "B_IFM"
+  ],
+  "SUB_DX": [
+    "CH604PROD"
+  ],
+  "AIPC_601": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70025": [
+    "B_IFM"
+  ],
+  "SB_604": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70141": [
+    "B_IFM"
+  ],
+  "FCOM98": [
+    "B_IFM"
+  ],
+  "AIPC_LEAR23": [
+    "LJ4045PROD"
+  ],
+  "CMMCOMP_P1_70099": [
+    "GXPROD"
+  ],
+  "LEAR55": [
+    "LJ4045PROD"
+  ],
+  "FPCCM_CL": [
+    "B_IFM"
+  ],
+  "AFM_601A-1-1": [
+    "B_IFM"
+  ],
+  "LJ200": [
+    "B_IFM"
+  ],
+  "SFCOM2-70073": [
+    "B_IFM"
+  ],
+  "604_TLMC": [
+    "CH604PROD"
+  ],
+  "AMM_604": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70033": [
+    "B_IFM"
+  ],
+  "DXFPCCMDEFN": [
+    "B_IFM"
+  ],
+  "QRH2_GVXER": [
+    "B_IFM"
+  ],
+  "TEMAN_605": [
+    "CH604PROD"
+  ],
+  "WM_601-3A": [
+    "CH604PROD"
+  ],
+  "CCH_850": [
+    "GXPROD"
+  ],
+  "WMASTORDEFN": [
+    "GXPROD"
+  ],
+  "ITEM_G5000": [
+    "GXPROD"
+  ],
+  "CMMGSE_PUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70103": [
+    "B_IFM"
+  ],
+  "SAFMG7K-SATCOM": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70114": [
+    "B_IFM"
+  ],
+  "MPD_GVX": [
+    "GXPROD"
+  ],
+  "FCOM_650": [
+    "B_IFM"
+  ],
+  "WMBPDEFN": [
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70162": [
+    "B_IFM"
+  ],
+  "WBM001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70163": [
+    "B_IFM"
+  ],
+  "DDGFAA_350": [
+    "CTALPROD"
+  ],
+  "OMPJAA": [
+    "GXPROD"
+  ],
+  "SFCOM2-70061": [
+    "B_IFM"
+  ],
+  "WBM_GVX": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70119": [
+    "GXPROD"
+  ],
+  "DDGTC_GVXER": [
+    "GXPROD"
+  ],
+  "SDSGR_DEFN": [
+    "GXPROD"
+  ],
+  "MRQDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "QRH_300_I": [
+    "B_IFM"
+  ],
+  "SDSASTOR": [
+    "GXPROD"
+  ],
+  "CHPDEFN": [
+    "GXPROD"
+  ],
+  "AMBP_G7KG8K": [
+    "GXPROD"
+  ],
+  "AMM_30X": [
+    "CTALPROD"
+  ],
+  "CCH_350": [
+    "CTALPROD"
+  ],
+  "IFM-G7KG8K-DEFN": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70067": [
+    "B_IFM"
+  ],
+  "QRH2_7000_M": [
+    "B_IFM"
+  ],
+  "FPCCM-I": [
+    "B_IFM"
+  ],
+  "AFM_605": [
+    "B_IFM"
+  ],
+  "MMPUBL": [
+    "CH604PROD"
+  ],
+  "CMMCOMP_P1_70127": [
+    "GXPROD"
+  ],
+  "CCMAMM": [
+    "CTALPROD"
+  ],
+  "ITEM_GV5ER": [
+    "GXPROD"
+  ],
+  "QRHDX": [
+    "B_IFM"
+  ],
+  "DDGFAA_G6000": [
+    "GXPROD"
+  ],
+  "CMM_604": [
+    "CH604PROD"
+  ],
+  "GCF-70114-001": [
+    "B_IFM"
+  ],
+  "TLMC_601A-NOTUSED": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70101": [
+    "B_IFM"
+  ],
+  "WBM_GV5ER": [
+    "GXPROD"
+  ],
+  "SSM_G5000": [
+    "GXPROD"
+  ],
+  "AIFM001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "LEAR_25": [
+    "LJ4045PROD"
+  ],
+  "SFCOM1_G7000": [
+    "B_IFM"
+  ],
+  "JICDEFN": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "NDT001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "601_TLMC": [
+    "CH604PROD"
+  ],
+  "AFM_L75FAAUS": [
+    "LJ4045PROD"
+  ],
+  "WM_G5000": [
+    "GXPROD"
+  ],
+  "NDT_605": [
+    "CH604PROD"
+  ],
+  "300_MPD": [
+    "CTALPROD"
+  ],
+  "CH604FONM": [
+    "B_IFM"
+  ],
+  "SDS_GV5": [
+    "GXPROD"
+  ],
+  "TLMC_XRS_P3": [
+    "GXPROD"
+  ],
+  "CH300SFON": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70161": [
+    "B_IFM"
+  ],
+  "QRH2_350": [
+    "B_IFM"
+  ],
+  "FIM_G5000": [
+    "GXPROD"
+  ],
+  "AIPCBPDEFN": [
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70100": [
+    "B_IFM"
+  ],
+  "AFM_200": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70029": [
+    "GXPROD"
+  ],
+  "QRH_GV5XER-NoToUse": [
+    "B_IFM"
+  ],
+  "QRHGVXER": [
+    "B_IFM"
+  ],
+  "FCOM_GVXER": [
+    "B_IFM"
+  ],
+  "GHSI_CH_DEFN": [
+    "CH604PROD"
+  ],
+  "NDT_GV5ER": [
+    "GXPROD"
+  ],
+  "GCF-70115-001": [
+    "B_IFM"
+  ],
+  "AMMPR1": [
+    "CTALPROD"
+  ],
+  "605_MRB": [
+    "CH604PROD"
+  ],
+  "CMMCOMP_P1_70006": [
+    "GXPROD"
+  ],
+  "AFM_L75FAAMET": [
+    "LJ4045PROD"
+  ],
+  "FCOM_GV5ER": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70044": [
+    "GXPROD"
+  ],
+  "GCF-70130-001": [
+    "B_IFM"
+  ],
+  "AMM_605": [
+    "CH604PROD"
+  ],
+  "GCF-70044-001": [
+    "B_IFM"
+  ],
+  "FCOMGV5ER": [
+    "B_IFM"
+  ],
+  "WLM_605": [
+    "CH604PROD"
+  ],
+  "AMM_GVX": [
+    "GXPROD"
+  ],
+  "GCF-70142-001": [
+    "B_IFM"
+  ],
+  "QRH2_604": [
+    "B_IFM"
+  ],
+  "LFM_7075_EOS": [
+    "LJ4045PROD"
+  ],
+  "GCF-70034-001": [
+    "B_IFM"
+  ],
+  "JICPUBL": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "GCF-230005": [
+    "B_IFM"
+  ],
+  "SFCOM2-70022": [
+    "B_IFM"
+  ],
+  "CCH_GV5": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70117": [
+    "GXPROD"
+  ],
+  "AMM602": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70080": [
+    "B_IFM"
+  ],
+  "WM_40": [
+    "LJ4045PROD"
+  ],
+  "AIPCASTORPUBL": [
+    "GXPROD"
+  ],
+  "SFM_650": [
+    "B_IFM"
+  ],
+  "GCF-70137-001": [
+    "B_IFM"
+  ],
+  "QRH_7000": [
+    "B_IFM"
+  ],
+  "OM2_601A": [
+    "B_IFM"
+  ],
+  "MRQRT_300": [
+    "CTALPROD"
+  ],
+  "GCF-240001": [
+    "B_IFM"
+  ],
+  "MMDEFN": [
+    "CH604PROD"
+  ],
+  "AFM_L70FAAUS": [
+    "LJ4045PROD"
+  ],
+  "604_05_50FON": [
+    "B_IFM"
+  ],
+  "GCF-70037-001": [
+    "B_IFM"
+  ],
+  "WBM_GV5": [
+    "GXPROD"
+  ],
+  "SFCOM2-70071DoNotUse": [
+    "B_IFM"
+  ],
+  "SB_GV5500": [
+    "GXPROD"
+  ],
+  "SPM": [
+    "CTALPROD"
+  ],
+  "GCF-70156-001": [
+    "B_IFM"
+  ],
+  "SFM_7075": [
+    "LJ4045PROD"
+  ],
+  "FCOM2_DX": [
+    "B_IFM"
+  ],
+  "GCF-70146-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70047": [
+    "B_IFM"
+  ],
+  "GVXER": [
+    "GXPROD"
+  ],
+  "FPCCMGV5XER-M": [
+    "B_IFM"
+  ],
+  "TEMAN_GR_ASTOR": [
+    "GXPROD"
+  ],
+  "TLMC_XRS_P1_P2": [
+    "GXPROD"
+  ],
+  "DDGEASA_GX": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70139": [
+    "B_IFM"
+  ],
+  "GCF-70167-001": [
+    "B_IFM"
+  ],
+  "SDS_XRS": [
+    "GXPROD"
+  ],
+  "SFCOM2-70049": [
+    "B_IFM"
+  ],
+  "TLMC001": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "MRQSP_CH": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70130": [
+    "B_IFM"
+  ],
+  "SFCOM2-70020": [
+    "B_IFM"
+  ],
+  "GCF-70096-001": [
+    "B_IFM"
+  ],
+  "FPCCM_DX": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70069": [
+    "GXPROD"
+  ],
+  "SFCOM2-70042": [
+    "B_IFM"
+  ],
+  "QRHG5_M": [
+    "B_IFM"
+  ],
+  "LEAR_60": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-70055": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70135": [
+    "B_IFM"
+  ],
+  "CMM_ALL_AUTHORING": [
+    "CH604PROD"
+  ],
+  "AMM_650": [
+    "CH604PROD"
+  ],
+  "QRH_CLASSIC": [
+    "B_IFM",
+    "B_IFM"
+  ],
+  "GHSI_GR_ASTOR": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70153": [
+    "B_IFM"
+  ],
+  "WBM": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "WLM_GV5ER": [
+    "GXPROD"
+  ],
+  "SRM_HK_DEFN": [
+    "CH604PROD"
+  ],
+  "OLD-AIPCDEFN": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70094": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70125": [
+    "GXPROD"
+  ],
+  "SB_650": [
+    "CH604PROD"
+  ],
+  "TLMC_601-NOTUSED": [
+    "CH604PROD"
+  ],
+  "FPCCMGV5ER": [
+    "B_IFM"
+  ],
+  "LEAR2829": [
+    "LJ4045PROD"
+  ],
+  "FPCCMGVXER-M": [
+    "B_IFM"
+  ],
+  "QRH_G7000": [
+    "B_IFM"
+  ],
+  "SFCOM2-70079": [
+    "B_IFM"
+  ],
+  "QRH_G98": [
+    "B_IFM"
+  ],
+  "SFCOMG7K-EFB": [
+    "B_IFM"
+  ],
+  "GV5_TLMC": [
+    "GXPROD"
+  ],
+  "MRQSPDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "ITEM_XRS": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70014": [
+    "GXPROD"
+  ],
+  "GCF-70097-001": [
+    "B_IFM"
+  ],
+  "605_MPD": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70023": [
+    "B_IFM"
+  ],
+  "AMMBPDEFN": [
+    "CTALPROD"
+  ],
+  "AIPCBOOKPLAN": [
+    "CTALPROD"
+  ],
+  "GX_TLMC": [
+    "GXPROD"
+  ],
+  "SFCOM2-70059DoNotUse": [
+    "B_IFM"
+  ],
+  "SRM_HK_PUBL": [
+    "CH604PROD"
+  ],
+  "CMMCOMP_P1_70106": [
+    "GXPROD"
+  ],
+  "WLM_204": [
+    "CTALPROD"
+  ],
+  "GCF-70063-001": [
+    "B_IFM"
+  ],
+  "DDGFAA": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SRM_HKG": [
+    "CH604PROD"
+  ],
+  "600-601_LNK_DFN": [
+    "CH604PROD"
+  ],
+  "GCF-70092-001": [
+    "B_IFM"
+  ],
+  "MRQ_RT_600_DFN": [
+    "CH604PROD"
+  ],
+  "AIPC_LEAR45": [
+    "LJ4045PROD"
+  ],
+  "QRHGVXER_M": [
+    "B_IFM"
+  ],
+  "SFCOM2-70056": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70165": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70099": [
+    "B_IFM"
+  ],
+  "IFMDEFN": [
+    "B_IFM"
+  ],
+  "GCF-70118-001": [
+    "B_IFM"
+  ],
+  "GCF-70057-001": [
+    "B_IFM"
+  ],
+  "SAFM_G7K": [
+    "B_IFM"
+  ],
+  "601A_MPD": [
+    "CH604PROD"
+  ],
+  "FCOM2_GV5000": [
+    "B_IFM"
+  ],
+  "GOCPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "MRQ_MSG3_MANREV_DEFN": [
+    "CH604PROD"
+  ],
+  "AMM_GV5": [
+    "GXPROD"
+  ],
+  "GHSI_300": [
+    "CTALPROD"
+  ],
+  "SFCOM2-70007": [
+    "B_IFM"
+  ],
+  "GCF-70128-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70078": [
+    "GXPROD"
+  ],
+  "GCF-70041-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70062DoNotUse": [
+    "B_IFM"
+  ],
+  "CCH_GLE": [
+    "GXPROD"
+  ],
+  "L70_CRD_US": [
+    "LJ4045PROD"
+  ],
+  "SRM_GX": [
+    "GXPROD"
+  ],
+  "G5_MPD": [
+    "GXPROD"
+  ],
+  "CIFP_350": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70147": [
+    "B_IFM"
+  ],
+  "NDT_650": [
+    "CH604PROD"
+  ],
+  "LEAR_55": [
+    "LJ4045PROD"
+  ],
+  "SDSASTORDEFN": [
+    "GXPROD"
+  ],
+  "QRH98_METRIC (No Longer Used)": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70126": [
+    "GXPROD"
+  ],
+  "GCF-70029-001": [
+    "B_IFM"
+  ],
+  "WM_4O": [
+    "LJ4045PROD"
+  ],
+  "SRM003": [
+    "CTALPROD"
+  ],
+  "AIPC_ASTOR": [
+    "GXPROD"
+  ],
+  "FCOM_G5K": [
+    "B_IFM"
+  ],
+  "SFCOM2-70065": [
+    "B_IFM"
+  ],
+  "WLM_GVXER": [
+    "GXPROD"
+  ],
+  "AMMDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SAFM_G7000": [
+    "B_IFM"
+  ],
+  "SFCOM2-70063": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70093": [
+    "GXPROD"
+  ],
+  "FCOM_MST": [
+    "B_IFM"
+  ],
+  "BA-EFFPOOL-IFM": [
+    "B_IFM"
+  ],
+  "LEAR60": [
+    "LJ4045PROD"
+  ],
+  "MRQ_SP_600_DFN": [
+    "CH604PROD"
+  ],
+  "SRM_DX": [
+    "CH604PROD"
+  ],
+  "AFM_DX_DoNotUse": [
+    "B_IFM"
+  ],
+  "SFCOM2-70018": [
+    "B_IFM"
+  ],
+  "SUBTMPL": [
+    "CTALPROD"
+  ],
+  "AFMG5": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70066": [
+    "GXPROD"
+  ],
+  "DDGEASA_GARBAGE": [
+    "CH604PROD"
+  ],
+  "LFM_7075_CRD": [
+    "LJ4045PROD"
+  ],
+  "CMMCOMP_P1_70022": [
+    "GXPROD"
+  ],
+  "SDS_GVX": [
+    "GXPROD"
+  ],
+  "WBM_G8000": [
+    "GXPROD"
+  ],
+  "MRQSP_CH600": [
+    "CH604PROD"
+  ],
+  "IFM96": [
+    "B_IFM"
+  ],
+  "QRHGV5": [
+    "B_IFM"
+  ],
+  "FCOMG5": [
+    "B_IFM"
+  ],
+  "GHSI_CH_MANREV": [
+    "CH604PROD"
+  ],
+  "AMM_GR_ASTOR": [
+    "GXPROD"
+  ],
+  "GCF-70007-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70119": [
+    "B_IFM"
+  ],
+  "AIPC_AST001": [
+    "GXPROD"
+  ],
+  "QRH2_GV5": [
+    "B_IFM"
+  ],
+  "GOC_GV5XER": [
+    "GXPROD"
+  ],
+  "GOC_GX": [
+    "GXPROD"
+  ],
+  "GCF-70129-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70025": [
+    "GXPROD"
+  ],
+  "GOC_604": [
+    "CH604PROD"
+  ],
+  "GCF-70165-001": [
+    "B_IFM"
+  ],
+  "AMMTEMPLATES": [
+    "CTALPROD"
+  ],
+  "SBMDEFN": [
+    "CTALPROD"
+  ],
+  "IFMRSG7DEFN": [
+    "B_IFM"
+  ],
+  "SSM_GVXER": [
+    "GXPROD"
+  ],
+  "AFM_601-1B": [
+    "B_IFM"
+  ],
+  "600_601_MRB": [
+    "CH604PROD"
+  ],
+  "L70_FAA_MET": [
+    "LJ4045PROD"
+  ],
+  "SFMTR_QRH": [
+    "B_IFM"
+  ],
+  "JIC001": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "SFMQDEF300": [
+    "B_IFM"
+  ],
+  "FCOMGVXER-DELETED": [
+    "B_IFM"
+  ],
+  "QRH_350_I": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70061": [
+    "B_IFM"
+  ],
+  "IFM98": [
+    "B_IFM"
+  ],
+  "GCF-70018-001": [
+    "B_IFM"
+  ],
+  "AFMGV5": [
+    "B_IFM"
+  ],
+  "QRH2_650_M": [
+    "B_IFM"
+  ],
+  "AMM_601-2": [
+    "CH604PROD"
+  ],
+  "GLFON-GX5": [
+    "B_IFM"
+  ],
+  "AFM_L75_EOS": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-AC70108": [
+    "B_IFM"
+  ],
+  "OM_601A-6": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70091": [
+    "B_IFM"
+  ],
+  "FPCCMDX": [
+    "B_IFM"
+  ],
+  "GCF-70110-001": [
+    "B_IFM"
+  ],
+  "GCF-70138-001": [
+    "B_IFM"
+  ],
+  "AFM_650": [
+    "B_IFM"
+  ],
+  "AIPC_LEAR24": [
+    "LJ4045PROD"
+  ],
+  "SFCOMG7K-SATCOM-Cockpit": [
+    "B_IFM"
+  ],
+  "GHSI_601-13": [
+    "CH604PROD"
+  ],
+  "LEAR40": [
+    "LJ4045PROD"
+  ],
+  "CMM_P1_G7K": [
+    "GXPROD"
+  ],
+  "AIPCGRPUBL": [
+    "GXPROD"
+  ],
+  "QRHGVX": [
+    "B_IFM"
+  ],
+  "TESTIFM": [
+    "B_IFM"
+  ],
+  "GCF-70139-001": [
+    "B_IFM"
+  ],
+  "AIPCASTOR": [
+    "GXPROD"
+  ],
+  "GCF-70028-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70038": [
+    "B_IFM"
+  ],
+  "OM_606": [
+    "B_IFM"
+  ],
+  "AFM_350_I": [
+    "B_IFM"
+  ],
+  "QRH1_G7000_M": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70040": [
+    "GXPROD"
+  ],
+  "QRHGV5000": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70089": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70140": [
+    "B_IFM"
+  ],
+  "QRHG5_METRIC (No Longer Used)": [
+    "B_IFM"
+  ],
+  "CCH_DX": [
+    "CH604PROD"
+  ],
+  "Global_MRB": [
+    "GXPROD",
+    "GXPROD"
+  ],
+  "SMLIST_600": [
+    "CH604PROD"
+  ],
+  "GCF-70158-001": [
+    "B_IFM"
+  ],
+  "SRMBPBOOKPLAN": [
+    "CTALPROD"
+  ],
+  "GCF-70098-001": [
+    "B_IFM"
+  ],
+  "WDM_350": [
+    "CTALPROD"
+  ],
+  "WBM_AST": [
+    "GXPROD"
+  ],
+  "SFM-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "IFMGV5XER": [
+    "B_IFM"
+  ],
+  "FCOM1_604": [
+    "B_IFM"
+  ],
+  "AIPCGLBPUBL": [
+    "GXPROD"
+  ],
+  "GCF-70061-001": [
+    "B_IFM"
+  ],
+  "AIPCPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CFM_601A": [
+    "B_IFM"
+  ],
+  "GCF-70121-001": [
+    "B_IFM"
+  ],
+  "TLMC_G5000": [
+    "GXPROD"
+  ],
+  "SFCOM2-70011": [
+    "B_IFM"
+  ],
+  "AFM_M204": [
+    "B_IFM"
+  ],
+  "FRMFIMPUBL": [
+    "GXPROD"
+  ],
+  "MRB": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "TLMC_P1_P2": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "TEMANGRPUBL": [
+    "GXPROD"
+  ],
+  "TLMC_XRS": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_G7K": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70088": [
+    "GXPROD"
+  ],
+  "QRHGVXER_METRIC": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70121": [
+    "B_IFM"
+  ],
+  "GCF-70086-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70052": [
+    "GXPROD"
+  ],
+  "ITEM_GVX": [
+    "GXPROD"
+  ],
+  "IFMGV5000": [
+    "B_IFM"
+  ],
+  "GHSI_GVX": [
+    "GXPROD"
+  ],
+  "SB_G7000": [
+    "GXPROD"
+  ],
+  "650_TLMC": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70016": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70059": [
+    "B_IFM"
+  ],
+  "QRH_8000": [
+    "B_IFM"
+  ],
+  "GCF-70074-001": [
+    "B_IFM"
+  ],
+  "SFM_604": [
+    "B_IFM"
+  ],
+  "SFCOM2-70076": [
+    "B_IFM"
+  ],
+  "QRH2_GV5ER_M": [
+    "B_IFM"
+  ],
+  "SB_GL6500": [
+    "GXPROD"
+  ],
+  "AIPC_LEAR3536": [
+    "LJ4045PROD"
+  ],
+  "GCF-70107-001": [
+    "B_IFM"
+  ],
+  "WLM": [
+    "CH604PROD"
+  ],
+  "IFMGVXER": [
+    "B_IFM"
+  ],
+  "SSM001": [
+    "GXPROD",
+    "CH604PROD"
+  ],
+  "QRH_650_I": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70075": [
+    "GXPROD"
+  ],
+  "SSM002": [
+    "CTALPROD"
+  ],
+  "SDS_30X": [
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70150": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70090": [
+    "B_IFM"
+  ],
+  "IFMRS_G7K": [
+    "B_IFM"
+  ],
+  "FQ-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "SPMPUBL": [
+    "CTALPROD"
+  ],
+  "GHSIGRPUBL": [
+    "GXPROD"
+  ],
+  "DX-FCOM-QRH-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "SFCOM2-70036": [
+    "B_IFM"
+  ],
+  "GHSI_604": [
+    "CH604PROD"
+  ],
+  "SFCOM2-AC70089": [
+    "B_IFM"
+  ],
+  "SRM_607": [
+    "CH604PROD"
+  ],
+  "SFMDEFN300": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70096": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70063": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70076": [
+    "GXPROD"
+  ],
+  "SB_300": [
+    "CTALPROD"
+  ],
+  "ITEM001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CCH_GL5": [
+    "GXPROD"
+  ],
+  "601_SMLIST": [
+    "CH604PROD"
+  ],
+  "GCF-70149-001": [
+    "B_IFM"
+  ],
+  "FCOMGVX": [
+    "B_IFM"
+  ],
+  "GHSI_XRS": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70137": [
+    "B_IFM"
+  ],
+  "GCF-70070-001": [
+    "B_IFM"
+  ],
+  "GHSI_650": [
+    "CH604PROD"
+  ],
+  "SAFMG7K-COMP": [
+    "B_IFM"
+  ],
+  "QRH2_98": [
+    "B_IFM"
+  ],
+  "300_TLMC": [
+    "CTALPROD"
+  ],
+  "AMM_GVXER": [
+    "GXPROD"
+  ],
+  "SDS_GV5ER": [
+    "GXPROD"
+  ],
+  "AIPC_350": [
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70168": [
+    "B_IFM"
+  ],
+  "GLFONDEFN": [
+    "B_IFM"
+  ],
+  "SB_GX_XRS": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70103": [
+    "GXPROD"
+  ],
+  "AIPC_LEAR55": [
+    "LJ4045PROD"
+  ],
+  "CMMCOMP_P1_70071": [
+    "GXPROD"
+  ],
+  "WM-OBSOLETE": [
+    "GXPROD"
+  ],
+  "AFM_L70_EOS": [
+    "LJ4045PROD"
+  ],
+  "AIPC_LEAR25": [
+    "LJ4045PROD"
+  ],
+  "DDGTC_GV5000": [
+    "GXPROD"
+  ],
+  "WM_604": [
+    "CH604PROD"
+  ],
+  "GCF-70040-001": [
+    "B_IFM"
+  ],
+  "AMM_602": [
+    "CH604PROD"
+  ],
+  "QRH_GV5_M": [
+    "B_IFM"
+  ],
+  "QRH2_G5": [
+    "B_IFM"
+  ],
+  "AIPCASTORDEFN": [
+    "GXPROD"
+  ],
+  "SMLIST_601A": [
+    "CH604PROD"
+  ],
+  "QRH2_605_M": [
+    "B_IFM"
+  ],
+  "SFCOM2-70014": [
+    "B_IFM"
+  ],
+  "WDM_204": [
+    "CTALPROD"
+  ],
+  "OMPTC001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CIFP_350_I": [
+    "B_IFM"
+  ],
+  "TEMAN_300": [
+    "CTALPROD"
+  ],
+  "QRH_605": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70169": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70096": [
+    "GXPROD"
+  ],
+  "GFX000": [
+    "GXPROD",
+    "LJ4045PROD",
+    "CH604PROD",
+    "B_IFM",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70158": [
+    "B_IFM"
+  ],
+  "AFM_601-1B-1": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70074": [
+    "GXPROD"
+  ],
+  "SRM_GV5": [
+    "GXPROD"
+  ],
+  "TLMC_605_P1_P2": [
+    "CH604PROD"
+  ],
+  "TEMANDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "TEMANPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "AMM001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70097": [
+    "B_IFM"
+  ],
+  "SFCOM2-70053": [
+    "B_IFM"
+  ],
+  "DDG": [
+    "GXPROD"
+  ],
+  "QRH_G5_M": [
+    "B_IFM"
+  ],
+  "AMMPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "GCF-70021-001": [
+    "B_IFM"
+  ],
+  "TLMC-600": [
+    "CH604PROD"
+  ],
+  "CH605_650": [
+    "B_IFM"
+  ],
+  "FPCCM-M": [
+    "B_IFM"
+  ],
+  "DDGFAA_GVXER": [
+    "GXPROD"
+  ],
+  "FCOM1_G7000": [
+    "B_IFM"
+  ],
+  "GCF-70081-001": [
+    "B_IFM"
+  ],
+  "GHSI001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "AFMGV5-OLD": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70087": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70074": [
+    "B_IFM"
+  ],
+  "MRQRT_GL": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70126": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70055": [
+    "GXPROD"
+  ],
+  "SFCOM2-70072": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70092": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70149": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70125": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70102": [
+    "B_IFM"
+  ],
+  "MRQ_LNK_NEW_DFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "L75_FAA_MET": [
+    "LJ4045PROD"
+  ],
+  "SFMTRDEFN": [
+    "B_IFM"
+  ],
+  "AIPCDEFN": [
+    "GXPROD",
+    "LJ4045PROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "AFM_L70EASAMET": [
+    "LJ4045PROD"
+  ],
+  "FCOMGV5": [
+    "B_IFM"
+  ],
+  "L70_EASA_US": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-AC70128": [
+    "B_IFM"
+  ],
+  "SFCOM2-70026DoNotUse": [
+    "B_IFM"
+  ],
+  "WM_G6000": [
+    "GXPROD"
+  ],
+  "QRH_GV5XER": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70081": [
+    "B_IFM"
+  ],
+  "AMMGRPUBL": [
+    "GXPROD"
+  ],
+  "SFCOM2-70099DoNotUse": [
+    "B_IFM"
+  ],
+  "WM_LEAR40": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-70021": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70064": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70142": [
+    "B_IFM"
+  ],
+  "GOC_605": [
+    "CH604PROD"
+  ],
+  "FCOM_200": [
+    "B_IFM"
+  ],
+  "AFM_600-1": [
+    "B_IFM"
+  ],
+  "GHSI_GVXER": [
+    "GXPROD"
+  ],
+  "SFCOM2-70073DoNotUse": [
+    "B_IFM"
+  ],
+  "SDSDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "DDGTC_300": [
+    "CTALPROD"
+  ],
+  "GCA-7500-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70027": [
+    "GXPROD"
+  ],
+  "FCOM2_300": [
+    "B_IFM"
+  ],
+  "AFM_604": [
+    "B_IFM"
+  ],
+  "AFM_300_M": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70011": [
+    "GXPROD"
+  ],
+  "GCF-70171-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-70063DoNotUse": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70020": [
+    "GXPROD"
+  ],
+  "FCOM2_GV5ER": [
+    "B_IFM"
+  ],
+  "SFCOM2_GL7500": [
+    "B_IFM"
+  ],
+  "CLFON-300": [
+    "B_IFM"
+  ],
+  "MRB_AUTH": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-70007DoNotUse": [
+    "B_IFM"
+  ],
+  "SSM_XRS": [
+    "GXPROD"
+  ],
+  "AFM_G98": [
+    "B_IFM"
+  ],
+  "WM": [
+    "GXPROD",
+    "CH604PROD"
+  ],
+  "AFM-G7KG8K-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "WM_GVXRS": [
+    "GXPROD"
+  ],
+  "GCF-70079-001": [
+    "B_IFM"
+  ],
+  "SUB_600_601": [
+    "CH604PROD"
+  ],
+  "SBM": [
+    "CTALPROD"
+  ],
+  "GHSI_350": [
+    "CTALPROD"
+  ],
+  "LEAR_40-2": [
+    "LJ4045PROD"
+  ],
+  "AIPC001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "QRH-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "LEAR_24": [
+    "LJ4045PROD"
+  ],
+  "SMD_604": [
+    "CH604PROD"
+  ],
+  "CMMCOMP_P1_70082": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70098": [
+    "B_IFM"
+  ],
+  "MFM": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "IFMTR_GL_AUT": [
+    "B_IFM"
+  ],
+  "QRH_7000_M": [
+    "B_IFM"
+  ],
+  "FCOM_604": [
+    "B_IFM"
+  ],
+  "CH605_650-DONOTUSE": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70133": [
+    "B_IFM"
+  ],
+  "L75_CRD_MET": [
+    "LJ4045PROD"
+  ],
+  "AMM_G5000": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70085": [
+    "GXPROD"
+  ],
+  "CCH001": [
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SDS_604": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70067": [
+    "B_IFM"
+  ],
+  "QRH_300X": [
+    "B_IFM"
+  ],
+  "MPD": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SDS_GR_ASTOR": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70018": [
+    "GXPROD"
+  ],
+  "FCOM2_604": [
+    "B_IFM"
+  ],
+  "GCF-70066-001": [
+    "B_IFM"
+  ],
+  "AFM_G5K": [
+    "B_IFM"
+  ],
+  "CFM-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "GCF-70054-001": [
+    "B_IFM"
+  ],
+  "AFMGVXER-DELETED": [
+    "B_IFM"
+  ],
+  "WM_603A": [
+    "CH604PROD"
+  ],
+  "FCOM2_204": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70008": [
+    "GXPROD"
+  ],
+  "AFM_601A-1": [
+    "B_IFM"
+  ],
+  "AMM_GR_SEN": [
+    "GXPROD"
+  ],
+  "SFM_MANREV-DEFN600": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70072": [
+    "B_IFM"
+  ],
+  "MRQSP_300": [
+    "CTALPROD"
+  ],
+  "DDGEASA_G7": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70084": [
+    "B_IFM"
+  ],
+  "SFCOMG7K-KETTLE": [
+    "B_IFM"
+  ],
+  "SFCOM2-70080": [
+    "B_IFM"
+  ],
+  "IFMTR_G7K": [
+    "B_IFM"
+  ],
+  "MPD_XRS": [
+    "GXPROD"
+  ],
+  "QRH96": [
+    "B_IFM"
+  ],
+  "SFCOM2-70039": [
+    "B_IFM"
+  ],
+  "AFMGV5_SUPP_NJT": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70170": [
+    "B_IFM"
+  ],
+  "FCOM1_M204": [
+    "B_IFM"
+  ],
+  "604_605_TLMC": [
+    "CH604PROD"
+  ],
+  "IFMTR_GL": [
+    "B_IFM"
+  ],
+  "WBM_600_601": [
+    "CH604PROD"
+  ],
+  "QRH_604": [
+    "B_IFM"
+  ],
+  "AIPC_GV5": [
+    "GXPROD"
+  ],
+  "ITEM_GVXER": [
+    "GXPROD"
+  ],
+  "TEMAN_600": [
+    "CH604PROD"
+  ],
+  "SFM_600": [
+    "B_IFM"
+  ],
+  "SFCOM2-70069": [
+    "B_IFM"
+  ],
+  "DDGPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CLFON-350": [
+    "B_IFM"
+  ],
+  "MRQRT_CT": [
+    "CTALPROD"
+  ],
+  "CCMSDS": [
+    "CTALPROD"
+  ],
+  "650_MPD": [
+    "CH604PROD"
+  ],
+  "GCF-70090-001": [
+    "B_IFM"
+  ],
+  "AMMLINK": [
+    "CTALPROD"
+  ],
+  "ITEM": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "601A_SMLIST": [
+    "CH604PROD"
+  ],
+  "AFM_601-1B-1-UNSUPP": [
+    "B_IFM"
+  ],
+  "CW000": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "AFM_601A-1-UNSUPP": [
+    "B_IFM"
+  ],
+  "CMM_DX": [
+    "CH604PROD"
+  ],
+  "SRM_XRS": [
+    "GXPROD"
+  ],
+  "SFM300_RS": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70071": [
+    "B_IFM"
+  ],
+  "MRQ_MSG3_DEFN": [
+    "CH604PROD"
+  ],
+  "FRMFIMDEFN": [
+    "GXPROD"
+  ],
+  "IFMGV5XER-DELETED": [
+    "B_IFM"
+  ],
+  "FCOM2_605": [
+    "B_IFM"
+  ],
+  "GCF-70152-001": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70095": [
+    "GXPROD"
+  ],
+  "TLMC_GX_P1_P2": [
+    "GXPROD"
+  ],
+  "SSM_GVXRS": [
+    "GXPROD"
+  ],
+  "SDS": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "L75_FSA_US": [
+    "LJ4045PROD"
+  ],
+  "SB_605X": [
+    "CH604PROD"
+  ],
+  "SDS001": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70015": [
+    "GXPROD"
+  ],
+  "SRMDEFN": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70083": [
+    "GXPROD"
+  ],
+  "WLM_G5000": [
+    "GXPROD"
+  ],
+  "AFMGVX": [
+    "B_IFM"
+  ],
+  "GHSI_613": [
+    "CH604PROD"
+  ],
+  "SFCOM2-70046": [
+    "B_IFM"
+  ],
+  "SFCOM2-70057": [
+    "B_IFM"
+  ],
+  "AFMGVX_SUPP_NJT": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70062": [
+    "B_IFM"
+  ],
+  "GHSIPUBL": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "QRH2_98_M": [
+    "B_IFM"
+  ],
+  "SB_GV5000": [
+    "GXPROD"
+  ],
+  "AFM_G8000": [
+    "B_IFM"
+  ],
+  "IFMRS_GL": [
+    "B_IFM"
+  ],
+  "IFMGVX": [
+    "B_IFM"
+  ],
+  "IFM_GV5ER": [
+    "B_IFM"
+  ],
+  "DDGEASA_G6000": [
+    "GXPROD"
+  ],
+  "SFCOM2-70026": [
+    "B_IFM"
+  ],
+  "TLMC_GV5_P1_P2": [
+    "GXPROD"
+  ],
+  "SFCOM2-AC70105": [
+    "B_IFM"
+  ],
+  "IFM-MANREV-DEFN": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70058": [
+    "GXPROD"
+  ],
+  "AOMTESTMASTER": [
+    "CTALPROD"
+  ],
+  "GCF-70025-001": [
+    "B_IFM"
+  ],
+  "IFMGLDEFN": [
+    "B_IFM"
+  ],
+  "SFCOM2-70017": [
+    "B_IFM"
+  ],
+  "QRH2_300_M": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70075": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70122": [
+    "B_IFM"
+  ],
+  "QRH_204": [
+    "B_IFM"
+  ],
+  "SRM_605": [
+    "CH604PROD"
+  ],
+  "FPCCMG7KG8K-M": [
+    "B_IFM"
+  ],
+  "LEAR23": [
+    "LJ4045PROD"
+  ],
+  "SSM_GV5ER": [
+    "GXPROD"
+  ],
+  "SFCOM2-70060": [
+    "B_IFM"
+  ],
+  "QRH_G7000_M": [
+    "B_IFM"
+  ],
+  "IFM_GVXER": [
+    "B_IFM"
+  ],
+  "GOC": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "LEAR_23": [
+    "LJ4045PROD"
+  ],
+  "FCOM96": [
+    "B_IFM"
+  ],
+  "AFM_601-1B-UNSUPP": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70043": [
+    "GXPROD"
+  ],
+  "SFCOM2-70032": [
+    "B_IFM"
+  ],
+  "IFM_EFFPOOL": [
+    "B_IFM"
+  ],
+  "GSE": [
+    "CH604PROD"
+  ],
+  "GOC_650": [
+    "CH604PROD"
+  ],
+  "AFM_L75_FSA": [
+    "LJ4045PROD"
+  ],
+  "DDGFAA_G7": [
+    "GXPROD"
+  ],
+  "GHSI_GV5": [
+    "GXPROD"
+  ],
+  "GCF-70020-001": [
+    "B_IFM"
+  ],
+  "AIFM": [
+    "GXPROD",
+    "CH604PROD",
+    "CTALPROD"
+  ],
+  "SFCOM2-70054": [
+    "B_IFM"
+  ],
+  "AFM_601-1A-1": [
+    "B_IFM"
+  ],
+  "JIC_GX": [
+    "GXPROD"
+  ],
+  "SRM_GVXER": [
+    "GXPROD"
+  ],
+  "MPD_G5000": [
+    "GXPROD"
+  ],
+  "AIPC_LJ45": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-70089": [
+    "B_IFM"
+  ],
+  "TLMC_GV5_P3": [
+    "GXPROD"
+  ],
+  "AFM_300_I": [
+    "B_IFM"
+  ],
+  "FCOM_GLX": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70042": [
+    "GXPROD"
+  ],
+  "QRH98_METRIC": [
+    "B_IFM"
+  ],
+  "SSM_GVX": [
+    "GXPROD"
+  ],
+  "350_TLMC": [
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70132": [
+    "B_IFM"
+  ],
+  "SRMGRPUBL": [
+    "GXPROD"
+  ],
+  "CMMCOMP_P1_70090": [
+    "GXPROD"
+  ],
+  "GCF-70113-001": [
+    "B_IFM"
+  ],
+  "WLM_300": [
+    "CTALPROD"
+  ],
+  "CMMCOMP_P1_70087": [
+    "GXPROD"
+  ],
+  "GHSI_GV5ER": [
+    "GXPROD"
+  ],
+  "AFM_G98-2": [
+    "B_IFM"
+  ],
+  "GCF-70026-001": [
+    "B_IFM"
+  ],
+  "GCF-70042-001": [
+    "B_IFM"
+  ],
+  "WM_603": [
+    "CH604PROD"
+  ],
+  "CFM_601": [
+    "B_IFM"
+  ],
+  "OLD-AIPCPUBL": [
+    "GXPROD",
+    "CTALPROD"
+  ],
+  "GV5ER_TLMC": [
+    "GXPROD"
+  ],
+  "L75_EASA_MET": [
+    "LJ4045PROD"
+  ],
+  "SRM_604": [
+    "CH604PROD"
+  ],
+  "FPCCM_CL_M": [
+    "B_IFM"
+  ],
+  "TEMAN_650": [
+    "CH604PROD"
+  ],
+  "SPMDEFN": [
+    "CTALPROD"
+  ],
+  "GCF-70088-001": [
+    "B_IFM"
+  ],
+  "SFCOM2-AC70113": [
+    "B_IFM"
+  ],
+  "WBM_300": [
+    "CTALPROD"
+  ],
+  "SFCOM2-AC70156": [
+    "B_IFM"
+  ],
+  "601A_TLMC": [
+    "CH604PROD"
+  ],
+  "GCF-70069-001": [
+    "B_IFM"
+  ],
+  "604_MPD": [
+    "CH604PROD"
+  ],
+  "L75_CRD_US": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-AC70138": [
+    "B_IFM"
+  ],
+  "LEAR_75": [
+    "LJ4045PROD"
+  ],
+  "SFCOM2-70027": [
+    "B_IFM"
+  ],
+  "CMMCOMP_P1_70068": [
+    "GXPROD"
+  ],
+  "SPM_MM": [
+    "CTALPROD"
+  ]
+}

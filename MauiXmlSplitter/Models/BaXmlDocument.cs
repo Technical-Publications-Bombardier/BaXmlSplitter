@@ -1,12 +1,14 @@
 ﻿using System.Xml;
 
-namespace BaXmlSplitter
+namespace MauiXmlSplitter.Models
 {
+    /// <summary>
+    /// An XML document with entity resolution disabled.
+    /// </summary>
+    /// <seealso cref="System.Xml.XmlDocument" />
     internal class BaXmlDocument : XmlDocument
     {
         public bool ResolveEntities { get; set; } = true;
-
-
         public override void LoadXml(string xml)
         {
             if (ResolveEntities)

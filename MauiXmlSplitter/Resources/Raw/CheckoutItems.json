@@ -1,0 +1,117 @@
+{
+  "LJ4045PROD": {},
+  "CH604PROD": {},
+  "GXPROD": {},
+  "B_IFM": {
+    "FPPCM-IMP": [
+      "generic-sec2",
+      "recofrev",
+      "recoftr",
+      "title",
+      "titlepage"
+    ],
+    "FPPCM-METRIC": [
+      "generic-sec2",
+      "recofrev",
+      "recoftr",
+      "title",
+      "titlepage"
+    ],
+    "AFM": [
+      "ae-proc2",
+      "approvalpage",
+      "callouts-sec",
+      "cdl-system",
+      "generic-sec",
+      "l1item",
+      "n-proc2",
+      "proctitle",
+      "recofrev",
+      "recoftr",
+      "special-operation",
+      "supplement",
+      "title",
+      "titlepage"
+    ],
+    "SFCOM2": [
+      "recofrev",
+      "supplement",
+      "title"
+    ],
+    "SAFM": [
+      "approvalpage",
+      "recofrev",
+      "supplement",
+      "title"
+    ],
+    "IFM": [
+      "ae-proc2",
+      "approvalpage",
+      "callouts-sec",
+      "cdl-system",
+      "generic-sec",
+      "l1item",
+      "n-proc2",
+      "proctitle",
+      "recofrev",
+      "recoftr",
+      "special-operation",
+      "supplement",
+      "title",
+      "titlepage"
+    ],
+    "OM": [
+      "systemsec",
+      "title"
+    ],
+    "QRH1": [
+      "generic-sec",
+      "n-proc2",
+      "proctitle",
+      "recofrev",
+      "recoftr",
+      "sblist",
+      "supplement",
+      "title",
+      "titlepage"
+    ],
+    "FONM": [
+      "l1item",
+      "recofrev",
+      "recoftr",
+      "title",
+      "titlepage"
+    ],
+    "QRH2": [
+      "ae-proc1",
+      "l1item",
+      "proctitle",
+      "title",
+      "titlepage"
+    ],
+    "FCOM1": [
+      "ae-proc2",
+      "approvalpage",
+      "callouts-sec",
+      "cdl-system",
+      "generic-sec",
+      "l1item",
+      "n-proc2",
+      "proctitle",
+      "recofrev",
+      "recoftr",
+      "special-operation",
+      "supplement",
+      "title",
+      "titlepage"
+    ],
+    "FCOM2": [
+      "recofrev",
+      "recoftr",
+      "systemsec",
+      "title",
+      "titlepage"
+    ]
+  },
+  "CTALPROD": {}
+}

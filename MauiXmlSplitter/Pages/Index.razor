@@ -1,0 +1,36 @@
+﻿@page "/"
+@inject XmlSplitterViewModel ViewModel
+
+<h1>XML Splitter</h1>
+
+
+
+<p>
+    <label>
+        Input XML File:
+        <InputText @bind-Value="ViewModel.SourceXml" />
+        <Button @onclick="(e) => ViewModel.PickXmlFile(this,e)">Select XML File</Button>
+    </label>
+</p>
+
+<p>
+    <label>
+        Units-of-Work States File:
+        <InputText @bind-Value="ViewModel.UowStatesFile" />
+        <Button @onclick="(e) => ViewModel.PickUowStatesFile(this,e)">Select UOW States File</Button>
+    </label>
+</p>
+
+<p>
+    <label>
+        Output Directory:
+        <InputText @bind-Value="ViewModel.OutputDirectory" />
+        <Button @onclick="(e) => ViewModel.PickOutputFolder(this,e)">Select Output Directory</Button>
+    </label>
+</p>
+
+<p>
+    <label>
+        <Button @onclick="(e) => ViewModel.SplitXmlCommand(this,e)">Execute Split</Button>
+    </label>
+</p>

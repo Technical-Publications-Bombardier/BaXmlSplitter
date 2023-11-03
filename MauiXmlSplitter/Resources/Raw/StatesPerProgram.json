@@ -1,0 +1,827 @@
+{
+  "GXPROD": {
+    "-1": {
+      "statename": "For Rev TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "-3": {
+      "statename": "Obsolete TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "-2": {
+      "statename": "Official TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "68": {
+      "statename": "SPRTinProgrs"
+    },
+    "67": {
+      "statename": "BAQA-SPRT"
+    },
+    "66": {
+      "statename": "SOC Locked"
+    },
+    "65": {
+      "statename": "ApproveNewP"
+    },
+    "64": {
+      "statename": "Pending",
+      "remark": "In a waiting mode"
+    },
+    "63": {
+      "statename": "SXTinProgrss"
+    },
+    "62": {
+      "statename": "BAQA-SXT"
+    },
+    "61": {
+      "statename": "BAQA-SH"
+    },
+    "60": {
+      "statename": "LPSinProgrss"
+    },
+    "59": {
+      "statename": "BAQA-LPS"
+    },
+    "58": {
+      "statename": "MHIinprogrss"
+    },
+    "57": {
+      "statename": "HEinprogrss"
+    },
+    "56": {
+      "statename": "BAQA-HE"
+    },
+    "55": {
+      "statename": "ABXinProgrss"
+    },
+    "54": {
+      "statename": "HWinProgrss"
+    },
+    "53": {
+      "statename": "AEinProgrss"
+    },
+    "52": {
+      "statename": "BAQA-ABX"
+    },
+    "51": {
+      "statename": "BAQA-AE"
+    },
+    "50": {
+      "statename": "BAQA-HW"
+    },
+    "49": {
+      "statename": "RCCinProgrss"
+    },
+    "48": {
+      "statename": "BAQA-RCC"
+    },
+    "47": {
+      "statename": "HSCinProgrss"
+    },
+    "46": {
+      "statename": "BAQA-HSC"
+    },
+    "45": {
+      "statename": "PKinProgress"
+    },
+    "44": {
+      "statename": "BAQA-PK"
+    },
+    "43": {
+      "statename": "WKinProgrss"
+    },
+    "42": {
+      "statename": "BAQA-WK"
+    },
+    "41": {
+      "statename": "RSMinProgrss"
+    },
+    "40": {
+      "statename": "BAQA-RSM"
+    },
+    "39": {
+      "statename": "BRRinProgrss"
+    },
+    "38": {
+      "statename": "BAQA-BRR"
+    },
+    "37": {
+      "statename": "MHIinProgrss"
+    },
+    "36": {
+      "statename": "BAQA-MHI"
+    },
+    "35": {
+      "statename": "DWYinProgrss"
+    },
+    "34": {
+      "statename": "BAQA-DWY"
+    },
+    "33": {
+      "statename": "BAQA-LTS"
+    },
+    "32": {
+      "statename": "LTSinProgrss",
+      "remark": "LIEBHERR supplier"
+    },
+    "31": {
+      "statename": "BAQA-TRI"
+    },
+    "30": {
+      "statename": "TRIinProgrss",
+      "remark": "For Triad sub-contractor"
+    },
+    "29": {
+      "statename": "BAQA-IM"
+    },
+    "28": {
+      "statename": "IMinProgress"
+    },
+    "27": {
+      "statename": "BAQA-Sono"
+    },
+    "26": {
+      "statename": "SonoInProg"
+    },
+    "25": {
+      "statename": "BaSMEreview",
+      "remark": "For review by BA SME"
+    },
+    "24": {
+      "statename": "CapSMEreview",
+      "remark": "For review by CAP SME"
+    },
+    "23": {
+      "statename": "CapInProgrss",
+      "remark": "Work unit available to CAP Writers"
+    },
+    "22": {
+      "statename": "In SAP",
+      "remark": "Figure has been sent to SAP"
+    },
+    "21": {
+      "statename": "SMTASKinProg",
+      "remark": "TLMC/MPD available to writer"
+    },
+    "20": {
+      "statename": "SMTASKapprov",
+      "remark": "TLMC/MPD approved for publishing"
+    },
+    "19": {
+      "statename": "SMTASKlinked",
+      "remark": "TLMC/MPD linked to SMLIST"
+    },
+    "18": {
+      "statename": "GHSIapproved",
+      "remark": "GHSI unit approved for publishing"
+    },
+    "17": {
+      "statename": "GHSIinProgrs",
+      "remark": "GHSI available to writer"
+    },
+    "16": {
+      "statename": "AtValidation",
+      "remark": "Data being validated: do not publish"
+    },
+    "15": {
+      "statename": "GHSI Linked",
+      "remark": "GHSI linked to AMM, ARM and SDS"
+    },
+    "14": {
+      "statename": "DataUnlink"
+    },
+    "13": {
+      "statename": "DataLink"
+    },
+    "12": {
+      "statename": "SubtaskLink",
+      "remark": "SUBTASKs are linked to AMM"
+    },
+    "11": {
+      "statename": "PmRecUpdated",
+      "remark": "Perm Rec changed only"
+    },
+    "10": {
+      "statename": "For Approval",
+      "remark": "Graphics Pool Management"
+    },
+    "9": {
+      "statename": "Approved4Pub",
+      "remark": "Workunit approved for publishing"
+    },
+    "8": {
+      "statename": "PBinProgress",
+      "remark": "Work unit available to writer"
+    },
+    "7": {
+      "statename": "Processing",
+      "remark": "Publishing in progress"
+    },
+    "6": {
+      "statename": "InitRev Done",
+      "remark": "Init Revision Complete"
+    },
+    "5": {
+      "statename": "Rev Done",
+      "remark": "Manual Revision Complete"
+    },
+    "4": {
+      "statename": "Ready4ManRev",
+      "remark": "Ready For Manual Revision"
+    },
+    "3": {
+      "statename": "Obsolete",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "2": {
+      "statename": "Official",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "1": {
+      "statename": "For Revision",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "0": {
+      "statename": "Undefined",
+      "remark": "Reserved Life*CDM state value"
+    }
+  },
+  "LJ4045PROD": {
+    "-1": {
+      "statename": "For Rev TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "-2": {
+      "statename": "Official TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "-3": {
+      "statename": "Obsolete TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "12": {
+      "statename": "SubtaskLink",
+      "remark": "SUBTASKs are linked to AMM"
+    },
+    "11": {
+      "statename": "PmRecUpdated",
+      "remark": "Perm Rec changed only"
+    },
+    "10": {
+      "statename": "For Approval",
+      "remark": "Graphics Pool Management"
+    },
+    "9": {
+      "statename": "Approved4Pub",
+      "remark": "Workunit approved for publishing"
+    },
+    "8": {
+      "statename": "PBinProgress",
+      "remark": "Work unit available to writer"
+    },
+    "7": {
+      "statename": "Processing",
+      "remark": "Publishing in progress"
+    },
+    "6": {
+      "statename": "InitRev Done",
+      "remark": "Init Revision Complete"
+    },
+    "5": {
+      "statename": "Rev Done",
+      "remark": "Manual Revision Complete"
+    },
+    "4": {
+      "statename": "Ready4ManRev",
+      "remark": "Ready For Manual Revision"
+    },
+    "3": {
+      "statename": "Obsolete",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "2": {
+      "statename": "Official",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "1": {
+      "statename": "For Revision",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "0": {
+      "statename": "Undefined",
+      "remark": "Reserved Life*CDM state value"
+    }
+  },
+  "CH604PROD": {
+    "-1": {
+      "statename": "For Rev TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "-2": {
+      "statename": "Official TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "-3": {
+      "statename": "Obsolete TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "33": {
+      "statename": "BAQA-LTS"
+    },
+    "32": {
+      "statename": "LTSinProgrss",
+      "remark": "LIEBHERR supplier"
+    },
+    "31": {
+      "statename": "BAQA-TRI"
+    },
+    "30": {
+      "statename": "TRIinProgrss",
+      "remark": "For Triad sub-contractor"
+    },
+    "29": {
+      "statename": "BAQA-IM"
+    },
+    "28": {
+      "statename": "IMinProgress"
+    },
+    "27": {
+      "statename": "BAQA-Sono"
+    },
+    "26": {
+      "statename": "SonoInProg"
+    },
+    "25": {
+      "statename": "BaSMEreview",
+      "remark": "For review by BA SME"
+    },
+    "24": {
+      "statename": "CapSMEreview",
+      "remark": "For review by CAP SME"
+    },
+    "23": {
+      "statename": "CapInProgrss",
+      "remark": "Work unit available to CAP Writers"
+    },
+    "22": {
+      "statename": "In SAP",
+      "remark": "Figure has been sent to SAP"
+    },
+    "21": {
+      "statename": "SMTASKinProg",
+      "remark": "TLMC/MPD available to writer"
+    },
+    "20": {
+      "statename": "SMTASKapprov",
+      "remark": "TLMC/MPD approved for publishing"
+    },
+    "19": {
+      "statename": "SMTASKlinked",
+      "remark": "TLMC/MPD linked to SMLIST"
+    },
+    "18": {
+      "statename": "GHSIapproved",
+      "remark": "GHSI unit approved for publishing"
+    },
+    "17": {
+      "statename": "GHSIinProgrs",
+      "remark": "GHSI available to writer"
+    },
+    "16": {
+      "statename": "AtValidation",
+      "remark": "Data being validated: do not publish"
+    },
+    "15": {
+      "statename": "GHSI Linked",
+      "remark": "GHSI linked to AMM, ARM and SDS"
+    },
+    "14": {
+      "statename": "DataUnlink"
+    },
+    "13": {
+      "statename": "DataLink"
+    },
+    "12": {
+      "statename": "SubtaskLink",
+      "remark": "SUBTASKs are linked to AMM"
+    },
+    "11": {
+      "statename": "PmRecUpdated",
+      "remark": "Perm Rec changed only"
+    },
+    "10": {
+      "statename": "For Approval",
+      "remark": "Graphics Pool Management"
+    },
+    "9": {
+      "statename": "Approved4Pub",
+      "remark": "Workunit approved for publishing"
+    },
+    "8": {
+      "statename": "PBinProgress",
+      "remark": "Work unit available to writer"
+    },
+    "7": {
+      "statename": "Processing",
+      "remark": "Publishing in progress"
+    },
+    "6": {
+      "statename": "InitRev Done",
+      "remark": "Init Revision Complete"
+    },
+    "5": {
+      "statename": "Rev Done",
+      "remark": "Manual Revision Complete"
+    },
+    "4": {
+      "statename": "Ready4ManRev",
+      "remark": "Ready For Manual Revision"
+    },
+    "3": {
+      "statename": "Obsolete",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "2": {
+      "statename": "Official",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "1": {
+      "statename": "For Revision",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "0": {
+      "statename": "Undefined",
+      "remark": "Reserved Life*CDM state value"
+    }
+  },
+  "B_IFM": {
+    "-1": {
+      "statename": "For Rev TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "-2": {
+      "statename": "Official TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "-3": {
+      "statename": "Obsolete TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "23": {
+      "statename": "CapInProgrss",
+      "remark": "Work unit available to CAP Writers"
+    },
+    "22": {
+      "statename": "In SAP",
+      "remark": "Figure has been sent to SAP"
+    },
+    "21": {
+      "statename": "SMTASKinProg",
+      "remark": "TLMC/MPD available to writer"
+    },
+    "210": null,
+    "209": null,
+    "208": null,
+    "204": null,
+    "202": null,
+    "201": null,
+    "200": null,
+    "199": null,
+    "20": {
+      "statename": "SMTASKapprov",
+      "remark": "TLMC/MPD approved for publishing"
+    },
+    "19": {
+      "statename": "SMTASKlinked",
+      "remark": "TLMC/MPD linked to SMLIST"
+    },
+    "18": {
+      "statename": "GHSIapproved",
+      "remark": "GHSI unit approved for publishing"
+    },
+    "17": {
+      "statename": "GHSIinProgrs",
+      "remark": "GHSI available to writer"
+    },
+    "16": {
+      "statename": "AtValidation",
+      "remark": "Data being validated: do not publish"
+    },
+    "15": {
+      "statename": "GHSI Linked",
+      "remark": "GHSI linked to AMM, ARM and SDS"
+    },
+    "14": {
+      "statename": "DataUnlink"
+    },
+    "13": {
+      "statename": "DataLink"
+    },
+    "12": {
+      "statename": "SubtaskLink",
+      "remark": "SUBTASKs are linked to AMM"
+    },
+    "11": {
+      "statename": "PmRecUpdated",
+      "remark": "Perm Rec changed only"
+    },
+    "10": {
+      "statename": "For Approval",
+      "remark": "Graphics Pool Management"
+    },
+    "9": {
+      "statename": "Approved4Pub",
+      "remark": "Workunit approved for publishing"
+    },
+    "8": {
+      "statename": "PBinProgress",
+      "remark": "Work unit available to writer"
+    },
+    "7": {
+      "statename": "Processing",
+      "remark": "Publishing in progress"
+    },
+    "6": {
+      "statename": "InitRev Done",
+      "remark": "Init Revision Complete"
+    },
+    "5": {
+      "statename": "Rev Done",
+      "remark": "Manual Revision Complete"
+    },
+    "4": {
+      "statename": "Ready4ManRev",
+      "remark": "Ready For Manual Revision"
+    },
+    "3": {
+      "statename": "Obsolete",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "2": {
+      "statename": "Official",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "1": {
+      "statename": "For Revision",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "0": {
+      "statename": "Undefined",
+      "remark": "Reserved Life*CDM state value"
+    }
+  },
+  "CTALPROD": {
+    "29": {
+      "statename": "BAQA-IM"
+    },
+    "62": {
+      "statename": "BAQA-SXT"
+    },
+    "-1": {
+      "statename": "For Rev TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "-3": {
+      "statename": "Obsolete TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "56": {
+      "statename": "BAQA-HE"
+    },
+    "209": null,
+    "48": {
+      "statename": "BAQA-RCC"
+    },
+    "32": {
+      "statename": "LTSinProgrss",
+      "remark": "LIEBHERR supplier"
+    },
+    "201": null,
+    "199": null,
+    "-2": {
+      "statename": "Official TN",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "67": {
+      "statename": "BAQA-SPRT"
+    },
+    "66": {
+      "statename": "SOC Locked"
+    },
+    "65": {
+      "statename": "ApproveNewP"
+    },
+    "64": {
+      "statename": "Pending",
+      "remark": "In a waiting mode"
+    },
+    "63": {
+      "statename": "SXTinProgrss"
+    },
+    "202": null,
+    "61": {
+      "statename": "BAQA-SH"
+    },
+    "60": {
+      "statename": "LPSinProgrss"
+    },
+    "59": {
+      "statename": "BAQA-LPS"
+    },
+    "58": {
+      "statename": "MHIinprogrss"
+    },
+    "57": {
+      "statename": "HEinprogrss"
+    },
+    "210": null,
+    "55": {
+      "statename": "ABXinProgrss"
+    },
+    "54": {
+      "statename": "HWinProgrss"
+    },
+    "53": {
+      "statename": "AEinProgrss"
+    },
+    "52": {
+      "statename": "BAQA-ABX"
+    },
+    "51": {
+      "statename": "BAQA-AE"
+    },
+    "50": {
+      "statename": "BAQA-HW"
+    },
+    "49": {
+      "statename": "RCCinProgrss"
+    },
+    "208": null,
+    "47": {
+      "statename": "HSCinProgrss"
+    },
+    "46": {
+      "statename": "BAQA-HSC"
+    },
+    "45": {
+      "statename": "PKinProgress"
+    },
+    "44": {
+      "statename": "BAQA-PK"
+    },
+    "43": {
+      "statename": "WKinProgrss"
+    },
+    "42": {
+      "statename": "BAQA-WK"
+    },
+    "41": {
+      "statename": "RSMinProgrss"
+    },
+    "40": {
+      "statename": "BAQA-RSM"
+    },
+    "39": {
+      "statename": "BRRinProgrss"
+    },
+    "38": {
+      "statename": "BAQA-BRR"
+    },
+    "37": {
+      "statename": "MHIinProgrss"
+    },
+    "36": {
+      "statename": "BAQA-MHI"
+    },
+    "35": {
+      "statename": "DWYinProgrss"
+    },
+    "34": {
+      "statename": "BAQA-DWY"
+    },
+    "33": {
+      "statename": "BAQA-LTS"
+    },
+    "204": null,
+    "31": {
+      "statename": "BAQA-TRI"
+    },
+    "30": {
+      "statename": "TRIinProgrss",
+      "remark": "For Triad sub-contractor"
+    },
+    "200": null,
+    "28": {
+      "statename": "IMinProgress"
+    },
+    "27": {
+      "statename": "BAQA-Sono"
+    },
+    "26": {
+      "statename": "SonoInProg"
+    },
+    "25": {
+      "statename": "BaSMEreview",
+      "remark": "For review by BA SME"
+    },
+    "24": {
+      "statename": "CapSMEreview",
+      "remark": "For review by CAP SME"
+    },
+    "23": {
+      "statename": "CapInProgrss",
+      "remark": "Work unit available to CAP Writers"
+    },
+    "22": {
+      "statename": "In SAP",
+      "remark": "Figure has been sent to SAP"
+    },
+    "21": {
+      "statename": "SMTASKinProg",
+      "remark": "TLMC/MPD available to writer"
+    },
+    "20": {
+      "statename": "SMTASKapprov",
+      "remark": "TLMC/MPD approved for publishing"
+    },
+    "19": {
+      "statename": "SMTASKlinked",
+      "remark": "TLMC/MPD linked to SMLIST"
+    },
+    "18": {
+      "statename": "GHSIapproved",
+      "remark": "GHSI unit approved for publishing"
+    },
+    "17": {
+      "statename": "GHSIinProgrs",
+      "remark": "GHSI available to writer"
+    },
+    "16": {
+      "statename": "AtValidation",
+      "remark": "Data being validated: do not publish"
+    },
+    "15": {
+      "statename": "GHSI Linked",
+      "remark": "GHSI linked to AMM, ARM and SDS"
+    },
+    "14": {
+      "statename": "DataUnlink"
+    },
+    "13": {
+      "statename": "DataLink"
+    },
+    "12": {
+      "statename": "SubtaskLink",
+      "remark": "SUBTASKs are linked to AMM"
+    },
+    "11": {
+      "statename": "PmRecUpdated",
+      "remark": "Perm Rec changed only"
+    },
+    "10": {
+      "statename": "For Approval",
+      "remark": "Graphics Pool Management"
+    },
+    "9": {
+      "statename": "Approved4Pub",
+      "remark": "Workunit approved for publishing"
+    },
+    "8": {
+      "statename": "PBinProgress",
+      "remark": "Work unit available to writer"
+    },
+    "7": {
+      "statename": "Processing",
+      "remark": "Publishing in progress"
+    },
+    "6": {
+      "statename": "InitRev Done",
+      "remark": "Init Revision Complete"
+    },
+    "5": {
+      "statename": "Rev Done",
+      "remark": "Manual Revision Complete"
+    },
+    "4": {
+      "statename": "Ready4ManRev",
+      "remark": "Ready For Manual Revision"
+    },
+    "3": {
+      "statename": "Obsolete",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "2": {
+      "statename": "Official",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "1": {
+      "statename": "For Revision",
+      "remark": "Reserved Life*CDM state value"
+    },
+    "0": {
+      "statename": "Undefined",
+      "remark": "Reserved Life*CDM state value"
+    }
+  }
+}

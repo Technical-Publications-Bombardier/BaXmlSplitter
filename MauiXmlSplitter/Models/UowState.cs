@@ -1,23 +1,33 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using static MauiXmlSplitter.Models.CsdbContext;
 
-[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("BaXmlSplitter.Tests")]
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("MauiXmlSplitter.Tests")]
 
-namespace BaXmlSplitter
+namespace MauiXmlSplitter.Models
 {
     /// <summary>
-    /// Unit-of-work states from ETPS. They are relative to the <see cref="XmlSplitterHelpers.CsdbProgram"/>.
+    /// Unit-of-work states from ETPS. They are relative to the <see cref="CsdbContext.CsdbProgram"/>.
     /// </summary>
     /// <seealso cref="IUowState" />
     /// <seealso cref="IUowState" />
     /// <seealso cref="IUowState" />
     /// <seealso cref="UowState" />
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-    internal record UowState(int? StateValue = null, string? StateName = null, string? Remark = null,
+    public partial record UowState(int? StateValue = null, string? StateName = null, string? Remark = null,
             string? XPath = null, string? TagName = null, string? Key = null, string? Resource = null,
             string? Title = null, string? Level = null)
         : IUowState
     {
+
+
+        /// <summary>The UOW states file parsing regular expression pattern.</summary>
+        [GeneratedRegex("""(?<tabs>\t*)(?:Front Matter: )?(?<tag>\S+)(?: (?<key>\S+))?(?: (?<rs>RS-\d+))?(?: - (?<title>.+?))?(?: (?<lvl>[A-Z0-9 =]+?))? +-- .*?\(state = "(?<state>[^"]*)"\)$""")]
+        private static partial Regex UowPattern();
+
         /// <summary>
         /// Gets or sets the x path.
         /// </summary>
@@ -66,6 +76,8 @@ namespace BaXmlSplitter
         /// <value>
         /// The name of the state.
         /// </value>
+        // ReSharper disable once StringLiteralTypo
+        [JsonPropertyName("statename")]
         public string? StateName { get; set; } = StateName;
         /// <summary>
         /// Gets or sets the state value.
@@ -80,6 +92,7 @@ namespace BaXmlSplitter
         /// <value>
         /// The remark.
         /// </value>
+        [JsonPropertyName("remark")]
         public string? Remark { get; set; } = Remark;
 
         /// <summary>
@@ -88,7 +101,7 @@ namespace BaXmlSplitter
         /// <returns></returns>
         public override string ToString()
         {
-            return string.Join(", ", new ArrayList() { (StateValue is null ? null : $"StateValue={StateValue}"), (string.IsNullOrEmpty(StateName) ? null : $"StateName='{StateName}'"), (string.IsNullOrEmpty(Remark) ? null : $"Remark='{Remark}'"), (string.IsNullOrEmpty(XPath) ? null : $"XPath='{XPath}'"), (string.IsNullOrEmpty(TagName) ? null : $"TagName='{TagName}'"), (string.IsNullOrEmpty(Key) ? null : $"Key='{Key}'"), (string.IsNullOrEmpty(Resource) ? null : $"Resource='{Resource}'"), (string.IsNullOrEmpty(Title) ? null : $"Title='{Title}'"), (string.IsNullOrEmpty(Level) ? null : $"Level='{Level}'") }.Cast<string>().Where(field => !string.IsNullOrEmpty(field)).ToArray());
+            return string.Join(", ", new ArrayList() { StateValue is null ? null : $"StateValue={StateValue}", string.IsNullOrEmpty(StateName) ? null : $"StateName='{StateName}'", string.IsNullOrEmpty(Remark) ? null : $"Remark='{Remark}'", string.IsNullOrEmpty(XPath) ? null : $"XPath='{XPath}'", string.IsNullOrEmpty(TagName) ? null : $"TagName='{TagName}'", string.IsNullOrEmpty(Key) ? null : $"Key='{Key}'", string.IsNullOrEmpty(Resource) ? null : $"Resource='{Resource}'", string.IsNullOrEmpty(Title) ? null : $"Title='{Title}'", string.IsNullOrEmpty(Level) ? null : $"Level='{Level}'" }.Cast<string>().Where(field => !string.IsNullOrEmpty(field)).ToArray());
         }
 
         /// <summary>
@@ -137,7 +150,7 @@ namespace BaXmlSplitter
     /// </summary>
     /// <seealso cref="IEquatable&lt;IUowState&gt;" />
     /// <seealso cref="IEqualityComparer&lt;IUowState&gt;" />
-    internal interface IUowState : IEquatable<IUowState>, IEqualityComparer<IUowState>
+    public interface IUowState : IEquatable<IUowState>, IEqualityComparer<IUowState>
     {
         /// <summary>
         /// Gets or sets the state value.
@@ -203,4 +216,95 @@ namespace BaXmlSplitter
         /// </value>
         string? Level { get; set; }
     }
+
+    public class StatesPerProgramConverter : JsonConverter<Dictionary<CsdbProgram, Dictionary<int, UowState>>>
+    {
+        public override Dictionary<CsdbProgram, Dictionary<int, UowState>> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            // Create an empty dictionary to store the result
+            var result = new Dictionary<CsdbProgram, Dictionary<int, UowState>>();
+
+            // Check that the JSON token is a start object
+            if (reader.TokenType != JsonTokenType.StartObject)
+            {
+                throw new JsonException();
+            }
+
+            // Read the next token
+            reader.Read();
+
+            // Loop until the end object token is reached
+            while (reader.TokenType != JsonTokenType.EndObject)
+            {
+                // Check that the JSON token is a property name
+                if (reader.TokenType != JsonTokenType.PropertyName)
+                {
+                    throw new JsonException();
+                }
+
+                // Parse the property name as a CsdbProgram enum value
+                var program = Enum.Parse<CsdbProgram>(reader.GetString() ?? throw new InvalidOperationException(nameof(reader) + " was null"));
+
+                // Read the next token
+                reader.Read();
+
+                // Check that the JSON token is a start object
+                if (reader.TokenType != JsonTokenType.StartObject)
+                {
+                    throw new JsonException();
+                }
+
+                // Read the next token
+                reader.Read();
+
+                // Create an empty dictionary to store the inner values
+                var innerDict = new Dictionary<int, UowState>();
+
+                // Loop until the end object token is reached
+                while (reader.TokenType != JsonTokenType.EndObject)
+                {
+                    // Check that the JSON token is a property name
+                    if (reader.TokenType != JsonTokenType.PropertyName)
+                    {
+                        throw new JsonException();
+                    }
+
+                    // Parse the property name as an int value
+                    var stateValue = int.Parse(reader.GetString() ?? throw new InvalidOperationException(nameof(reader) + " was null"));
+
+                    // Read the next token
+                    reader.Read();
+
+                    // Deserialize the property value as a UowState object
+                    var state = JsonSerializer.Deserialize<UowState>(ref reader, options);
+
+                    // Set the StateValue property of the UowState object
+                    Debug.Assert(state != null, nameof(state) + " != null");
+                    state.StateValue = stateValue;
+
+                    // Add the key-value pair to the inner dictionary
+                    innerDict.Add(stateValue, state);
+
+                    // Read the next token
+                    reader.Read();
+                }
+
+                // Add the key-value pair to the result dictionary
+                result.Add(program, innerDict);
+
+                // Read the next token
+                reader.Read();
+            }
+
+            // Return the result dictionary
+            return result;
+        }
+
+        public override void Write(Utf8JsonWriter writer, Dictionary<CsdbProgram, Dictionary<int, UowState>> value, JsonSerializerOptions options)
+        {
+            // This method is not implemented as it is not needed for deserialization
+            throw new NotImplementedException();
+        }
+    }
+
 }
