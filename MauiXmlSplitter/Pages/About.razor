@@ -1,8 +1,14 @@
 ﻿@page "/about"
 @using System.Reflection
-<h3>Bombardier XML Splitter</h3>
-<p>@(Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description)</p>
-<p>App Version: <code>@(Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion)</code></p>
-<p>@(Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright)</p>
-<p>Product: @(Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyProductAttribute>()?.Product)</p>
-    <img class="float-right" src="img/splash.svg" />
+<div id="about" class="d-flex flex-row flex-wrap">
+    <span class="order-1 p-2">
+        <h3>Bombardier XML Splitter</h3>
+        <p>@(Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description)</p>
+        <p>App Version: <code>@(Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion)</code></p>
+        <p>@(Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright)</p>
+        <p>Product: @(Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyProductAttribute>()?.Product)</p>
+    </span>
+    <span class="order-2 p-2">
+        <img class="float-end img-fluid" src="img/splash.svg" alt="An isometric graphic representation of the XML splitting process"/>
+    </span>
+</div>

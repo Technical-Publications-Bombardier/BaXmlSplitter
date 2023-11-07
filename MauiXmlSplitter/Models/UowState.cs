@@ -158,6 +158,7 @@ namespace MauiXmlSplitter.Models
         /// <value>
         /// The state value.
         /// </value>
+        [JsonPropertyName("value")]
         int? StateValue { get; set; }
         /// <summary>
         /// Gets or sets the name of the state.
@@ -165,6 +166,7 @@ namespace MauiXmlSplitter.Models
         /// <value>
         /// The name of the state.
         /// </value>
+        [JsonPropertyName("stateName")]
         string? StateName { get; set; }
         /// <summary>
         /// Gets or sets the remark.
@@ -172,6 +174,7 @@ namespace MauiXmlSplitter.Models
         /// <value>
         /// The remark.
         /// </value>
+        [JsonPropertyName("remark")]
         string? Remark { get; set; }
         /// <summary>
         /// Gets or sets the x path.
@@ -216,94 +219,90 @@ namespace MauiXmlSplitter.Models
         /// </value>
         string? Level { get; set; }
     }
-
-    public class StatesPerProgramConverter : JsonConverter<Dictionary<CsdbProgram, Dictionary<int, UowState>>>
+    public class UowStateConverter : JsonConverter<UowState>
     {
-        public override Dictionary<CsdbProgram, Dictionary<int, UowState>> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override UowState Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            // Create an empty dictionary to store the result
-            var result = new Dictionary<CsdbProgram, Dictionary<int, UowState>>();
-
-            // Check that the JSON token is a start object
+            // Read the JSON object
             if (reader.TokenType != JsonTokenType.StartObject)
             {
-                throw new JsonException();
+                throw new JsonException("Expected start object token");
             }
 
-            // Read the next token
-            reader.Read();
+            // Create a new UowState instance
+            var uowState = new UowState();
 
-            // Loop until the end object token is reached
-            while (reader.TokenType != JsonTokenType.EndObject)
+            // Read the properties of the JSON object
+            while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
             {
-                // Check that the JSON token is a property name
                 if (reader.TokenType != JsonTokenType.PropertyName)
                 {
-                    throw new JsonException();
+                    throw new JsonException("Expected property name token");
                 }
 
-                // Parse the property name as a CsdbProgram enum value
-                var program = Enum.Parse<CsdbProgram>(reader.GetString() ?? throw new InvalidOperationException(nameof(reader) + " was null"));
+                // Get the property name
+                var propertyName = reader.GetString();
 
-                // Read the next token
+                // Read the property value
                 reader.Read();
 
-                // Check that the JSON token is a start object
-                if (reader.TokenType != JsonTokenType.StartObject)
+                // Set the corresponding property of the UowState instance
+                switch (propertyName)
                 {
-                    throw new JsonException();
+                    case "statename":
+                        uowState.StateName = reader.GetString();
+                        break;
+                    case "value":
+                        uowState.StateValue = reader.GetInt32();
+                        break;
+                    case "remark":
+                        uowState.Remark = reader.GetString();
+                        break;
+                    case "xpath":
+                        uowState.XPath = reader.GetString();
+                        break;
+                    case "tagname":
+                        uowState.TagName = reader.GetString();
+                        break;
+                    case "key":
+                        uowState.Key = reader.GetString();
+                        break;
+                    case "resource":
+                        uowState.Resource = reader.GetString();
+                        break;
+                    case "title":
+                        uowState.Title = reader.GetString();
+                        break;
+                    case "level":
+                        uowState.Level = reader.GetString();
+                        break;
+                    default:
+                        throw new JsonException($"Unknown property: {propertyName}");
                 }
-
-                // Read the next token
-                reader.Read();
-
-                // Create an empty dictionary to store the inner values
-                var innerDict = new Dictionary<int, UowState>();
-
-                // Loop until the end object token is reached
-                while (reader.TokenType != JsonTokenType.EndObject)
-                {
-                    // Check that the JSON token is a property name
-                    if (reader.TokenType != JsonTokenType.PropertyName)
-                    {
-                        throw new JsonException();
-                    }
-
-                    // Parse the property name as an int value
-                    var stateValue = int.Parse(reader.GetString() ?? throw new InvalidOperationException(nameof(reader) + " was null"));
-
-                    // Read the next token
-                    reader.Read();
-
-                    // Deserialize the property value as a UowState object
-                    var state = JsonSerializer.Deserialize<UowState>(ref reader, options);
-
-                    // Set the StateValue property of the UowState object
-                    Debug.Assert(state != null, nameof(state) + " != null");
-                    state.StateValue = stateValue;
-
-                    // Add the key-value pair to the inner dictionary
-                    innerDict.Add(stateValue, state);
-
-                    // Read the next token
-                    reader.Read();
-                }
-
-                // Add the key-value pair to the result dictionary
-                result.Add(program, innerDict);
-
-                // Read the next token
-                reader.Read();
             }
 
-            // Return the result dictionary
-            return result;
+            // Return the UowState instance
+            return uowState;
         }
 
-        public override void Write(Utf8JsonWriter writer, Dictionary<CsdbProgram, Dictionary<int, UowState>> value, JsonSerializerOptions options)
+        public override void Write(Utf8JsonWriter writer, UowState value, JsonSerializerOptions options)
         {
-            // This method is not implemented as it is not needed for deserialization
-            throw new NotImplementedException();
+            // Write the start object token
+            writer.WriteStartObject();
+
+            // Write the properties of the UowState instance
+            writer.WriteString("statename", value.StateName);
+            writer.WriteNumber("value", value.StateValue ?? 0);
+            writer.WriteString("remark", value.Remark);
+            writer.WriteString("xpath", value.XPath);
+            writer.WriteString("tagname", value.TagName);
+            writer.WriteString("key", value.Key);
+            writer.WriteString("resource", value.Resource);
+            writer.WriteString("title", value.Title);
+            writer.WriteString("level", value.Level);
+
+            // Write the end object token
+            writer.WriteEndObject();
         }
     }
 

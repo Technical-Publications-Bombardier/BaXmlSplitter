@@ -20,17 +20,17 @@ namespace MauiXmlSplitter
                     fonts.AddFont("MonoidNerdFont/MonoidNerdFont-Italic.ttf");
                     fonts.AddFont("MonoidNerdFont/MonoidNerdFont-Retina.ttf");
                 });
-            var viewModel = new XmlSplitterViewModel();
-            builder.Services.AddSingleton(viewModel);
+            builder.Services.AddSingleton<XmlSplitterViewModel>();
             builder.Services.AddSingleton(FolderPicker.Default);
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
+#else
+            builder.Logging.AddConsole();
 #endif
 
-            builder.Services.AddTransient(_ => new MainPage());
-
+            builder.Services.AddSingleton(new MainPage());
             return builder.Build();
         }
     }

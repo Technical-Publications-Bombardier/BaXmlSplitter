@@ -53,6 +53,9 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <Nullable>enable</Nullable>
         <AnalysisLevel>preview</AnalysisLevel>
+        <DefaultLanguage>en-ca</DefaultLanguage>
+        <PackageCertificateThumbprint>B1A5D7258616E7FD26FB1E2B2FEBAF0B463BDC26</PackageCertificateThumbprint>
+        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     </PropertyGroup>
 
     <ItemGroup>
@@ -75,11 +78,12 @@
 
     <ItemGroup>
         <PackageReference Include="bootstrap" Version="5.3.2" />
-        <PackageReference Include="CommunityToolkit.Maui" Version="6.0.0" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="6.1.0" />
         <PackageReference Include="F23.StringSimilarity" Version="5.1.0" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.0-rc.2.9511" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.0-rc.2.9511" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.0-rc.2.9511" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.0-rc.2.23480.2" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.0-rc.2.9530" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.0-rc.2.9530" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.0-rc.2.9530" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0-rc.2.23479.6" />
         <PackageReference Include="RestSharp" Version="110.2.1-alpha.0.16" />
     </ItemGroup>
@@ -93,6 +97,11 @@
         <Pack>True</Pack>
         <PackagePath>\</PackagePath>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Data\" />
+      <Folder Include="wwwroot\img\" />
     </ItemGroup>
 
   <!-- Build Properties must be defined within these property groups to ensure successful publishing

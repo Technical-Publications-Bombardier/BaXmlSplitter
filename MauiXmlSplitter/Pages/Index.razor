@@ -1,36 +1,75 @@
 ﻿@page "/"
 @inject XmlSplitterViewModel ViewModel
 
-<h1>XML Splitter</h1>
+<div id="splitter">
+    <h1>XML Splitter</h1>
 
+    <p>
+        <label>
+            Maintenance/Flight Manual XML File:
+        </label>
+        <span class="select-file">
+            <InputText @bind-Value="ViewModel.SourceXml" />
+            <Button @onclick="(e) => ViewModel.PickXmlFile(this,e)">Browse</Button>
+        </span>
+    </p>
 
+    <p>
+        <label>
+            Units-of-Work States File:
+        </label>
+        <span class="select-file">
+            <InputText @bind-Value="ViewModel.UowStatesFile" />
+            <Button @onclick="(e) => ViewModel.PickUowStatesFile(this,e)">Browse</Button>
+        </span>
+    </p>
 
-<p>
-    <label>
-        Input XML File:
-        <InputText @bind-Value="ViewModel.SourceXml" />
-        <Button @onclick="(e) => ViewModel.PickXmlFile(this,e)">Select XML File</Button>
-    </label>
-</p>
+    <p>
+        <label>
+            Output Directory:
+        </label>
+        <span class="select-file">
+            <InputText @bind-Value="ViewModel.OutputDirectory" />
+            <Button @onclick="(e) => ViewModel.PickOutputFolder(this,e)">Browse</Button>
+        </span>
+    </p>
 
-<p>
-    <label>
-        Units-of-Work States File:
-        <InputText @bind-Value="ViewModel.UowStatesFile" />
-        <Button @onclick="(e) => ViewModel.PickUowStatesFile(this,e)">Select UOW States File</Button>
-    </label>
-</p>
+    <p>
+        <label>@ViewModel.ProgramPickerTitle:</label>
+        <span>
+            <select disabled="@(ViewModel.PossiblePrograms.Count() <= 1)">
+                @foreach (var program in ViewModel.PossiblePrograms)
+                {
+                    <option>@program</option>
+                }
+            </select>
+        </span>
+    </p>
 
-<p>
-    <label>
-        Output Directory:
-        <InputText @bind-Value="ViewModel.OutputDirectory" />
-        <Button @onclick="(e) => ViewModel.PickOutputFolder(this,e)">Select Output Directory</Button>
-    </label>
-</p>
+    <p>
+        <label>
+            @if (ViewModel.IsExecuting)
+            {
+                <ProgressBar Value="@ViewModel.Progress" />
+            }
+            else
+            {
+                <Button @onclick="(e) => ViewModel.SplitXmlCommand(this,e)" Disabled="@(!ViewModel.IsReadyToExecuteSplit)">Execute Split</Button>
+            }
+        </label>
+    </p>
+    Required:
+    <ol>
+        <li class="@((ViewModel.XmlIsProvided) ? "done" : "")">Select XML File</li>
+        <li class="@((ViewModel.UowIsProvided) ? "done" : "")">Select UOW States File</li>
+        <li class="@((ViewModel.OutDirIsProvided) ? "done" : "")">Choose Output Directory</li>
+        <li class="@((ViewModel.ProgramIsProvided) ? "done" : "")">Select CSDB Program</li>
+    </ol>
+</div>
 
-<p>
-    <label>
-        <Button @onclick="(e) => ViewModel.SplitXmlCommand(this,e)">Execute Split</Button>
-    </label>
-</p>
+@code {
+    protected override Task OnInitializedAsync()
+    {
+        return ViewModel.InitializeAsync();
+    }
+}
