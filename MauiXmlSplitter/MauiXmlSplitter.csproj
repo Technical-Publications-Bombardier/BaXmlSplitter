@@ -56,6 +56,7 @@
         <DefaultLanguage>en-ca</DefaultLanguage>
         <PackageCertificateThumbprint>B1A5D7258616E7FD26FB1E2B2FEBAF0B463BDC26</PackageCertificateThumbprint>
         <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <NeutralLanguage>en</NeutralLanguage>
     </PropertyGroup>
 
     <ItemGroup>
