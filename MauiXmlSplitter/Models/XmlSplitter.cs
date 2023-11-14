@@ -26,7 +26,7 @@ public partial class XmlSplitter(ILogger logger)
     internal const string ReportTimestampFormat = "yyyy - MM - dd - HH - mm - ss - fffffff";
 
     /// <summary>The CSDB programs.</summary>
-    internal static readonly string[] Programs = Enum.GetNames<CsdbProgram>();
+    internal static readonly string[] Programs = Enum.GetNames<CsdbProgram>().Where(e=>e!=Enum.GetName(CsdbProgram.None)).ToArray();
 
     /// <summary>
     ///     The <see cref="F23.StringSimilarity.Jaccard" /> object for performing string similarity calculations.
@@ -196,8 +196,12 @@ public partial class XmlSplitter(ILogger logger)
     /// <seealso cref="csdbProgram"/>
     public string Program
     {
-        get => Enum.GetName(csdbProgram) ?? string.Empty;
-        set => csdbProgram = Enum.Parse<CsdbProgram>(value);
+        get => (csdbProgram == CsdbProgram.None ? string.Empty : Enum.GetName(csdbProgram)) ?? string.Empty;
+        set {
+            if (!Enum.TryParse(value, true, out csdbProgram)) {
+                csdbProgram = CsdbProgram.None;
+            }
+        }
     }
 
     private bool IsLoadingXml { get; set; }

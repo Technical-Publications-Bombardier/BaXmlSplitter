@@ -1,13 +1,18 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Concurrent;
+using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Maui.Storage;
 using MauiXmlSplitter.Models;
+using MauiXmlSplitter.Shared;
 using Microsoft.Extensions.Logging;
 
 namespace MauiXmlSplitter;
 
-public class XmlSplitterViewModel(ILogger<XmlSplitterViewModel> logger) : INotifyPropertyChanged
+public class XmlSplitterViewModel(ConcurrentDictionary<DateTime, LogRecord> logs, ILogger<XmlSplitterViewModel> logger) : INotifyPropertyChanged
 {
+    public string? ContextMenuStyle { get; set; }
+
+    public ConcurrentDictionary<DateTime, LogRecord> Logs { get; } = logs;
     /// <summary>
     ///     The XML file type
     /// </summary>
@@ -40,10 +45,8 @@ public class XmlSplitterViewModel(ILogger<XmlSplitterViewModel> logger) : INotif
             { DevicePlatform.Tizen, new[] { "*/*" } }
         });
 
-    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(2.0);
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(15.0);
 
-
-    private readonly ILogger<XmlSplitterViewModel> logger = logger;
 
     private readonly XmlSplitter xmlSplitter = new(logger);
 
@@ -87,7 +90,7 @@ public class XmlSplitterViewModel(ILogger<XmlSplitterViewModel> logger) : INotif
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OutputDirectory)));
         }
     }
-
+    public string Program { get => xmlSplitter.Program; set => xmlSplitter.Program = value; }
     public bool IsReadyToExecuteSplit => xmlSplitter.ExecuteSplitIsReady;
     public string XPath => xmlSplitter.XPath;
 
@@ -105,8 +108,11 @@ public class XmlSplitterViewModel(ILogger<XmlSplitterViewModel> logger) : INotif
         };
         try
         {
-            if (await FilePicker.Default.PickAsync(options) is { } result) SourceXml = result.FullPath;
-            xmlSplitter.XmlContent = await File.ReadAllTextAsync(SourceXml, cts.Token).ConfigureAwait(false);
+            if (await FilePicker.Default.PickAsync(options) is { } result)
+            {
+                SourceXml = result.FullPath;
+                xmlSplitter.XmlContent = await File.ReadAllTextAsync(SourceXml, cts.Token).ConfigureAwait(false);
+            }
         }
         catch (OperationCanceledException)
         {
@@ -123,8 +129,11 @@ public class XmlSplitterViewModel(ILogger<XmlSplitterViewModel> logger) : INotif
         };
         try
         {
-            if (await FilePicker.Default.PickAsync(options) is { } result) UowStatesFile = result.FullPath;
-            xmlSplitter.UowContent = await File.ReadAllTextAsync(UowStatesFile, cts.Token).ConfigureAwait(false);
+            if (await FilePicker.Default.PickAsync(options) is { } result)
+            {
+                UowStatesFile = result.FullPath;
+                xmlSplitter.UowContent = await File.ReadAllTextAsync(UowStatesFile, cts.Token).ConfigureAwait(false);
+            }
         }
         catch (OperationCanceledException) when (!Debugger.IsAttached)
         {
@@ -151,7 +160,10 @@ public class XmlSplitterViewModel(ILogger<XmlSplitterViewModel> logger) : INotif
         var cts = new CancellationTokenSource();
         try
         {
+            logger.LogInformation("Initializing XmlSplitterViewModel"); 
             await xmlSplitter.LoadAssets(cts.Token);
+            var blah = await FileSystem.OpenAppPackageFileAsync("ApplicationInsights.json").ConfigureAwait(false);
+            logger.LogInformation("Initialized XmlSplitterViewModel"); // TODO: Log this
         }
         catch (OperationCanceledException) when (!Debugger.IsAttached)
         {
@@ -163,5 +175,10 @@ public class XmlSplitterViewModel(ILogger<XmlSplitterViewModel> logger) : INotif
         }
 
         IsLoading = false;
+    }
+
+    public void ClearLogs()
+    {
+        logs = new ConcurrentDictionary<DateTime, LogRecord>();
     }
 }

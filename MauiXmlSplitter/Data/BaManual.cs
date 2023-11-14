@@ -1,0 +1,6 @@
+﻿namespace BaXmlSplitter
+{
+    class BaManual
+    {
+    }
+}

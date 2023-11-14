@@ -1,7 +1,12 @@
 ﻿@page "/"
+@using Microsoft.Extensions.Logging
+@using System.Diagnostics
 @inject XmlSplitterViewModel ViewModel
+@inject Popper Popper
+@inject ILogger<XmlSplitterViewModel> Logger
 
-<div id="splitter">
+
+<div id="splitter" @onmousedown="HideContextMenu">
     <h1>XML Splitter</h1>
 
     <p>
@@ -9,8 +14,8 @@
             Maintenance/Flight Manual XML File:
         </label>
         <span class="select-file">
-            <InputText @bind-Value="ViewModel.SourceXml" />
-            <Button @onclick="(e) => ViewModel.PickXmlFile(this,e)">Browse</Button>
+            <InputText @bind-Value="ViewModel.SourceXml"/>
+            <Button @onclick="e => ViewModel.PickXmlFile(this, e)">Browse</Button>
         </span>
     </p>
 
@@ -19,8 +24,8 @@
             Units-of-Work States File:
         </label>
         <span class="select-file">
-            <InputText @bind-Value="ViewModel.UowStatesFile" />
-            <Button @onclick="(e) => ViewModel.PickUowStatesFile(this,e)">Browse</Button>
+            <InputText @bind-Value="ViewModel.UowStatesFile"/>
+            <Button @onclick="e => ViewModel.PickUowStatesFile(this, e)">Browse</Button>
         </span>
     </p>
 
@@ -29,15 +34,15 @@
             Output Directory:
         </label>
         <span class="select-file">
-            <InputText @bind-Value="ViewModel.OutputDirectory" />
-            <Button @onclick="(e) => ViewModel.PickOutputFolder(this,e)">Browse</Button>
+            <InputText @bind-Value="ViewModel.OutputDirectory"/>
+            <Button @onclick="e => ViewModel.PickOutputFolder(this, e)">Browse</Button>
         </span>
     </p>
 
     <p>
         <label>@ViewModel.ProgramPickerTitle:</label>
         <span>
-            <select disabled="@(ViewModel.PossiblePrograms.Count() <= 1)">
+            <select disabled="@(ViewModel.PossiblePrograms.Count() <= 1)" @bind="ViewModel.Program">
                 @foreach (var program in ViewModel.PossiblePrograms)
                 {
                     <option>@program</option>
@@ -50,26 +55,127 @@
         <label>
             @if (ViewModel.IsExecuting)
             {
-                <ProgressBar Value="@ViewModel.Progress" />
+                <ProgressBar Value="@ViewModel.Progress"/>
             }
             else
             {
-                <Button @onclick="(e) => ViewModel.SplitXmlCommand(this,e)" Disabled="@(!ViewModel.IsReadyToExecuteSplit)">Execute Split</Button>
+                <Button class="btn btn-primary" @onclick="e => ViewModel.SplitXmlCommand(this, e)" Disabled="@(!ViewModel.IsReadyToExecuteSplit)">Execute Split</Button>
             }
         </label>
     </p>
-    Required:
-    <ol>
-        <li class="@((ViewModel.XmlIsProvided) ? "done" : "")">Select XML File</li>
-        <li class="@((ViewModel.UowIsProvided) ? "done" : "")">Select UOW States File</li>
-        <li class="@((ViewModel.OutDirIsProvided) ? "done" : "")">Choose Output Directory</li>
-        <li class="@((ViewModel.ProgramIsProvided) ? "done" : "")">Select CSDB Program</li>
-    </ol>
+    <div id="infobox">
+        <span id="requirements">
+            <label>Required:</label>
+            <ol>
+                <li class="@(ViewModel.XmlIsProvided ? "done" : "")">Select XML File</li>
+                <li class="@(ViewModel.UowIsProvided ? "done" : "")">Select UOW States File</li>
+                <li class="@(ViewModel.OutDirIsProvided ? "done" : "")">Choose Output Directory</li>
+                <li class="@(ViewModel.ProgramIsProvided ? "done" : "")">Select CSDB Program</li>
+            </ol>
+        </span>
+        <div id="console" @ref="Console" @oncontextmenu:preventDefault="true" @oncontextmenu="ShowContextMenu">
+            <div>Status</div>
+            @if (contextMenuIsVisible)
+            {
+                <div id="contextMenu" class="popper" @ref=ContextMenuElement role="menu" style="@ViewModel.ContextMenuStyle">
+                        <button @onclick:stopPropagation="true" @onmouseup="ClearConsole">Clear Console</button>
+                </div>
+            }
+            <pre>
+        <code>
+            <!-- The status goes here -->
+                    @foreach (var log in ViewModel.Logs.OrderBy(log => log.Key))
+                    {
+                            <span class=@($"logMessage {log.Value.LogLevel}")>
+                            <span class="timestamp">
+                                @log.Key.ToString("HH:mm:ss.fffffff")
+                            </span>: <span class="message">
+                                @log.Value.Message
+                            </span>
+                        </span>
+                    }
+        </code></pre>
+        </div>
+    </div>
 </div>
 
+
 @code {
+    protected ElementReference Console;
+    protected ElementReference ContextMenuElement;
+    protected VirtualElement ConsoleReference = null!;
+    protected Instance? ContextMenu;
+    private bool contextMenuIsVisible;
+
     protected override Task OnInitializedAsync()
     {
         return ViewModel.InitializeAsync();
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Options options = new()
+            {
+                Placement = Placement.TopStart,
+                Modifiers = new Modifier[]
+                {
+                    new(ModifierName.Offset)
+                    {
+                        Options = new OffsetOptions { Offset = new double[] { 0, 10 } }
+                    },
+                    new(ModifierName.PreventOverflow)
+                    {
+                        Options = new PreventOverflowOptions { Padding = 10, Boundary = Console, AltAxis = true, TetherOffset = -10 }
+                    }
+                }
+            };
+            ConsoleReference = new VirtualElement
+            {
+                ContextElement = Console,
+                GetBoundingClientRect = () => new ClientRect()
+            };
+
+            try
+            {
+                ContextMenu = await Popper.CreatePopperAsync(ConsoleReference, ContextMenuElement, options);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+    }
+
+    protected async Task ShowContextMenu(MouseEventArgs eventArgs)
+    {
+        if (ContextMenu is null)
+            return;
+        // Get the X and Y coordinates of the mouse click
+        var x = eventArgs.ClientX;
+        var y = eventArgs.ClientY;
+        ViewModel.ContextMenuStyle = $"position: absolute; left: {x}px; top: {y}px;";
+        ConsoleReference.GetBoundingClientRect = () => new ClientRect
+        {
+            Top = y,
+            Right = x,
+            Bottom = y,
+            Left = x
+        };
+        await ContextMenu.ForceUpdate();
+        contextMenuIsVisible = true;
+    }
+    protected void HideContextMenu(MouseEventArgs? eventArgs)
+    {
+        if (!contextMenuIsVisible) return;
+        contextMenuIsVisible = false;
+        StateHasChanged();  // This will cause Blazor to re-render the component
+    }
+    protected void ClearConsole()
+    {
+        ViewModel.ClearLogs();
+        HideContextMenu(null);
+    }
+
 }

@@ -17,6 +17,10 @@ namespace MauiXmlSplitter.Models
         public enum CsdbProgram
         {
             /// <summary>
+            /// No CSDB program selected
+            /// </summary>
+            None,
+            /// <summary>
             /// The <c>B_IFM</c> program for instrument flight manuals (all models)
             /// </summary>
             B_IFM,
