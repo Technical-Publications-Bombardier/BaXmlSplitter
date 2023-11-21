@@ -1,52 +1,94 @@
-﻿using CommunityToolkit.Maui;
+﻿using System.Collections.Concurrent;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
 using MauiXmlSplitter.Shared;
 using Microsoft.Extensions.Logging;
 // ReSharper disable once RedundantUsingDirective
 using Microsoft.ApplicationInsights;
-using KristofferStrube.Blazor.Popper;
-using System.Collections.Concurrent;
-namespace MauiXmlSplitter
-{
-    public static class MauiProgram
-    {
-        public static MauiApp CreateMauiApp()
-        {
-            var builder = MauiApp.CreateBuilder();
-            builder
-                .UseMauiApp<App>()
-                .UseMauiCommunityToolkit()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("Gabarito/Gabarito-VariableFont_wght.ttf", "Gabarito");
-                    fonts.AddFont("MonoidNerdFont/MonoidNerdFont-Regular.ttf");
-                    fonts.AddFont("MonoidNerdFont/MonoidNerdFont-Bold.ttf");
-                    fonts.AddFont("MonoidNerdFont/MonoidNerdFont-Italic.ttf");
-                    fonts.AddFont("MonoidNerdFont/MonoidNerdFont-Retina.ttf");
-                });
-            builder.Services.AddSingleton(new MainPage());
-            builder.Services.AddSingleton<ConcurrentDictionary<DateTime, LogRecord>>();
+using Microsoft.Extensions.Logging.ApplicationInsights;
+using System.Reflection;
+using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
-            builder.Services.AddSingleton<ILogger<XmlSplitterViewModel>>(services =>
+namespace MauiXmlSplitter;
+
+public static class MauiProgram
+{
+#if WINDOWS
+        private static Exception _lastFirstChanceException;
+#endif
+#if !DEBUG
+    public static event UnhandledExceptionEventHandler? UnhandledException;
+#endif
+
+    public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder();
+        var config = new ConfigurationBuilder()
+            .AddJsonStream(Assembly.GetExecutingAssembly().GetManifestResourceStream("MauiXmlSplitter.appsettings.json")!)
+            .Build();
+        builder.Configuration.AddConfiguration(config);
+        builder
+            .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
+            .ConfigureFonts(fonts =>
             {
-                var logs = services.GetRequiredService<ConcurrentDictionary<DateTime, LogRecord>>();
-                return new BaLogger(logs, LogLevel.Trace);
+                fonts.AddFont("Gabarito/Gabarito-VariableFont_wght.ttf", "Gabarito");
+                fonts.AddFont("MonoidNerdFont/MonoidNerdFont-Regular.ttf");
+                fonts.AddFont("MonoidNerdFont/MonoidNerdFont-Bold.ttf");
+                fonts.AddFont("MonoidNerdFont/MonoidNerdFont-Italic.ttf");
+                fonts.AddFont("MonoidNerdFont/MonoidNerdFont-Retina.ttf");
             });
-            builder.Services.AddSingleton<XmlSplitterViewModel>();
-            builder.Services.AddSingleton(FolderPicker.Default);
-            builder.Services.AddScoped<Popper>();
-            builder.Services.AddMauiBlazorWebView();
-            builder.Services.AddLogging(logging => logging.AddApplicationInsights());
+        builder.Services.AddSingleton(new MainPage());
+        builder.Services.AddSingleton<ConcurrentDictionary<DateTime, LogRecord>>();
+
+        builder.Services.AddSingleton<ILogger<XmlSplitterViewModel>>(services =>
+        {
+            var logs = services.GetRequiredService<ConcurrentDictionary<DateTime, LogRecord>>();
+            return new BaLogger(logs, LogLevel.Trace);
+        });
+        builder.Services.AddSingleton<XmlSplitterViewModel>();
+        builder.Services.AddSingleton(FolderPicker.Default);
+        builder.Services.AddBlazorContextMenu();
+        builder.Services.AddBlazorBootstrap();
+        builder.Services.AddMauiBlazorWebView();
 #if DEBUG
-            builder.Services.AddBlazorWebViewDeveloperTools();
+        builder.Services.AddBlazorWebViewDeveloperTools();
     		builder.Logging.AddDebug();
 #else
-            //TODO: Add production logging
+        builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
+        builder.Services.AddLogging(logging => logging.AddApplicationInsights(
+            config => config.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"],
+            options => { }));
+        builder.Logging.AddFilter<ApplicationInsightsLoggerProvider>("XmlSplitter", LogLevel.Trace);
+        builder.Services.AddApplicationInsightsTelemetryWorkerService();
+        AppDomain.CurrentDomain.UnhandledException += (sender, args) => UnhandledException?.Invoke(sender, args);
+        TaskScheduler.UnobservedTaskException += (sender, args) =>
+            UnhandledException?.Invoke(sender!, new UnhandledExceptionEventArgs(args.Exception, false));
+#if IOS || MACCATALYST
+            ObjCRuntime.Runtime.MarshalManagedException += (_, args) => args.ExceptionMode =
+ ObjCRuntime.MarshalManagedExceptionMode.UnwindNativeCode;
+#elif ANDROID
+        AndroidEnvironment.UnhandledExceptionRaiser += (sender, args) =>
+        {
+            args.Handled = true; // Suppress the exception from being propagated to the managed thread
+            UnhandledException?.Invoke(sender!, new UnhandledExceptionEventArgs(args.Exception, true));
+        };
+#elif WINDOWS
+            AppDomain.CurrentDomain.FirstChanceException += (_, args) => _lastFirstChanceException = args.Exception;
+            Microsoft.UI.Xaml.Application.Current.UnhandledException += (sender, args) => {
+                var exception = args.Exception;
+                if (exception.StackTrace is null)
+                {
+                    exception = _lastFirstChanceException;
+                }
+                UnhandledException?.Invoke(sender, new UnhandledExceptionEventArgs(exception, true));
+            };
 #endif
-            var host = builder.Build();
-            var logger = host.Services.GetRequiredService<ILogger<XmlSplitterViewModel>>();
-            logger.LogDebug("MauiProgram.CreateMauiApp()");
-            return host;
-        }
+#endif
+        var host = builder.Build();
+        var logger = host.Services.GetRequiredService<ILogger<XmlSplitterViewModel>>();
+        logger.LogDebug("MauiProgram.CreateMauiApp()");
+        return host;
     }
 }

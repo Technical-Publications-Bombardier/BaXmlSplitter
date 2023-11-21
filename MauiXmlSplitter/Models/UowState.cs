@@ -10,7 +10,7 @@ using static MauiXmlSplitter.Models.CsdbContext;
 namespace MauiXmlSplitter.Models
 {
     /// <summary>
-    /// Unit-of-work states from ETPS. They are relative to the <see cref="CsdbContext.CsdbProgram"/>.
+    /// Unit-of-work states from ETPS. They are relative to the <see cref="CsdbProgram"/>.
     /// </summary>
     /// <seealso cref="IUowState" />
     /// <seealso cref="IUowState" />
@@ -20,7 +20,7 @@ namespace MauiXmlSplitter.Models
     public partial record UowState(int? StateValue = null, string? StateName = null, string? Remark = null,
             string? XPath = null, string? TagName = null, string? Key = null, string? Resource = null,
             string? Title = null, string? Level = null)
-        : IUowState
+        : Selectable, IUowState
     {
 
 
@@ -29,10 +29,10 @@ namespace MauiXmlSplitter.Models
         private static partial Regex UowPattern();
 
         /// <summary>
-        /// Gets or sets the x path.
+        /// Gets or sets the XPath.
         /// </summary>
         /// <value>
-        /// The x path.
+        /// The XPath.
         /// </value>
         public string? XPath { get; set; } = XPath;
         /// <summary>
@@ -98,7 +98,7 @@ namespace MauiXmlSplitter.Models
         /// <summary>
         /// Converts to string.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The unit-of-work state as a string.</returns>
         public override string ToString()
         {
             return string.Join(", ", new ArrayList() { StateValue is null ? null : $"StateValue={StateValue}", string.IsNullOrEmpty(StateName) ? null : $"StateName='{StateName}'", string.IsNullOrEmpty(Remark) ? null : $"Remark='{Remark}'", string.IsNullOrEmpty(XPath) ? null : $"XPath='{XPath}'", string.IsNullOrEmpty(TagName) ? null : $"TagName='{TagName}'", string.IsNullOrEmpty(Key) ? null : $"Key='{Key}'", string.IsNullOrEmpty(Resource) ? null : $"Resource='{Resource}'", string.IsNullOrEmpty(Title) ? null : $"Title='{Title}'", string.IsNullOrEmpty(Level) ? null : $"Level='{Level}'" }.Cast<string>().Where(field => !string.IsNullOrEmpty(field)).ToArray());
@@ -177,10 +177,10 @@ namespace MauiXmlSplitter.Models
         [JsonPropertyName("remark")]
         string? Remark { get; set; }
         /// <summary>
-        /// Gets or sets the x path.
+        /// Gets or sets the XPath.
         /// </summary>
         /// <value>
-        /// The x path.
+        /// The XPath.
         /// </value>
         string? XPath { get; set; }
         /// <summary>
@@ -218,6 +218,21 @@ namespace MauiXmlSplitter.Models
         /// The level.
         /// </value>
         string? Level { get; set; }
+    }
+
+    /// <summary>
+    /// An abstract class to provide select-ability for the <see cref="BlazorBootstrap.Grid{TItem}"/>
+    /// </summary>
+    /// <seealso cref="Selectable" />
+    public abstract record Selectable
+    {
+        /// <summary>
+        /// Gets a value indicating whether this instance is selected.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is selected; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsSelected { get; set; }
     }
     public class UowStateConverter : JsonConverter<UowState>
     {

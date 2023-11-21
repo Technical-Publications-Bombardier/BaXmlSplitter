@@ -87,28 +87,46 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="wwwroot\bootstrap\**" />
+	  <Compile Remove="wwwroot\bootstrap\**" />
+	  <Content Remove="wwwroot\bootstrap\**" />
+	  <EmbeddedResource Remove="wwwroot\bootstrap\**" />
+	  <None Remove="wwwroot\bootstrap\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="appsettings.json" />
+	  <Content Remove="Pages\UowStateGrid.razor" />
 	  <Content Remove="wwwroot\%2a%2a" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Azure.Storage.Blobs" Version="12.19.0" />
-		<PackageReference Include="bootstrap" Version="5.3.2" />
-		<PackageReference Include="CommunityToolkit.Maui" Version="6.1.0" />
+	  <EmbeddedResource Include="appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
+		<PackageReference Include="Blazor.Bootstrap" Version="1.10.4" />
+		<PackageReference Include="Blazor.ContextMenu" Version="1.16.0" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="7.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+		<PackageReference Include="DartSassBuilder" Version="1.0.0" />
 		<PackageReference Include="F23.StringSimilarity" Version="5.1.0" />
-		<PackageReference Include="Google.Protobuf" Version="3.25.0" />
-		<PackageReference Include="KristofferStrube.Blazor.Popper" Version="0.5.2" />
+		<PackageReference Include="Google.Protobuf" Version="3.25.1" />
 		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0-beta4" />
 		<PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0-beta4" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" Version="8.0.0-rc.2.23480.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0-rc.2.23480.1" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0-rc.2.23479.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.22.0-beta4" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0-rc.2.23479.6" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.0-rc.2.9530" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.0-rc.2.9530" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.0-rc.2.9530" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0-rc.2.23479.6" />
-		<PackageReference Include="Oracle.EntityFrameworkCore" Version="7.21.12" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.3" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+		<PackageReference Include="Oracle.EntityFrameworkCore" Version="8.0.0" />
 		<PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.3.0-dev" />
 		<PackageReference Include="RestSharp" Version="110.2.1-alpha.0.16" />
 	</ItemGroup>
@@ -122,6 +140,10 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\css\bootstrap\" />
 	</ItemGroup>
 
 	<!-- Build Properties must be defined within these property groups to ensure successful publishing
@@ -174,4 +196,8 @@
 		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
 		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="Pages\UowStateGrid.razor" />
+	</ItemGroup>
 </Project>

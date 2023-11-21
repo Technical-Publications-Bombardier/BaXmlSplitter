@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Bombardier XML Splitter</title>
     <base href="/" />
-    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.css" />
+    <link rel="stylesheet" href="css/bootstrap-icons/bootstrap-icons.css" />
+    <link href="_content/Blazor.Bootstrap/blazor.bootstrap.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
     <link href="MauiXmlSplitter.styles.css" rel="stylesheet" />
+    <link href="_content/Blazor.ContextMenu/blazorContextMenu.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -23,7 +26,11 @@
     </div>
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
-    <script src="js/@popperjs/core/dist/umd/popper.js"></script>
+    <script src="_content/Blazor.ContextMenu/blazorContextMenu.min.js"></script>
+    <!-- #region Blazor.Bootstrap -->
+    <script src="js/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="_content/Blazor.Bootstrap/blazor.bootstrap.js"></script>
+    <!-- #endregion Blazor.Bootstrap -->
 </body>
 
 </html>

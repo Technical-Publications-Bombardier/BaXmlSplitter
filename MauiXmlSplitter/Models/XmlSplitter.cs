@@ -9,11 +9,21 @@ using System.Xml;
 using F23.StringSimilarity;
 using Microsoft.Extensions.Logging;
 using static MauiXmlSplitter.Models.CsdbContext;
+using Path = System.IO.Path;
 
 namespace MauiXmlSplitter.Models;
 
 public partial class XmlSplitter(ILogger logger)
 {
+    public enum ReasonForUowFailure
+    {
+        None,
+        NoFileProvided,
+        NotPlaintextFile,
+        NotEnoughContent,
+        DidNotMeetExpectedPattern
+    }
+
     /// <summary>
     ///     The default output directory
     /// </summary>
@@ -26,7 +36,8 @@ public partial class XmlSplitter(ILogger logger)
     internal const string ReportTimestampFormat = "yyyy - MM - dd - HH - mm - ss - fffffff";
 
     /// <summary>The CSDB programs.</summary>
-    internal static readonly string[] Programs = Enum.GetNames<CsdbProgram>().Where(e=>e!=Enum.GetName(CsdbProgram.None)).ToArray();
+    internal static readonly string[] Programs =
+        Enum.GetNames<CsdbProgram>().Where(e => e != Enum.GetName(CsdbProgram.None)).ToArray();
 
     /// <summary>
     ///     The <see cref="F23.StringSimilarity.Jaccard" /> object for performing string similarity calculations.
@@ -47,7 +58,7 @@ public partial class XmlSplitter(ILogger logger)
     ///     The CSDB program (GXPROD, CTALPROD, B_IFM, CH604PROD, LJ4045PROD)
     ///     for the manual.
     /// </summary>
-    /// <seealso cref="Program"/>
+    /// <seealso cref="Program" />
     private CsdbProgram csdbProgram;
 
     /// <summary>The fully populated unit-of-work states that are selected by the user for export.</summary>
@@ -62,6 +73,15 @@ public partial class XmlSplitter(ILogger logger)
     /// </summary>
     private string? outputDirectory;
 
+    private Hashtable? possibleStatesInManual;
+    public Hashtable PossibleStatesInManual => possibleStatesInManual ?? [];
+
+
+    /// <summary>
+    ///     The cancellation token for the previous match work in the <see cref="TryGetUowMatchesAsync(CancellationToken)" />.
+    ///     Defaults to 45 seconds.
+    /// </summary>
+    private CancellationTokenSource previousUowCts = new(TimeSpan.FromSeconds(45));
 
     /// <summary>
     ///     The <see cref="CsdbProgram" /> lookup from docnbr
@@ -193,14 +213,13 @@ public partial class XmlSplitter(ILogger logger)
     /// <value>
     ///     The CSDB program (GXPROD, CTALPROD, B_IFM, CH604PROD, LJ4045PROD).
     /// </value>
-    /// <seealso cref="csdbProgram"/>
+    /// <seealso cref="csdbProgram" />
     public string Program
     {
         get => (csdbProgram == CsdbProgram.None ? string.Empty : Enum.GetName(csdbProgram)) ?? string.Empty;
-        set {
-            if (!Enum.TryParse(value, true, out csdbProgram)) {
-                csdbProgram = CsdbProgram.None;
-            }
+        set
+        {
+            if (!Enum.TryParse(value, true, out csdbProgram)) csdbProgram = CsdbProgram.None;
         }
     }
 
@@ -255,13 +274,67 @@ public partial class XmlSplitter(ILogger logger)
     /// </value>
     public bool ExecuteSplitIsReady => XmlIsProvided && UowIsProvided && OutDirIsProvided && ProgramIsProvided;
 
-    public string UowStatesDocnbr
+    public string UowStatesDocnbr { get; private set; }
+
+    internal MatchCollection? StateMatches { get; set; }
+
+    internal async Task<MatchCollection?> TryGetUowMatchesAsync(CancellationToken token)
     {
-        get
+        await previousUowCts.CancelAsync().ConfigureAwait(false); // Supplant previous run
+        previousUowCts = CancellationTokenSource.CreateLinkedTokenSource(token);
+        try
         {
-            if (string.IsNullOrEmpty(uowContent)) return string.Empty;
-            string[] newlines = ["\r\n", "\n"];
-            return uowContent.Split(newlines, StringSplitOptions.None)[0]; // get the first line of the file
+            return await Task.Run(() => UowRegex().Matches(UowContent), previousUowCts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            return null;
+        }
+    }
+
+    internal async Task<(bool, ReasonForUowFailure)> UowPreliminaryCheck(string filePath)
+    {
+        const int numLines = 5; // number of lines to check provisionally
+        var isUowText =
+            (Success: true, Reason: ReasonForUowFailure.None); // assume file is text until assumption is falsified
+        await Task.Run(CheckLines);
+        return isUowText;
+
+        bool CheckLineIsPlaintext(in string line)
+        {
+            var isPlaintext = true;
+            for (var j = 0; j < line.Length && isPlaintext; j++)
+            {
+                isPlaintext = line[j] == '\t' || !char.IsControl(line[j]); // Control characters indicate file is not plaintext
+            }
+            return isPlaintext;
+        }
+
+        void CheckLines()
+        {
+            using var sr = new StreamReader(filePath);
+            var provisionalUowStatesDocnbr = UowStatesDocnbr;
+            int i;
+            for (i = 0; i < numLines && isUowText.Success; i++)
+            {
+                if (sr.EndOfStream || sr.ReadLine() is not { } line) break;
+                if (i > 0)
+                {
+                    isUowText.Success = UowRegex().IsMatch(line);
+                    if (!isUowText.Success) isUowText.Reason = ReasonForUowFailure.DidNotMeetExpectedPattern;
+                }
+                else
+                {
+                    provisionalUowStatesDocnbr =
+                        line; // Use this opportunity to set the expected docnbr from the UOW states file
+                }
+
+                if(!CheckLineIsPlaintext(line)) isUowText = (Success: false, Reason: ReasonForUowFailure.NotPlaintextFile);
+            }
+
+            isUowText.Success &= i > 1;
+            if (i <= 1) isUowText.Reason = ReasonForUowFailure.NotEnoughContent;
+            if (isUowText.Success) UowStatesDocnbr = provisionalUowStatesDocnbr;
         }
     }
 
@@ -282,7 +355,7 @@ public partial class XmlSplitter(ILogger logger)
                 bestMatchManualKey.Enqueue(manualNameKey, Jaccard.Distance(Manual, manualNameKey));
             return bestMatchManualKey.Dequeue();
         });
-        logger.LogInformation($"Closest manual found for {Program} is {closestManual}");
+        logger.LogInformation("Closest manual found for {Program} is {ClosestManual}", Program, closestManual);
         return checkoutItems[csdbProgram][closestManual];
     }
 
@@ -362,26 +435,38 @@ public partial class XmlSplitter(ILogger logger)
         }
     }
 
-    internal UowState[]? ParseUowContent(out Hashtable possibleStatesInManual)
+    internal async Task<UowState[]?> ParseUowContentAsync()
     {
         possibleStatesInManual = [];
         var tabIndentation = 0;
         if (string.IsNullOrEmpty(uowContent) || !UowRegex().IsMatch(uowContent) || string.IsNullOrEmpty(Program) ||
             statesPerProgram is null) return null;
-        var stateMatches = UowRegex().Matches(uowContent);
-        if (stateMatches.Count == 0)
-            //logMessages.Add(new LogMessage($"Invalid UOW file '{uowStatesFile}' chosen", Severity.Error));
-            return null;
+        if (StateMatches is null)
+            try
+            {
+                StateMatches = await TryGetUowMatchesAsync(previousUowCts.Token);
+            }
+            catch (Exception e) when (!Debugger.IsAttached)
+            {
+                logger.LogError("Invalid UOW file '{UowStatesFile}' chosen", uowStatesFile);
+                return null;
+            }
 
-        var states = new UowState[stateMatches.Count];
-        Stack<OrderedDictionary> elementStack = new(stateMatches.Count);
-        OrderedDictionary siblingCount = new(StringComparer.OrdinalIgnoreCase);
-        for (var i = 0; i < stateMatches.Count; i++)
+        if (StateMatches is null || StateMatches.Count == 0)
         {
-            states[i] = new UowState(TagName: stateMatches[i].Groups["tag"].Value);
+            logger.LogError("Invalid UOW file '{UowStatesFile}' chosen", uowStatesFile);
+            return null;
+        }
 
-            var currentIndentation = stateMatches[i].Groups["tabs"].Value.Length;
-            if (stateMatches[i].Groups["tabs"].Success)
+        var states = new UowState[StateMatches.Count];
+        Stack<OrderedDictionary> elementStack = new(StateMatches.Count);
+        OrderedDictionary siblingCount = new(StringComparer.OrdinalIgnoreCase);
+        for (var i = 0; i < StateMatches.Count; i++)
+        {
+            states[i] = new UowState(TagName: StateMatches[i].Groups["tag"].Value);
+
+            var currentIndentation = StateMatches[i].Groups["tabs"].Value.Length;
+            if (StateMatches[i].Groups["tabs"].Success)
             {
                 if (currentIndentation == tabIndentation + 1)
                 {
@@ -410,28 +495,28 @@ public partial class XmlSplitter(ILogger logger)
             states[i].XPath = $"/{parentPath}/{states[i].TagName}[{siblingCount[states[i].TagName!]}]"
                 .ToLowerInvariant();
 #pragma warning restore CA1308
-            if (stateMatches[i].Groups["key"].Success &&
-                !string.IsNullOrWhiteSpace(stateMatches[i].Groups["key"].Value))
+            if (StateMatches[i].Groups["key"].Success &&
+                !string.IsNullOrWhiteSpace(StateMatches[i].Groups["key"].Value))
             {
-                states[i].Key = stateMatches[i].Groups["key"].Value;
+                states[i].Key = StateMatches[i].Groups["key"].Value;
 #pragma warning disable CA1308
                 states[i].XPath =
                     $"{states[i].XPath}[contains(@key,'{states[i].Key}') or contains(@key,'{states[i].Key?.ToLowerInvariant()}')]";
 #pragma warning restore CA1308
             }
 
-            if (stateMatches[i].Groups["rs"].Success &&
-                !string.IsNullOrWhiteSpace(stateMatches[i].Groups["rs"].Value))
-                states[i].Resource = stateMatches[i].Groups["rs"].Value;
-            if (stateMatches[i].Groups["title"].Success &&
-                !string.IsNullOrWhiteSpace(stateMatches[i].Groups["title"].Value))
-                states[i].Title = stateMatches[i].Groups["title"].Value;
-            if (stateMatches[i].Groups["lvl"].Success &&
-                !string.IsNullOrWhiteSpace(stateMatches[i].Groups["lvl"].Value))
-                states[i].Level = stateMatches[i].Groups["lvl"].Value;
-            if (stateMatches[i].Groups["state"].Success &&
-                !string.IsNullOrWhiteSpace(stateMatches[i].Groups["state"].Value) &&
-                int.TryParse(stateMatches[i].Groups["state"].Value, out var stateValue))
+            if (StateMatches[i].Groups["rs"].Success &&
+                !string.IsNullOrWhiteSpace(StateMatches[i].Groups["rs"].Value))
+                states[i].Resource = StateMatches[i].Groups["rs"].Value;
+            if (StateMatches[i].Groups["title"].Success &&
+                !string.IsNullOrWhiteSpace(StateMatches[i].Groups["title"].Value))
+                states[i].Title = StateMatches[i].Groups["title"].Value;
+            if (StateMatches[i].Groups["lvl"].Success &&
+                !string.IsNullOrWhiteSpace(StateMatches[i].Groups["lvl"].Value))
+                states[i].Level = StateMatches[i].Groups["lvl"].Value;
+            if (StateMatches[i].Groups["state"].Success &&
+                !string.IsNullOrWhiteSpace(StateMatches[i].Groups["state"].Value) &&
+                int.TryParse(StateMatches[i].Groups["state"].Value, out var stateValue))
             {
                 var state = statesPerProgram[csdbProgram][stateValue];
                 state.StateValue = states[i].StateValue = stateValue;
@@ -453,11 +538,6 @@ public partial class XmlSplitter(ILogger logger)
         }
 
         return states;
-    }
-
-    private async Task ProcessUowStates(object sender, EventArgs e)
-    {
-        var states = ParseUowContent(out var possibleStatesInManual);
     }
 
     /// <summary>
@@ -485,45 +565,65 @@ public partial class XmlSplitter(ILogger logger)
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-    public async Task ExecuteSplit(object sender, EventArgs e, IProgress<double> progress)
+    /// <param name="progress"></param>
+    /// <param name="token"></param>
+    public async Task ExecuteSplit(object sender, EventArgs e, IProgress<double> progress, CancellationToken token)
     {
         progress.Report(0);
         if (string.IsNullOrEmpty(uowContent))
+        {
+            logger.LogWarning("Attempted split not ready: unit-of-work states not provided");
             return;
+        }
 
         if (string.IsNullOrEmpty(Program))
+        {
+            logger.LogWarning("Attempted split not ready: program not provided");
             return;
+        }
 
         if (xmlSourceFile is null && string.IsNullOrEmpty(xmlContent))
+        {
+            logger.LogWarning("Attempted split not ready: XML not provided");
             return;
+        }
 
         if (string.IsNullOrEmpty(outputDirectory))
+        {
+            logger.LogWarning("Attempted split not ready: output directory not provided");
             return;
+        }
 
         // check if outputDirectory exists, if not, create it
         if (!Directory.Exists(outputDirectory))
+        {
+            logger.LogTrace("Creating output directory: '{OutputDirectory}'", outputDirectory);
             try
             {
                 _ = Directory.CreateDirectory(outputDirectory);
+                logger.LogTrace("Created output directory: '{OutputDirectory}'", outputDirectory);
             }
             catch (IOException ex) when (!Debugger.IsAttached)
             {
-                // await DisplayAlert("Error", "An I/O error occurred while creating the directory.", "OK");
+                logger.LogError(ex, "An I/O error occurred while creating a directory at '{OutputDirectory}'",
+                    outputDirectory);
             }
             catch (UnauthorizedAccessException ex) when (!Debugger.IsAttached)
             {
-                // await DisplayAlert("Error", "You do not have permission to create this directory.", "OK");
+                logger.LogError(ex, "You do not have permission to create a directory at '{OutputDirectory}'",
+                    outputDirectory);
             }
             catch (ArgumentException ex) when (!Debugger.IsAttached)
             {
-                // await DisplayAlert("Error", "The directory path is invalid.", "OK");
+                logger.LogError(ex, "The directory path '{OutputDirectory}' is invalid", outputDirectory);
             }
             catch (NotSupportedException ex) when (!Debugger.IsAttached)
             {
-                // await DisplayAlert("Error", "The directory path format is not supported.", "OK");
+                logger.LogError(ex, "The directory path format '{OutputDirectory}' is not supported", outputDirectory);
             }
-
-        if (string.IsNullOrEmpty(xmlContent) || string.IsNullOrEmpty(xmlSourceFile)) return;
+        }
+        if (await ParseUowContentAsync() is not { } states || possibleStatesInManual is null || xmlContent is null) return;
+        await Task.Run(() => xml.LoadXml(xmlContent), token).ConfigureAwait(false);
     }
 
     public async Task LoadXml(object sender, EventArgs e, CancellationToken token = default)

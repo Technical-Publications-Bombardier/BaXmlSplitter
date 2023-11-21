@@ -1,46 +1,67 @@
 ﻿@page "/"
-@using Microsoft.Extensions.Logging
+@using System.ComponentModel
 @using System.Diagnostics
 @inject XmlSplitterViewModel ViewModel
-@inject Popper Popper
-@inject ILogger<XmlSplitterViewModel> Logger
 
 
-<div id="splitter" @onmousedown="HideContextMenu">
+<div id="splitter">
     <h1>XML Splitter</h1>
 
     <p>
         <label>
-            Maintenance/Flight Manual XML File:
+            <span class="text-truncate">Maintenance/Flight Manual&nbsp;</span><span>XML File:</span>
         </label>
         <span class="select-file">
             <InputText @bind-Value="ViewModel.SourceXml"/>
-            <Button @onclick="e => ViewModel.PickXmlFile(this, e)">Browse</Button>
+            <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickXmlFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingXmlFile">Browse</Button>
         </span>
     </p>
 
     <p>
         <label>
-            Units-of-Work States File:
+            <span class="text-truncate">Units-of-Work&nbsp;</span><span>States File:</span>
         </label>
-        <span class="select-file">
-            <InputText @bind-Value="ViewModel.UowStatesFile"/>
-            <Button @onclick="e => ViewModel.PickUowStatesFile(this, e)">Browse</Button>
-        </span>
+        @if (!(ViewModel.UowLoadSuccess.Success || ViewModel.UowLoadSuccess.Reason == Models.XmlSplitter.ReasonForUowFailure.NoFileProvided))
+        {
+            <Tooltip Title="@XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadSuccess.Reason]" Color="TooltipColor.Danger">
+                <span class="select-file error">
+                    <InputText @bind-Value="ViewModel.UowStatesFile"/>
+                    <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickUowStatesFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingUowStatesFile">Browse</Button>
+                </span>
+            </Tooltip>
+        } else
+        {
+            <span class="select-file">
+                <InputText @bind-Value="ViewModel.UowStatesFile"/>
+                <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickUowStatesFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingUowStatesFile">Browse</Button>
+            </span>
+        }
+        <div id="uowStatesFileModal">
+            <Modal @ref="UowStatesFileModal" title="Invalid file chosen for units-of-work states" IsVerticallyCentered="true">
+                <BodyTemplate>
+                    <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon>The file <code>@ViewModel.UowStatesFile</code> does not appear to provide valid UOW states: @XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadSuccess.Reason]
+                </BodyTemplate>
+                <FooterTemplate>
+                    <Button Color="ButtonColor.Primary" @onclick="_ => UowStatesFileModal.HideAsync()">OK</Button>
+                </FooterTemplate>
+            </Modal>
+        </div>
     </p>
 
     <p>
         <label>
-            Output Directory:
+            <span class="text-truncate">Output Directory</span><span>:</span>
         </label>
         <span class="select-file">
             <InputText @bind-Value="ViewModel.OutputDirectory"/>
-            <Button @onclick="e => ViewModel.PickOutputFolder(this, e)">Browse</Button>
+            <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickOutputFolder(this, e)" Size="Size.Small">Browse</Button>
         </span>
     </p>
 
-    <p>
-        <label>@ViewModel.ProgramPickerTitle:</label>
+    <p id="selectProgram">
+        <label>
+            <span class="text-truncate">@ViewModel.ProgramPickerTitle CSDB&nbsp;</span><span>Program:</span>
+        </label>
         <span>
             <select disabled="@(ViewModel.PossiblePrograms.Count() <= 1)" @bind="ViewModel.Program">
                 @foreach (var program in ViewModel.PossiblePrograms)
@@ -50,44 +71,49 @@
             </select>
         </span>
     </p>
-
+    <Modal @ref="ViewModel.SelectUowModal" title="Select UOW States" UseStaticBackdrop="true" CloseOnEscape="false">
+        <BodyTemplate>            
+            <UowStateGrid/>
+        </BodyTemplate>
+        <FooterTemplate>
+            <Button Color="ButtonColor.Secondary" @onclick="ViewModel.SelectUowModal.HideAsync">Cancel</Button>
+            <Button Color="ButtonColor.Primary" @onclick="ViewModel.SelectStates">OK</Button>
+        </FooterTemplate>
+    </Modal>
     <p>
-        <label>
-            @if (ViewModel.IsExecuting)
-            {
-                <ProgressBar Value="@ViewModel.Progress"/>
-            }
-            else
-            {
-                <Button class="btn btn-primary" @onclick="e => ViewModel.SplitXmlCommand(this, e)" Disabled="@(!ViewModel.IsReadyToExecuteSplit)">Execute Split</Button>
-            }
-        </label>
+        @if (ViewModel.IsExecuting)
+        {
+            <Progress Class="mb-3">
+                <ProgressBar Width="@ViewModel.Progress" Label="@ProgressStr" Type="@ViewModel.Status.Type" Color="@ViewModel.Status.Color"/>
+            </Progress>
+        }
+        else
+        {
+            <Button Color="ButtonColor.Primary" @onclick="e => ViewModel.SplitXmlCommand(this, e)" Disabled="@(!ViewModel.IsReadyToExecuteSplit)">Execute Split</Button>
+        }
     </p>
     <div id="infobox">
         <span id="requirements">
             <label>Required:</label>
             <ol>
                 <li class="@(ViewModel.XmlIsProvided ? "done" : "")">Select XML File</li>
-                <li class="@(ViewModel.UowIsProvided ? "done" : "")">Select UOW States File</li>
+                <li class="@(ViewModel.UowLoadSuccess.Success ? "done" : "")">Select UOW States File</li>
                 <li class="@(ViewModel.OutDirIsProvided ? "done" : "")">Choose Output Directory</li>
                 <li class="@(ViewModel.ProgramIsProvided ? "done" : "")">Select CSDB Program</li>
             </ol>
         </span>
-        <div id="console" @ref="Console" @oncontextmenu:preventDefault="true" @oncontextmenu="ShowContextMenu">
+        <ContextMenu Id="clearConsole">
+            <Item OnClick="@ViewModel.ClearLogs">Clear Console</Item>
+        </ContextMenu>
+        <ContextMenuTrigger id="console" MenuId="clearConsole">
             <div>Status</div>
-            @if (contextMenuIsVisible)
-            {
-                <div id="contextMenu" class="popper" @ref=ContextMenuElement role="menu" style="@ViewModel.ContextMenuStyle">
-                        <button @onclick:stopPropagation="true" @onmouseup="ClearConsole">Clear Console</button>
-                </div>
-            }
             <pre>
         <code>
             <!-- The status goes here -->
                     @foreach (var log in ViewModel.Logs.OrderBy(log => log.Key))
                     {
-                            <span class=@($"logMessage {log.Value.LogLevel}")>
-                            <span class="timestamp">
+                        <span class=@($"logMessage {log.Value.LogLevel}")>
+                                <span class="timestamp text-truncate">
                                 @log.Key.ToString("HH:mm:ss.fffffff")
                             </span>: <span class="message">
                                 @log.Value.Message
@@ -95,87 +121,41 @@
                         </span>
                     }
         </code></pre>
-        </div>
+        </ContextMenuTrigger>
     </div>
 </div>
 
 
 @code {
-    protected ElementReference Console;
-    protected ElementReference ContextMenuElement;
-    protected VirtualElement ConsoleReference = null!;
-    protected Instance? ContextMenu;
-    private bool contextMenuIsVisible;
+    protected Modal UowStatesFileModal = default!;
 
-    protected override Task OnInitializedAsync()
-    {
-        return ViewModel.InitializeAsync();
-    }
+    protected string ProgressStr => ViewModel.Progress.ToString("0.0") + "%";
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    async void PropertyWatchersAsync(object? sender, PropertyChangedEventArgs args)
     {
-        if (firstRender)
+        Debug.WriteLine($"Saw property change for '{args.PropertyName}'", "Debug");
+        switch (args.PropertyName)
         {
-            Options options = new()
-            {
-                Placement = Placement.TopStart,
-                Modifiers = new Modifier[]
-                {
-                    new(ModifierName.Offset)
-                    {
-                        Options = new OffsetOptions { Offset = new double[] { 0, 10 } }
-                    },
-                    new(ModifierName.PreventOverflow)
-                    {
-                        Options = new PreventOverflowOptions { Padding = 10, Boundary = Console, AltAxis = true, TetherOffset = -10 }
-                    }
-                }
-            };
-            ConsoleReference = new VirtualElement
-            {
-                ContextElement = Console,
-                GetBoundingClientRect = () => new ClientRect()
-            };
-
-            try
-            {
-                ContextMenu = await Popper.CreatePopperAsync(ConsoleReference, ContextMenuElement, options);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex);
-            }
+            case nameof(ViewModel.LoadingUowStatesFile) when !ViewModel.LoadingUowStatesFile && !ViewModel.UowLoadSuccess.Success:
+                await UowStatesFileModal.ShowAsync();  // Show the modal
+                break;
+            case nameof(ViewModel.UowStatesFile) when ViewModel.UowStatesFile == string.Empty:
+                ViewModel.UowLoadSuccess = (false, Models.XmlSplitter.ReasonForUowFailure.NoFileProvided);  // Remove the error CSS class
+                StateHasChanged();
+                break;
         }
     }
 
-    protected async Task ShowContextMenu(MouseEventArgs eventArgs)
+    protected override Task OnInitializedAsync()
     {
-        if (ContextMenu is null)
-            return;
-        // Get the X and Y coordinates of the mouse click
-        var x = eventArgs.ClientX;
-        var y = eventArgs.ClientY;
-        ViewModel.ContextMenuStyle = $"position: absolute; left: {x}px; top: {y}px;";
-        ConsoleReference.GetBoundingClientRect = () => new ClientRect
-        {
-            Top = y,
-            Right = x,
-            Bottom = y,
-            Left = x
-        };
-        await ContextMenu.ForceUpdate();
-        contextMenuIsVisible = true;
+        ViewModel.PropertyChanged += PropertyWatchersAsync;
+        return ViewModel.InitializeAsync();
     }
-    protected void HideContextMenu(MouseEventArgs? eventArgs)
+
+    protected void ClearConsole(ItemClickEventArgs e)
     {
-        if (!contextMenuIsVisible) return;
-        contextMenuIsVisible = false;
-        StateHasChanged();  // This will cause Blazor to re-render the component
-    }
-    protected void ClearConsole()
-    {
-        ViewModel.ClearLogs();
-        HideContextMenu(null);
+        ViewModel.ClearLogs(e);
+        StateHasChanged();
     }
 
 }
