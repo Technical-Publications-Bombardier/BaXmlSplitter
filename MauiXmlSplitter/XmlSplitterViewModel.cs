@@ -8,18 +8,25 @@ using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MauiXmlSplitter.Models;
 using MauiXmlSplitter.Shared;
+using MauiXmlSplitter.XmlFileActions;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
+using IDispatcher = Fluxor.IDispatcher;
 
 namespace MauiXmlSplitter;
 
 /// <summary>
-/// View model for XML Splitter.
+///     View model for XML Splitter.
 /// </summary>
 /// <seealso cref="CommunityToolkit.Mvvm.ComponentModel.ObservableObject" />
 public partial class XmlSplitterViewModel(
     ConcurrentDictionary<DateTime, LogRecord> logs,
-    ILogger<XmlSplitterViewModel> logger)
-    : ObservableObject
+    ILogger<XmlSplitterViewModel> logger,
+    ModalService modalService,
+    IDispatcher dispatcher,
+    Fluxor.IState<XmlFileState> xmlFileState
+)
+    : ObservableObject, IDisposable, IAsyncDisposable
 
 {
     /// <summary>
@@ -34,6 +41,12 @@ public partial class XmlSplitterViewModel(
         { XmlSplitter.ReasonForUowFailure.DidNotMeetExpectedPattern, "File did not meet expected pattern" }
     };
 
+    private IDispatcher Dispatcher { get; } = dispatcher;
+
+    public void OnInputChanged(ChangeEventArgs e)
+    {
+        Dispatcher.Dispatch(new PickFileAction(e.Value?.ToString() ?? string.Empty));
+    }
     /// <summary>
     /// The XML file type
     /// </summary>
@@ -92,6 +105,21 @@ public partial class XmlSplitterViewModel(
     public Modal SelectUowModal = default!;
 
     /// <summary>
+    /// The modal service
+    /// </summary>
+    public ModalService ModalService = modalService;
+
+    /// <summary>
+    /// The invalid units-of-work states file modal
+    /// </summary>
+    public Modal InvalidUowStatesFileModal = default!;
+
+    /// <summary>
+    /// The states are selected
+    /// </summary>
+    public bool StatesAreSelected = false;
+
+    /// <summary>
     /// The states
     /// </summary>
     [ObservableProperty] private IQueryable<UowState>? states;
@@ -109,6 +137,7 @@ public partial class XmlSplitterViewModel(
     /// The context menu style.
     /// </value>
     public string? ContextMenuStyle { get; set; }
+
     /// <summary>
     /// Gets the logs.
     /// </summary>
@@ -343,12 +372,25 @@ public partial class XmlSplitterViewModel(
             {
                 SourceXml = result.FullPath;
                 LoadingXmlFile = true;
+                Dispatcher.Dispatch(new PickFileAction(SourceXml));
                 xmlSplitter.XmlContent = await File.ReadAllTextAsync(SourceXml, cts.Token).ConfigureAwait(false);
+
             }
         }
         catch (OperationCanceledException)
         {
-            // TODO: Show message to user
+            var option = new ModalOption()
+            {
+                FooterButtonColor = ButtonColor.Warning,
+                FooterButtonText = "OK",
+                IsVerticallyCentered = true,
+                Message = "The XML loading was cancelled",
+                ShowFooterButton = true,
+                Size = ModalSize.Regular,
+                Title = "Cancelled XML Selection",
+                Type = ModalType.Warning
+            };
+            await ModalService.ShowAsync(option);
         }
         finally
         {
@@ -449,5 +491,17 @@ public partial class XmlSplitterViewModel(
         field = value;
         OnPropertyChanged(propertyName);
         return true;
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        SelectUowModal.Dispose();
+    }
+
+    /// <inheritdoc />
+    public async ValueTask DisposeAsync()
+    {
+        await SelectUowModal.DisposeAsync();
     }
 }

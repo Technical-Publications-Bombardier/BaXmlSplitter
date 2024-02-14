@@ -1,12 +1,51 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 @import url('MaterialDesign/font/css/materialdesignicons.css');
+@font-face {
+    font-family: 'Gabarito';
+    src: url('fonts/Gabarito-Regular.woff2') format('woff2'), url('fonts/Gabarito-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
 
+@font-face {
+    font-family: 'Monoid Nerd Font';
+    src: url('fonts/MonoidNF-Bold.woff2') format('woff2'), url('fonts/MonoidNF-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Monoid Nerd Font';
+    src: url('fonts/MonoidNF-Regular.woff2') format('woff2'), url('fonts/MonoidNF-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Monoid Nerd Font Retina';
+    src: url('fonts/MonoidNF-Retina.woff2') format('woff2'), url('fonts/MonoidNF-Retina.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Monoid Nerd Font';
+    src: url('fonts/MonoidNF-Italic.woff2') format('woff2'), url('fonts/MonoidNF-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
 :root {
     --console-width: 50vh;
     --label-width: 20vw;
     --input-width: 100%;
     --console-header: 1em;
     --golden-ratio: 1.618033988749894;
+    --neon-pink: rgb(255, 20, 147);
 }
 
 article {
@@ -507,14 +546,16 @@ span.text-truncate {
     padding: 0.25em;
 }
 .error {
-    border: rgb(255, 20, 147) 0.125em solid;
+    border: 0.125em solid var(--neon-pink);
     text-shadow: 0 0 0.125em hsl(0 0% 100% / 0.3), 0 0 0.45em --clr-one;
-    box-shadow: inset 0 0 0.5em 0 rgb(255, 20, 147), 0 0 0.5em 0 rgb(255, 20, 147);
+    box-shadow: inset 0 0 0.5em 0 var(--neon-pink), 0 0 0.5em 0 var(--neon-pink);
 }
-#uowStatesFileModal .bi-exclamation-triangle-fill {
+#uowStatesFileInvalidModal .bi-exclamation-triangle-fill {
     display: block;
     float: left;
     font-size: xx-large;
+    filter: drop-shadow(1px 1px 8px orange);
+    color: var(--neon-pink);
 }
 #uowStatesFileModal code {
     line-break: anywhere;

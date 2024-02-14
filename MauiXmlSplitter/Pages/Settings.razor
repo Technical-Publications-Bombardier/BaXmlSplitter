@@ -1,0 +1,48 @@
+﻿@page "/settings"
+@using Fluxor
+@using MauiXmlSplitter.Features.AppState
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inject IDispatcher Dispatcher
+@inject SettingsViewModel ViewModel
+@inject IState<AppState> AppState
+<h3>Settings</h3>
+<Tabs>
+    <Tab Title="Application" IsActive="true">
+        <Content>
+            <form>
+                <div class="mb-3">
+                    <Dropdown id="languages">
+                        <DropdownToggleButton Color="ButtonColor.Secondary"></DropdownToggleButton>
+                        <DropdownMenu>
+                            <DropdownItem value="en" class="d-flex justify-content-evenly" @onclick="@(() => Dispatcher.Dispatch(new SettingsActions.SetProvisionalLanguage("en")))">
+                                <span>English</span><span>🇬🇧</span>
+                            </DropdownItem>
+                            <DropdownItem value="fr" class="d-flex justify-content-evenly" @onclick="@(() => Dispatcher.Dispatch(new SettingsActions.SetProvisionalLanguage("fr")))">
+                                <span>French</span><span>🇫🇷</span>
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+                <Button Color="ButtonColor.Primary" @onclick="@(args => Dispatcher.Dispatch(new SettingsActions.CommitLanguage()))" Type="ButtonType.Submit">Save</Button>
+            </form>
+
+        </Content>
+    </Tab>
+    <Tab Title="Secrets">
+        <Content>
+            <form>
+                <div class="mb-3">
+                    <label for="hashicorp-client-secret" class="form-label">HashiCorp Client Secret</label>
+                    <input type="password" class="form-control" id="hashicorp-client-secret" value="@AppState.Value.Settings.ProvisionalSecret" />
+                </div>
+                <Button Type="ButtonType.Submit" Color="ButtonColor.Primary">Save</Button>
+            </form>
+
+        </Content>
+    </Tab>
+</Tabs>
+<span id="emoji">&nbsp;</span> <!-- To preload the emojis font -->
+
+@code {
+
+}

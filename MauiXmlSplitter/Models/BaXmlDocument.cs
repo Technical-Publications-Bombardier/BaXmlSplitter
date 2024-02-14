@@ -6,9 +6,14 @@ namespace MauiXmlSplitter.Models
     /// An XML document with entity resolution disabled.
     /// </summary>
     /// <seealso cref="System.Xml.XmlDocument" />
-    internal class BaXmlDocument : XmlDocument
+    public class BaXmlDocument : XmlDocument
     {
-        public bool ResolveEntities { get; set; } = true;
+        /// <summary>
+        /// Determines whether to resolve character entities on XML load.
+        /// </summary>
+        public bool ResolveEntities { get; init; } = true;
+
+        /// <inheritdoc />
         public override void LoadXml(string xml)
         {
             if (ResolveEntities)
@@ -26,6 +31,8 @@ namespace MauiXmlSplitter.Models
                 base.Load(reader);
             }
         }
+
+        /// <inheritdoc />
         public override void Load(Stream inStream)
         {
             if (ResolveEntities)
@@ -44,6 +51,7 @@ namespace MauiXmlSplitter.Models
             }
         }
 
+        /// <inheritdoc />
         public override void Load(string filename)
         {
             if (ResolveEntities)
@@ -62,6 +70,14 @@ namespace MauiXmlSplitter.Models
             }
         }
 
+        /// <summary>
+        /// Selects the nodes by filtering the node name against an array of strings.
+        /// If the node name is in the array, the node is included. Otherwise, the node
+        /// is traversed up to the most recent ancestor whose name is in the array.
+        /// </summary>
+        /// <param name="xpath">The xpath.</param>
+        /// <param name="checkoutNames">The checkout names.</param>
+        /// <returns></returns>
         public XmlNode[]? SelectNodesByCheckout(string xpath, string[] checkoutNames)
         {
             HashSet<XmlNode> selectedNodes = [];

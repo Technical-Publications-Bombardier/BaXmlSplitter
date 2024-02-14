@@ -33,6 +33,7 @@ namespace BaXmlSplitter
         /// Sanitizes the specified XML stream.
         /// </summary>
         /// <param name="xmlStream">The XML stream.</param>
+        /// <param name="logger">The <see cref="ILogger"/> logger.</param>
         /// <returns></returns>
         internal Stream Sanitize(in Stream xmlStream, ILogger logger)
         {

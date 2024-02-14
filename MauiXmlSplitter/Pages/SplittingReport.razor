@@ -1,0 +1,55 @@
+﻿@page "/report"
+@using static XmlSplitReport
+@inject XmlSplitterViewModel ViewModel
+@using Microsoft.AspNetCore.WebUtilities;
+@using Microsoft.Extensions.Primitives;
+@inject NavigationManager NavManager
+
+
+<p>The source XML, '@(Path.GetFileName(ViewModel.SourceXml))', was split into {nodes.Length} unit of work nodes.</p>
+<p>The complete splitting report is written as @(string.Join(", ", Enum.GetNames<ReportFormat>())) in the WIP package with the following file names:</p>
+<ul>
+    @foreach (var filename in SplittingReportFilenames)
+    {
+        var uri = new Uri(Path.Combine(OutputDir, filename)).AbsoluteUri;
+        <li><a href="@uri">@filename</a></li>
+    }
+</ul>
+<p>Below is the full HTML report of the XML splitting results:</p>
+<table class="table">
+    <caption>
+        <p>Table showing the details on each node that was split from the source XML.</p><aside aria-label="Information note">The tag of the parent is the <em>most recent containing XML node</em> having a <code>key</code> attribute; or, where there is no such <code>key</code>-bearing node, the root node for the document is indicated. For brevity, the parent tag is represented as a self-closing tag without inner XML.</aside><aside aria-label="Information note">"Node" in this context refers to the unit of work as an <a href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmlnode?view=net-8.0"><code>XmlNode</code></a> that was split off from the source <a href="https://learn.microsoft.com/en-us/dotnet/api/system.xml.xmldocument?view=net-8.0"><code>XmlDocument</code></a>.</aside>
+    </caption>
+    <colgroup>
+        <col/><col/><col/><col/><col/><col/><col/><col/><col/><col/><col/><col/><col/>
+    </colgroup>
+    <tr>
+        <th>Checkout Parent Number</th>
+        <th>Checkout Parent Element's Name</th>
+        <th>Checkout Parent's 'Key' Value</th>
+        <th>Checkout Parent's Opening Tag</th>
+        <th>UOW Node Number</th>
+        <th>UOW Node Element's Name</th>
+        <th>UOW Node's 'Key' Value</th>
+        <th>Key-bearing Parent's Opening Tag</th>
+        <th>Full XPath to UOW Node</th>
+        <th>Filename of Split</th>
+        <th>UOW State Value</th>
+        <th>UOW State Name</th>
+        <th>UOW State Remark</th>
+    </tr>
+</table>
+
+@code {
+    protected string OutputDir = default!;
+    protected static string[] SplittingReportFilenames = Enum.GetNames(typeof(XmlSplitReport.ReportFormat));
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("outputDir", out var initOutputDirectory))
+        {
+            OutputDir = initOutputDirectory.ToString();
+        }
+    }
+}

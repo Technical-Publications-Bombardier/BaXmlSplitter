@@ -51,7 +51,7 @@ public partial class XmlSplitter(ILogger logger)
         ResolveEntities = false
     };
 
-    /// <summary>The CSDB element names eligible for importing to RWS Contenta.</summary>
+    /// <summary>The CSDB element names eligible for importing to RWS Contenta. Initialized by <see cref="LoadAssets(CancellationToken)"/></summary>
     private Dictionary<CsdbProgram, Dictionary<string, string[]>>? checkoutItems;
 
     /// <summary>
@@ -62,7 +62,7 @@ public partial class XmlSplitter(ILogger logger)
     private CsdbProgram csdbProgram;
 
     /// <summary>The fully populated unit-of-work states that are selected by the user for export.</summary>
-    private IEnumerable<UowState>? fullyQualifiedSelectedStates;
+    public IEnumerable<UowState>? FullyQualifiedSelectedStates { get; set; }
 
     /// <summary>The lookup table for manual type from docnbr.</summary>
     private Dictionary<CsdbProgram, Dictionary<string, string>>? manualFromDocnbr;
@@ -169,7 +169,7 @@ public partial class XmlSplitter(ILogger logger)
     /// <value>
     ///     The name of the XML source file base.
     /// </value>
-    private string XmlSourceFileBaseName => XmlFilenameRe()
+    internal string XmlSourceFileBaseName => XmlFilenameRe()
         .Replace(Path.GetFileNameWithoutExtension(xmlSourceFile ?? string.Empty),
             m => TerminusCharPattern().Replace(m.Groups["basename"].Value, string.Empty));
 
@@ -363,7 +363,7 @@ public partial class XmlSplitter(ILogger logger)
     {
         if (!xml.HasChildNodes || string.IsNullOrEmpty(xpath))
             return [];
-        var checkoutElementNames = await GetCheckoutElementNamesAsync();
+        var checkoutElementNames = await GetCheckoutElementNamesAsync().ConfigureAwait(false);
         if (checkoutElementNames.Length == 0)
         {
             if (await Task.Run(() => xml.SelectNodes(xpath)).ConfigureAwait(false) is { } plainNodes)
@@ -435,13 +435,17 @@ public partial class XmlSplitter(ILogger logger)
         }
     }
 
+    /// <summary>
+    /// Parses the units-of-work states file content asynchronously.
+    /// </summary>
+    /// <returns>An array if the <see cref="UowState"/> states.</returns>
     internal async Task<UowState[]?> ParseUowContentAsync()
     {
         possibleStatesInManual = [];
         var tabIndentation = 0;
         if (string.IsNullOrEmpty(uowContent) || !UowRegex().IsMatch(uowContent) || string.IsNullOrEmpty(Program) ||
             statesPerProgram is null) return null;
-        if (StateMatches is null)
+        if (StateMatches is null || StateMatches.Count == 0)
             try
             {
                 StateMatches = await TryGetUowMatchesAsync(previousUowCts.Token);
@@ -536,7 +540,6 @@ public partial class XmlSplitter(ILogger logger)
                     siblingCount.Add(states[i].TagName!, 1);
             }
         }
-
         return states;
     }
 
@@ -567,31 +570,31 @@ public partial class XmlSplitter(ILogger logger)
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
     /// <param name="progress"></param>
     /// <param name="token"></param>
-    public async Task ExecuteSplit(object sender, EventArgs e, IProgress<double> progress, CancellationToken token)
+    public async Task<bool> ExecuteSplit(object sender, EventArgs e, IProgress<double> progress, CancellationToken token)
     {
         progress.Report(0);
         if (string.IsNullOrEmpty(uowContent))
         {
             logger.LogWarning("Attempted split not ready: unit-of-work states not provided");
-            return;
+            return false;
         }
 
         if (string.IsNullOrEmpty(Program))
         {
             logger.LogWarning("Attempted split not ready: program not provided");
-            return;
+            return false;
         }
 
         if (xmlSourceFile is null && string.IsNullOrEmpty(xmlContent))
         {
             logger.LogWarning("Attempted split not ready: XML not provided");
-            return;
+            return false;
         }
 
         if (string.IsNullOrEmpty(outputDirectory))
         {
             logger.LogWarning("Attempted split not ready: output directory not provided");
-            return;
+            return false;
         }
 
         // check if outputDirectory exists, if not, create it
@@ -607,23 +610,54 @@ public partial class XmlSplitter(ILogger logger)
             {
                 logger.LogError(ex, "An I/O error occurred while creating a directory at '{OutputDirectory}'",
                     outputDirectory);
+                return false;
             }
             catch (UnauthorizedAccessException ex) when (!Debugger.IsAttached)
             {
                 logger.LogError(ex, "You do not have permission to create a directory at '{OutputDirectory}'",
                     outputDirectory);
+                return false;
             }
             catch (ArgumentException ex) when (!Debugger.IsAttached)
             {
                 logger.LogError(ex, "The directory path '{OutputDirectory}' is invalid", outputDirectory);
+                return false;
             }
             catch (NotSupportedException ex) when (!Debugger.IsAttached)
             {
                 logger.LogError(ex, "The directory path format '{OutputDirectory}' is not supported", outputDirectory);
+                return false;
             }
         }
-        if (await ParseUowContentAsync() is not { } states || possibleStatesInManual is null || xmlContent is null) return;
+        if (await ParseUowContentAsync() is not { } states || possibleStatesInManual is null || xmlContent is null)
+        {
+            logger.LogError("UOW not parsed");
+            return false;
+        }
         await Task.Run(() => xml.LoadXml(xmlContent), token).ConfigureAwait(false);
+        // Compare the docnbr to UowStatesDocnbr
+        if(xml.DocumentElement?.GetAttribute("docnbr") is not {} docnbr) {
+            logger.LogError("The XML had no docnbr attribute");
+            return false;
+        }
+        if (docnbr != UowStatesDocnbr)
+        {
+            logger.LogWarning("The XML docnbr '{Docnbr}' does not match the UOW docnbr '{UowStatesDocnbr}'", docnbr, UowStatesDocnbr);
+            return false;
+        }
+        if(checkoutItems is null || manualFromDocnbr is null)
+        {
+            logger.LogError("Checkout items or manual from docnbr are null");
+            return false;
+        }
+        if(await GetXmlNodesAsync().ConfigureAwait(false) is not { } nodes || nodes.Length == 0)
+        {
+            logger.LogError("XML nodes were empty");
+            return false;
+        }
+        logger.LogInformation("Splitting XML file {XmlFilePath} into {NumNodes} fragments",xmlSourceFile,nodes.Length.ToString());
+        progress.Report(1);
+        return true;
     }
 
     public async Task LoadXml(object sender, EventArgs e, CancellationToken token = default)

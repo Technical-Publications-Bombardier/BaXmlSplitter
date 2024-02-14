@@ -115,6 +115,7 @@ internal class BaLogger(ConcurrentDictionary<DateTime, LogRecord> logs, LogLevel
         {
             // Restore the parent scope when disposed
             ScopeInformation.Value = Parent;
+            GC.SuppressFinalize(this);
         }
     }
 

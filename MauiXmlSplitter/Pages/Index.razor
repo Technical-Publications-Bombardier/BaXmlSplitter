@@ -1,8 +1,11 @@
 ﻿@page "/"
-@using System.ComponentModel
-@using System.Diagnostics
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using MauiXmlSplitter.Models
+@using MauiXmlSplitter.Features.AppState
+@inject Fluxor.IDispatcher Dispatcher
 @inject XmlSplitterViewModel ViewModel
-
+@inject Fluxor.IState<AppState> AppState
+@inject Fluxor.IState<XmlFileState> XmlFileState
 
 <div id="splitter">
     <h1>XML Splitter</h1>
@@ -12,7 +15,7 @@
             <span class="text-truncate">Maintenance/Flight Manual&nbsp;</span><span>XML File:</span>
         </label>
         <span class="select-file">
-            <InputText @bind-Value="ViewModel.SourceXml"/>
+            <InputText @bind-Value="ViewModel.SourceXml" />
             <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickXmlFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingXmlFile">Browse</Button>
         </span>
     </p>
@@ -21,7 +24,7 @@
         <label>
             <span class="text-truncate">Units-of-Work&nbsp;</span><span>States File:</span>
         </label>
-        @if (!(ViewModel.UowLoadSuccess.Success || ViewModel.UowLoadSuccess.Reason == Models.XmlSplitter.ReasonForUowFailure.NoFileProvided))
+        @if (!(ViewModel.UowLoadSuccess.Success || ViewModel.UowLoadSuccess.Reason == XmlSplitter.ReasonForUowFailure.NoFileProvided))
         {
             <Tooltip Title="@XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadSuccess.Reason]" Color="TooltipColor.Danger">
                 <span class="select-file error">
@@ -29,20 +32,21 @@
                     <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickUowStatesFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingUowStatesFile">Browse</Button>
                 </span>
             </Tooltip>
-        } else
+        }
+        else
         {
             <span class="select-file">
                 <InputText @bind-Value="ViewModel.UowStatesFile"/>
                 <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickUowStatesFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingUowStatesFile">Browse</Button>
             </span>
         }
-        <div id="uowStatesFileModal">
-            <Modal @ref="UowStatesFileModal" title="Invalid file chosen for units-of-work states" IsVerticallyCentered="true">
+        <div id="uowStatesFileInvalidModal">
+            <Modal @ref="ViewModel.InvalidUowStatesFileModal" Title="Invalid file chosen for units-of-work states" IsVerticallyCentered="true">
                 <BodyTemplate>
                     <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon>The file <code>@ViewModel.UowStatesFile</code> does not appear to provide valid UOW states: @XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadSuccess.Reason]
                 </BodyTemplate>
                 <FooterTemplate>
-                    <Button Color="ButtonColor.Primary" @onclick="_ => UowStatesFileModal.HideAsync()">OK</Button>
+                    <Button Color="ButtonColor.Primary" @onclick="_ => ViewModel.InvalidUowStatesFileModal.HideAsync()">OK</Button>
                 </FooterTemplate>
             </Modal>
         </div>
@@ -72,19 +76,19 @@
         </span>
     </p>
     <Modal @ref="ViewModel.SelectUowModal" title="Select UOW States" UseStaticBackdrop="true" CloseOnEscape="false">
-        <BodyTemplate>            
+        <BodyTemplate>
             <UowStateGrid/>
         </BodyTemplate>
         <FooterTemplate>
-            <Button Color="ButtonColor.Secondary" @onclick="ViewModel.SelectUowModal.HideAsync">Cancel</Button>
-            <Button Color="ButtonColor.Primary" @onclick="ViewModel.SelectStates">OK</Button>
+            <Button Color="ButtonColor.Secondary" @onclick="(e)=>{ ViewModel.StatesAreSelected = false; ViewModel.SelectUowModal.HideAsync(); }">Cancel</Button>
+            <Button Color="ButtonColor.Primary" @onclick="(e) => ViewModel.StatesAreSelected = true">OK</Button>
         </FooterTemplate>
     </Modal>
     <p>
         @if (ViewModel.IsExecuting)
         {
             <Progress Class="mb-3">
-                <ProgressBar Width="@ViewModel.Progress" Label="@ProgressStr" Type="@ViewModel.Status.Type" Color="@ViewModel.Status.Color"/>
+                <ProgressBar Width="@ViewModel.Progress" Label="@(ViewModel.Progress.ToString("0.0") + "%")" Type="@ViewModel.Status.Type" Color="@ViewModel.Status.Color"/>
             </Progress>
         }
         else
@@ -112,13 +116,13 @@
             <!-- The status goes here -->
                     @foreach (var log in ViewModel.Logs.OrderBy(log => log.Key))
                     {
-                        <span class=@($"logMessage {log.Value.LogLevel}")>
-                                <span class="timestamp text-truncate">
+                            <span class=@($"logMessage {log.Value.LogLevel}")>
+                                    <span class="timestamp text-truncate">
                                 @log.Key.ToString("HH:mm:ss.fffffff")
-                            </span>: <span class="message">
+                                </span>: <span class="message">
                                 @log.Value.Message
+                                </span>
                             </span>
-                        </span>
                     }
         </code></pre>
         </ContextMenuTrigger>
@@ -127,35 +131,23 @@
 
 
 @code {
-    protected Modal UowStatesFileModal = default!;
+    [Inject] ModalService ModalService { get; set; } = default!;
 
-    protected string ProgressStr => ViewModel.Progress.ToString("0.0") + "%";
-
-    async void PropertyWatchersAsync(object? sender, PropertyChangedEventArgs args)
-    {
-        Debug.WriteLine($"Saw property change for '{args.PropertyName}'", "Debug");
-        switch (args.PropertyName)
-        {
-            case nameof(ViewModel.LoadingUowStatesFile) when !ViewModel.LoadingUowStatesFile && !ViewModel.UowLoadSuccess.Success:
-                await UowStatesFileModal.ShowAsync();  // Show the modal
-                break;
-            case nameof(ViewModel.UowStatesFile) when ViewModel.UowStatesFile == string.Empty:
-                ViewModel.UowLoadSuccess = (false, Models.XmlSplitter.ReasonForUowFailure.NoFileProvided);  // Remove the error CSS class
-                StateHasChanged();
-                break;
-        }
-    }
-
+    /// <inheritdoc />
     protected override Task OnInitializedAsync()
     {
-        ViewModel.PropertyChanged += PropertyWatchersAsync;
+        base.OnInitializedAsync();
+        Dispatcher.Dispatch(new StartDeserializationAction());
         return ViewModel.InitializeAsync();
     }
 
+    /// <summary>
+    /// Clears the pseudo-console
+    /// </summary>
+    /// <param name="e"></param>
     protected void ClearConsole(ItemClickEventArgs e)
     {
         ViewModel.ClearLogs(e);
         StateHasChanged();
     }
-
 }
