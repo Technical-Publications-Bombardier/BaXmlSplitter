@@ -3,12 +3,12 @@ using System.Reflection;
 using BlazorBootstrap;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
-using Fluxor;
 using MauiXmlSplitter.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 // ReSharper disable once RedundantUsingDirective
 using Microsoft.ApplicationInsights;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MauiXmlSplitter;
 
@@ -35,7 +35,6 @@ public static class MauiProgram
             .AddJsonStream(
                 Assembly.GetExecutingAssembly().GetManifestResourceStream("MauiXmlSplitter.appsettings.json")!)
             .Build();
-        builder.Services.AddFluxor(options => options.ScanAssemblies(typeof(MauiProgram).Assembly));
         builder.Configuration.AddConfiguration(config);
         builder
             .UseMauiApp<App>()
@@ -50,14 +49,16 @@ public static class MauiProgram
                 fonts.AddFont(@".\Resources\Fonts\MonoidNerdFont\MonoidNerdFont-Retina.ttf", "MonoidNerdFont-Retina");
             });
         builder.Services.AddSingleton(new MainPage());
+        builder.Services.AddSingleton<Dispatcher>();
         builder.Services.AddSingleton<ConcurrentDictionary<DateTime, LogRecord>>();
         builder.Services.AddSingleton<ModalService>();
         builder.Services.AddSingleton<ILogger<XmlSplitterViewModel>>(services =>
         {
             var logs = services.GetRequiredService<ConcurrentDictionary<DateTime, LogRecord>>();
-            return new BaLogger(logs, LogLevel.Trace);
+            return new BaLogger(SynchronizationContext.Current, logs, LogLevel.Trace);
         });
         builder.Services.AddSingleton<XmlSplitterViewModel>();
+        builder.Services.AddSingleton<SettingsViewModel>();
         builder.Services.AddSingleton(FolderPicker.Default);
         builder.Services.AddBlazorContextMenu();
         builder.Services.AddBlazorBootstrap();

@@ -1,16 +1,15 @@
 ﻿using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using BlazorBootstrap;
 using BlazorContextMenu;
 using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Fluxor;
 using MauiXmlSplitter.Models;
 using MauiXmlSplitter.Shared;
 using Microsoft.Extensions.Logging;
-using IDispatcher = Fluxor.IDispatcher;
 namespace MauiXmlSplitter;
 
 /// <summary>
@@ -20,14 +19,19 @@ namespace MauiXmlSplitter;
 public partial class SettingsViewModel(
     ConcurrentDictionary<DateTime, LogRecord> logs,
     ILogger<SettingsViewModel> logger,
-    ModalService modalService,
-    IState<SettingsViewModel> settingsState
+    ModalService modalService
     )
     : ObservableObject, IDisposable, IAsyncDisposable
 
 {
-
-
+    public string? HcpSecret { get; set; }
+    /// <summary>
+    /// Gets or sets the culture.
+    /// </summary>
+    /// <value>
+    /// The culture.
+    /// </value>
+    public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
     /// <inheritdoc />
     public void Dispose()
     {

@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml;
+using BlazorBootstrap;
 using F23.StringSimilarity;
 using Microsoft.Extensions.Logging;
 using static MauiXmlSplitter.Models.CsdbContext;
@@ -13,7 +15,7 @@ using Path = System.IO.Path;
 
 namespace MauiXmlSplitter.Models;
 
-public partial class XmlSplitter(ILogger logger)
+public partial class XmlSplitter(ILogger logger, ModalService modalService)
 {
     public enum ReasonForUowFailure
     {
@@ -27,7 +29,7 @@ public partial class XmlSplitter(ILogger logger)
     /// <summary>
     ///     The default output directory
     /// </summary>
-    private const string DefaultOutputDir = "WIP";
+    public const string DefaultOutputDir = "WIP";
 
     /// <summary>The timestamp format.</summary>
     internal const string LogTimestampFormat = "HH:mm:ss.fffffff";
@@ -44,6 +46,8 @@ public partial class XmlSplitter(ILogger logger)
     /// </summary>
     internal static readonly Jaccard Jaccard = new(2);
 
+    private readonly JsonSerializerOptions options = new();
+
     /// <summary>The XML object that will parse the XML content. </summary>
     /// <seealso cref="BaXmlDocument" />
     private readonly BaXmlDocument xml = new()
@@ -51,7 +55,10 @@ public partial class XmlSplitter(ILogger logger)
         ResolveEntities = false
     };
 
-    /// <summary>The CSDB element names eligible for importing to RWS Contenta. Initialized by <see cref="LoadAssets(CancellationToken)"/></summary>
+    /// <summary>
+    ///     The CSDB element names eligible for importing to RWS Contenta. Initialized by
+    ///     <see cref="LoadAssets(CancellationToken)" />
+    /// </summary>
     private Dictionary<CsdbProgram, Dictionary<string, string[]>>? checkoutItems;
 
     /// <summary>
@@ -61,8 +68,7 @@ public partial class XmlSplitter(ILogger logger)
     /// <seealso cref="Program" />
     private CsdbProgram csdbProgram;
 
-    /// <summary>The fully populated unit-of-work states that are selected by the user for export.</summary>
-    public IEnumerable<UowState>? FullyQualifiedSelectedStates { get; set; }
+    private IEnumerable<CharacterEntities>? lookupEntities;
 
     /// <summary>The lookup table for manual type from docnbr.</summary>
     private Dictionary<CsdbProgram, Dictionary<string, string>>? manualFromDocnbr;
@@ -74,7 +80,6 @@ public partial class XmlSplitter(ILogger logger)
     private string? outputDirectory;
 
     private Hashtable? possibleStatesInManual;
-    public Hashtable PossibleStatesInManual => possibleStatesInManual ?? [];
 
 
     /// <summary>
@@ -115,6 +120,11 @@ public partial class XmlSplitter(ILogger logger)
     ///     names and key values in the UOW states file.
     /// </summary>
     private string? xpath;
+
+    /// <summary>The fully populated unit-of-work states that are selected by the user for export.</summary>
+    public IEnumerable<UowState>? FullyQualifiedSelectedStates { get; set; }
+
+    public Hashtable PossibleStatesInManual => possibleStatesInManual ?? [];
 
     public string UowContent
     {
@@ -304,9 +314,8 @@ public partial class XmlSplitter(ILogger logger)
         {
             var isPlaintext = true;
             for (var j = 0; j < line.Length && isPlaintext; j++)
-            {
-                isPlaintext = line[j] == '\t' || !char.IsControl(line[j]); // Control characters indicate file is not plaintext
-            }
+                isPlaintext =
+                    line[j] == '\t' || !char.IsControl(line[j]); // Control characters indicate file is not plaintext
             return isPlaintext;
         }
 
@@ -329,7 +338,8 @@ public partial class XmlSplitter(ILogger logger)
                         line; // Use this opportunity to set the expected docnbr from the UOW states file
                 }
 
-                if(!CheckLineIsPlaintext(line)) isUowText = (Success: false, Reason: ReasonForUowFailure.NotPlaintextFile);
+                if (!CheckLineIsPlaintext(line))
+                    isUowText = (Success: false, Reason: ReasonForUowFailure.NotPlaintextFile);
             }
 
             isUowText.Success &= i > 1;
@@ -391,42 +401,55 @@ public partial class XmlSplitter(ILogger logger)
     {
         try
         {
-            // Create a JsonSerializerOptions object and add the custom converter
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new CsdbProgramConverter());
-            options.Converters.Add(new UowStateConverter());
-            await using var checkoutItemsStream =
-                await FileSystem.OpenAppPackageFileAsync("CheckoutItems.json").ConfigureAwait(false);
-            checkoutItems = await JsonSerializer
-                .DeserializeAsync<Dictionary<CsdbProgram, Dictionary<string, string[]>>>(checkoutItemsStream,
-                    cancellationToken: token)
-                .ConfigureAwait(false);
-            Debug.Assert(checkoutItems is { Count: > 0 }, "Checkout items were empty");
+            // add the custom converters to the JsonSerializerOptions options
 
-            await using var docnbrManualFromProgramStream =
-                await FileSystem.OpenAppPackageFileAsync("DocnbrManualFromProgram.json").ConfigureAwait(false);
-            manualFromDocnbr = await JsonSerializer
-                .DeserializeAsync<Dictionary<CsdbProgram, Dictionary<string, string>>>(docnbrManualFromProgramStream,
-                    cancellationToken: token)
-                .ConfigureAwait(false);
-            Debug.Assert(manualFromDocnbr is { Count: > 0 }, "Manual from docnbr was empty");
-            await using var programPerDocnbrStream =
-                await FileSystem.OpenAppPackageFileAsync("ProgramPerDocnbr.json").ConfigureAwait(false);
+            foreach (var converterType in new Type[]
+                         { typeof(CsdbProgramConverter), typeof(UowStateConverter), typeof(CharacterEntitiesConverter) })
+            {
+                if (options.Converters.All(c => c.GetType() != converterType) &&
+                    Activator.CreateInstance(converterType) as JsonConverter is { } converter)
+                    options.Converters.Add(converter);
+            }
 
-            programPerDocnbr = await JsonSerializer
-                .DeserializeAsync<Dictionary<string, CsdbProgram[]>>(programPerDocnbrStream, options, token)
-                .ConfigureAwait(false);
-            Debug.Assert(programPerDocnbr is { Count: > 0 }, "Program per docnbr was empty");
+            if (checkoutItems is not { Count: > 0 })
+            {
+                checkoutItems = await DeserializeCheckoutItems(token);
+                logger.LogInformation("Deserialized CheckoutItems with {NumItems} items", checkoutItems.Count);
+                Debug.Assert(checkoutItems is { Count: > 0 }, "Checkout items were empty");
+            }
 
-            await using var statesPerProgramStream =
-                await FileSystem.OpenAppPackageFileAsync("StatesPerProgram.json").ConfigureAwait(false);
+            if (manualFromDocnbr is not { Count: > 0 })
+            {
+                manualFromDocnbr = await DeserializeDocnbrManualFromProgram(token);
+                logger.LogInformation("Deserialized DocnbrManualFromProgram with {NumItems} items",
+                    manualFromDocnbr.Count);
+                Debug.Assert(manualFromDocnbr is { Count: > 0 }, "Manual from docnbr was empty");
+            }
 
-            // Pass the options to the DeserializeAsync method
-            statesPerProgram = await JsonSerializer
-                .DeserializeAsync<Dictionary<CsdbProgram, Dictionary<int, UowState>>>(statesPerProgramStream, options,
-                    token)
-                .ConfigureAwait(false);
-            Debug.Assert(statesPerProgram is { Count: > 0 }, "States per program was empty");
+            if (programPerDocnbr is not { Count: > 0 })
+            {
+                programPerDocnbr = await DeserializeProgramPerDocnbr(token);
+                logger.LogInformation("Deserialized ProgramPerDocnbr with {NumItems} items", programPerDocnbr.Count);
+                Debug.Assert(programPerDocnbr is { Count: > 0 }, "Program per docnbr was empty");
+            }
+
+            if (statesPerProgram is not { Count: > 0 })
+            {
+                statesPerProgram = await DeserializeStatesPerProgram(token);
+                logger.LogInformation("Deserialized StatesPerProgram with {NumItems} items", statesPerProgram.Count);
+                Debug.Assert(statesPerProgram is { Count: > 0 }, "States per program was empty");
+            }
+
+            if (lookupEntities?.Any() != false)
+            {
+                lookupEntities = await DeserializeLookupEntities(token);
+                logger.LogInformation("Deserialized LookupEntities with {NumItems} items", lookupEntities.Count());
+                Debug.Assert(lookupEntities.Any(), "Character entities lookup was empty");
+            }
+        }
+        catch (Exception e) when (!Debugger.IsAttached)
+        {
+            logger.LogCritical($"Ran into an error while deserializing: '{e.Message}'");
         }
         catch (Exception e)
         {
@@ -435,11 +458,63 @@ public partial class XmlSplitter(ILogger logger)
         }
     }
 
+    private async Task<Dictionary<CsdbProgram, Dictionary<string, string[]>>> DeserializeCheckoutItems(
+        CancellationToken token)
+    {
+        await using var checkoutItemsStream =
+            await FileSystem.OpenAppPackageFileAsync("CheckoutItems.json").ConfigureAwait(false);
+        await FileSystem.OpenAppPackageFileAsync("CheckoutItems.json").ConfigureAwait(false);
+        return await JsonSerializer
+            .DeserializeAsync<Dictionary<CsdbProgram, Dictionary<string, string[]>>>(checkoutItemsStream, options,
+                token)
+            .ConfigureAwait(false) ?? throw new InvalidOperationException();
+    }
+
+    private async Task<Dictionary<CsdbProgram, Dictionary<string, string>>> DeserializeDocnbrManualFromProgram(
+        CancellationToken token)
+    {
+        await using var docnbrManualFromProgramStream =
+            await FileSystem.OpenAppPackageFileAsync("DocnbrManualFromProgram.json").ConfigureAwait(false);
+        return await JsonSerializer
+            .DeserializeAsync<Dictionary<CsdbProgram, Dictionary<string, string>>>(docnbrManualFromProgramStream,
+                options, token)
+            .ConfigureAwait(false) ?? throw new InvalidOperationException();
+    }
+
+    private async Task<Dictionary<string, CsdbProgram[]>> DeserializeProgramPerDocnbr(CancellationToken token)
+    {
+        await using var programPerDocnbrStream =
+            await FileSystem.OpenAppPackageFileAsync("ProgramPerDocnbr.json").ConfigureAwait(false);
+        return await JsonSerializer
+            .DeserializeAsync<Dictionary<string, CsdbProgram[]>>(programPerDocnbrStream, options, token)
+            .ConfigureAwait(false) ?? throw new InvalidOperationException();
+    }
+
+    private async Task<Dictionary<CsdbProgram, Dictionary<int, UowState>>> DeserializeStatesPerProgram(
+        CancellationToken token)
+    {
+        await using var statesPerProgramStream =
+            await FileSystem.OpenAppPackageFileAsync("StatesPerProgram.json").ConfigureAwait(false);
+        return await JsonSerializer
+            .DeserializeAsync<Dictionary<CsdbProgram, Dictionary<int, UowState>>>(statesPerProgramStream, options,
+                token)
+            .ConfigureAwait(false) ?? throw new InvalidOperationException();
+    }
+
+    private async Task<CharacterEntities[]> DeserializeLookupEntities(CancellationToken token)
+    {
+        await using var lookupEntitiesStream =
+            await FileSystem.OpenAppPackageFileAsync("LookupEntities.json").ConfigureAwait(false);
+        return await JsonSerializer
+            .DeserializeAsync<CharacterEntities[]>(lookupEntitiesStream, options, token)
+            .ConfigureAwait(false) ?? throw new InvalidOperationException();
+    }
+
     /// <summary>
-    /// Parses the units-of-work states file content asynchronously.
+    ///     Parses the units-of-work states file content asynchronously.
     /// </summary>
-    /// <returns>An array if the <see cref="UowState"/> states.</returns>
-    internal async Task<UowState[]?> ParseUowContentAsync()
+    /// <returns>An array if the <see cref="UowState" /> states.</returns>
+    internal async Task<UowState[]?> ParseUowContentAsync(CancellationToken token)
     {
         possibleStatesInManual = [];
         var tabIndentation = 0;
@@ -540,6 +615,7 @@ public partial class XmlSplitter(ILogger logger)
                     siblingCount.Add(states[i].TagName!, 1);
             }
         }
+
         return states;
     }
 
@@ -570,7 +646,8 @@ public partial class XmlSplitter(ILogger logger)
     /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
     /// <param name="progress"></param>
     /// <param name="token"></param>
-    public async Task<bool> ExecuteSplit(object sender, EventArgs e, IProgress<double> progress, CancellationToken token)
+    public async Task<bool> ExecuteSplit(object sender, EventArgs e, IProgress<double> progress,
+        CancellationToken token)
     {
         progress.Report(0);
         if (string.IsNullOrEmpty(uowContent))
@@ -629,33 +706,61 @@ public partial class XmlSplitter(ILogger logger)
                 return false;
             }
         }
-        if (await ParseUowContentAsync() is not { } states || possibleStatesInManual is null || xmlContent is null)
+
+        if (await ParseUowContentAsync(token) is not { } states || possibleStatesInManual is null || xmlContent is null)
         {
             logger.LogError("UOW not parsed");
             return false;
         }
-        await Task.Run(() => xml.LoadXml(xmlContent), token).ConfigureAwait(false);
+
+        try
+        {
+            await Task.Run(() => xml.LoadXml(xmlContent), token).ConfigureAwait(false);
+        }
+        catch(XmlException xmlException)
+        {
+            logger.LogCritical("XML load failed with '{message}'",xmlException.Message);
+            ModalOption option = new()
+            {
+                FooterButtonColor = ButtonColor.Danger,
+                FooterButtonText = "OK",
+                IsVerticallyCentered = true,
+                Message = xmlException.Message,
+                ShowFooterButton = true,
+                Size = ModalSize.Regular,
+                Title = "Error loading XML",
+                Type = ModalType.Danger
+            };
+            await modalService.ShowAsync(option);
+        }
         // Compare the docnbr to UowStatesDocnbr
-        if(xml.DocumentElement?.GetAttribute("docnbr") is not {} docnbr) {
+        if (xml.DocumentElement?.GetAttribute("docnbr") is not { } docnbr)
+        {
             logger.LogError("The XML had no docnbr attribute");
             return false;
         }
+
         if (docnbr != UowStatesDocnbr)
         {
-            logger.LogWarning("The XML docnbr '{Docnbr}' does not match the UOW docnbr '{UowStatesDocnbr}'", docnbr, UowStatesDocnbr);
+            logger.LogWarning("The XML docnbr '{Docnbr}' does not match the UOW docnbr '{UowStatesDocnbr}'", docnbr,
+                UowStatesDocnbr);
             return false;
         }
-        if(checkoutItems is null || manualFromDocnbr is null)
+
+        if (checkoutItems is null || manualFromDocnbr is null)
         {
             logger.LogError("Checkout items or manual from docnbr are null");
             return false;
         }
-        if(await GetXmlNodesAsync().ConfigureAwait(false) is not { } nodes || nodes.Length == 0)
+
+        if (await GetXmlNodesAsync().ConfigureAwait(false) is not { } nodes || nodes.Length == 0)
         {
             logger.LogError("XML nodes were empty");
             return false;
         }
-        logger.LogInformation("Splitting XML file {XmlFilePath} into {NumNodes} fragments",xmlSourceFile,nodes.Length.ToString());
+
+        logger.LogInformation("Splitting XML file {XmlFilePath} into {NumNodes} fragments", xmlSourceFile,
+            nodes.Length.ToString());
         progress.Report(1);
         return true;
     }

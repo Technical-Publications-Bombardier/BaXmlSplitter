@@ -39,6 +39,21 @@
     font-style: italic;
     font-display: swap;
 }
+
+@font-face {
+    font-family: 'Noto Color Emoji';
+    src: url('fonts/NotoColorEmoji-Regular.ttf') format('truetype');
+}
+
+
+/* Set the font for flag emojis */
+span#emoji, #languages .d-flex > span:nth-child(2) {
+    font-family: 'Noto Color Emoji', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-stretch: normal;
+    font-optical-sizing: auto;
+}
 :root {
     --console-width: 50vh;
     --label-width: 20vw;

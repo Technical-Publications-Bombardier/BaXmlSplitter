@@ -1,12 +1,9 @@
 ﻿@page "/"
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 @using MauiXmlSplitter.Models
-@using MauiXmlSplitter.Features.AppState
-@inject Fluxor.IDispatcher Dispatcher
+@using Microsoft.Extensions.Logging
 @inject XmlSplitterViewModel ViewModel
-@inject Fluxor.IState<AppState> AppState
-@inject Fluxor.IState<XmlFileState> XmlFileState
-
+@inject ILogger<XmlSplitterViewModel> Logger
+@inject IJSRuntime JSRuntime
 <div id="splitter">
     <h1>XML Splitter</h1>
 
@@ -124,6 +121,7 @@
                                 </span>
                             </span>
                     }
+            <span class="logMessage Information"><span class="timestamp text-truncate">&nbsp;</span>: <span class="message">&nbsp;</span></span>
         </code></pre>
         </ContextMenuTrigger>
     </div>
@@ -134,13 +132,29 @@
     [Inject] ModalService ModalService { get; set; } = default!;
 
     /// <inheritdoc />
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitializedAsync();
-        Dispatcher.Dispatch(new StartDeserializationAction());
-        return ViewModel.InitializeAsync();
+        await base.OnInitializedAsync();
+        await ViewModel.InitializeAsync();
+        if (Logger is BaLogger baLogger && SynchronizationContext.Current is not null)
+        {
+            Logger = new BaLogger(SynchronizationContext.Current, ViewModel.Logs, LogLevel.Trace);
+            baLogger.OnLogAdded += StateHasChanged;
+        }
+        ViewModel.PropertyChanged += (sender, e) =>
+        {
+            if (e.PropertyName is nameof(ViewModel.UowStatesFile) or nameof(ViewModel.SourceXml)) StateHasChanged();
+        };
     }
 
+    /// <inheritdoc />
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("setupAutoScroll", "#console > pre > code");
+        }
+    }
     /// <summary>
     /// Clears the pseudo-console
     /// </summary>

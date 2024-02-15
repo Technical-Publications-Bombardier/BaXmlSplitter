@@ -28,7 +28,7 @@ namespace MauiXmlSplitter.Models
                     XmlResolver = null
                 };
                 using var reader = XmlReader.Create(new StringReader(xml), settings);
-                base.Load(reader);
+                base.Load(reader);  // throws System.Xml.XmlException when undeclared entity is found
             }
         }
 

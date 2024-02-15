@@ -6,8 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace MauiXmlSplitter.Shared;
 
-internal class BaLogger(ConcurrentDictionary<DateTime, LogRecord> logs, LogLevel minimumLogLevel = LogLevel.Warning) : ILogger<XmlSplitterViewModel>
+internal class BaLogger(SynchronizationContext synchronizationContext, ConcurrentDictionary<DateTime, LogRecord> logs, LogLevel minimumLogLevel = LogLevel.Warning) : ILogger<XmlSplitterViewModel>
 {
+    public event Action? OnLogAdded;
     /// <summary>
     /// The verbosity
     /// </summary>
@@ -35,6 +36,7 @@ internal class BaLogger(ConcurrentDictionary<DateTime, LogRecord> logs, LogLevel
         var message = formatter(state, exception);
         Debug.WriteLine($"{logLevel}: {message}");
         _ = logs.TryAdd(DateTime.Now, new LogRecord(logLevel, message, exception));
+        synchronizationContext.Post(_ => OnLogAdded?.Invoke(), null);
     }
 
     /// <summary>

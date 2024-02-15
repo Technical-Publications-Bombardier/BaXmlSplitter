@@ -31,6 +31,17 @@
     <script src="js/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="_content/Blazor.Bootstrap/blazor.bootstrap.js"></script>
     <!-- #endregion Blazor.Bootstrap -->
+    <script>
+        window.setupAutoScroll = (elementId) => {
+            var element = document.querySelector(elementId);
+            if (element) {
+                var observer = new MutationObserver(() => {
+                    element.scrollTop = element.scrollHeight;
+                });
+                observer.observe(element, { childList: true });
+            }
+        }
+    </script>
 </body>
 
 </html>
