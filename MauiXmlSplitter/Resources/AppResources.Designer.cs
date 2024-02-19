@@ -61,6 +61,105 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        internal static string About {
+            get {
+                return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An I/O error occurred while creating a directory at &apos;{OutputDirectory}&apos;.
+        /// </summary>
+        internal static string AnIOErrorOccurredWhileCreatingADirectoryAtOutputDirectory {
+            get {
+                return ResourceManager.GetString("AnIOErrorOccurredWhileCreatingADirectoryAtOutputDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Work-in-progress exporting tool: An XML splitting application for segmenting the Bombardier flight and maintenance manuals into in-progress units of work..
+        /// </summary>
+        internal static string AppDescription {
+            get {
+                return ResourceManager.GetString("AppDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application.
+        /// </summary>
+        internal static string Application {
+            get {
+                return ResourceManager.GetString("Application", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bombardier Work-in-Progress XML Splitter.
+        /// </summary>
+        internal static string AppName {
+            get {
+                return ResourceManager.GetString("AppName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to App Version.
+        /// </summary>
+        internal static string AppVersion {
+            get {
+                return ResourceManager.GetString("AppVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attempted split not ready: output directory not provided.
+        /// </summary>
+        internal static string AttemptedSplitNotReadyOutputDirectoryNotProvided {
+            get {
+                return ResourceManager.GetString("AttemptedSplitNotReadyOutputDirectoryNotProvided", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attempted split not ready: program not provided.
+        /// </summary>
+        internal static string AttemptedSplitNotReadyProgramNotProvided {
+            get {
+                return ResourceManager.GetString("AttemptedSplitNotReadyProgramNotProvided", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attempted split not ready: unit-of-work states not provided.
+        /// </summary>
+        internal static string AttemptedSplitNotReadyUnitOfWorkStatesNotProvided {
+            get {
+                return ResourceManager.GetString("AttemptedSplitNotReadyUnitOfWorkStatesNotProvided", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attempted split not ready: XML not provided.
+        /// </summary>
+        internal static string AttemptedSplitNotReadyXMLNotProvided {
+            get {
+                return ResourceManager.GetString("AttemptedSplitNotReadyXMLNotProvided", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authors.
+        /// </summary>
+        internal static string Authors {
+            get {
+                return ResourceManager.GetString("Authors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Browse.
         /// </summary>
         internal static string Browse {
@@ -84,6 +183,15 @@ namespace MauiXmlSplitter.Resources {
         internal static string CancelledXMLSelection {
             get {
                 return ResourceManager.GetString("CancelledXMLSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checkout items are null.
+        /// </summary>
+        internal static string CheckoutItemsAreNull {
+            get {
+                return ResourceManager.GetString("CheckoutItemsAreNull", resourceCulture);
             }
         }
         
@@ -115,11 +223,29 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Closest manual found for {Program} {Manual} is {ClosestManual}.
+        /// </summary>
+        internal static string ClosestManualFoundForProgramManualIsClosestManual {
+            get {
+                return ResourceManager.GetString("ClosestManualFoundForProgramManualIsClosestManual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not load static resources.
         /// </summary>
         internal static string CouldNotLoadStaticResources {
             get {
                 return ResourceManager.GetString("CouldNotLoadStaticResources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not parse units-of-work states file.
+        /// </summary>
+        internal static string CouldNotParseUOWStatesFile {
+            get {
+                return ResourceManager.GetString("CouldNotParseUOWStatesFile", resourceCulture);
             }
         }
         
@@ -142,7 +268,70 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to does not appear to provide valid UOW states.
+        ///   Looks up a localized string similar to Created output directory: &apos;{OutputDirectory}&apos;.
+        /// </summary>
+        internal static string CreatedOutputDirectoryOutputDirectory {
+            get {
+                return ResourceManager.GetString("CreatedOutputDirectoryOutputDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creating output directory: &apos;{OutputDirectory}&apos;.
+        /// </summary>
+        internal static string CreatingOutputDirectoryOutputDirectory {
+            get {
+                return ResourceManager.GetString("CreatingOutputDirectoryOutputDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deserialized CheckoutItems with {NumItems} items.
+        /// </summary>
+        internal static string DeserializedCheckoutItemsWithNumItemsItems {
+            get {
+                return ResourceManager.GetString("DeserializedCheckoutItemsWithNumItemsItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deserialized DocnbrManualFromProgram with {NumItems} items.
+        /// </summary>
+        internal static string DeserializedDocnbrManualFromProgramWithNumItemsItems {
+            get {
+                return ResourceManager.GetString("DeserializedDocnbrManualFromProgramWithNumItemsItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deserialized LookupEntities with {NumItems} items.
+        /// </summary>
+        internal static string DeserializedLookupEntitiesWithNumItemsItems {
+            get {
+                return ResourceManager.GetString("DeserializedLookupEntitiesWithNumItemsItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deserialized ProgramPerDocnbr with {NumItems} items.
+        /// </summary>
+        internal static string DeserializedProgramPerDocnbrWithNumItemsItems {
+            get {
+                return ResourceManager.GetString("DeserializedProgramPerDocnbrWithNumItemsItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deserialized StatesPerProgram with {NumItems} items.
+        /// </summary>
+        internal static string DeserializedStatesPerProgramWithNumItemsItems {
+            get {
+                return ResourceManager.GetString("DeserializedStatesPerProgramWithNumItemsItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Does not appear to provide valid unit-of-work states.
         /// </summary>
         internal static string DoesNotAppearToProvideValidUOWStates {
             get {
@@ -178,6 +367,15 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to load XML: &apos;{message}&apos;.
+        /// </summary>
+        internal static string FailedToLoadXMLMessage {
+            get {
+                return ResourceManager.GetString("FailedToLoadXMLMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File appears not to be plaintext.
         /// </summary>
         internal static string FileAppearsNotToBePlaintext {
@@ -205,11 +403,29 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Found {num} units of work in the manual.
+        /// </summary>
+        internal static string FoundNumUnitsOfWorkInTheManual {
+            get {
+                return ResourceManager.GetString("FoundNumUnitsOfWorkInTheManual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to French.
         /// </summary>
         internal static string French {
             get {
                 return ResourceManager.GetString("French", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An isometric graphic representation of the XML splitting process.
+        /// </summary>
+        internal static string GraphicAlt {
+            get {
+                return ResourceManager.GetString("GraphicAlt", resourceCulture);
             }
         }
         
@@ -250,6 +466,33 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid UOW file &apos;{UowStatesFile}&apos; chosen.
+        /// </summary>
+        internal static string InvalidUOWFileUowStatesFileChosen {
+            get {
+                return ResourceManager.GetString("InvalidUOWFileUowStatesFileChosen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid UOW file &apos;{UowStatesFile}&apos; chosen: &apos;{message}&apos;.
+        /// </summary>
+        internal static string InvalidUOWFileUowStatesFileChosenMessage {
+            get {
+                return ResourceManager.GetString("InvalidUOWFileUowStatesFileChosenMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        internal static string Language {
+            get {
+                return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maintenance/Flight Manual.
         /// </summary>
         internal static string MaintenanceFlightManual {
@@ -259,11 +502,47 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Manual from docnbr is null.
+        /// </summary>
+        internal static string ManualFromDocnbrIsNull {
+            get {
+                return ResourceManager.GetString("ManualFromDocnbrIsNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Created the Application.
+        /// </summary>
+        internal static string MauiProgramCreateMauiApp {
+            get {
+                return ResourceManager.GetString("MauiProgramCreateMauiApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {PickUowStatesFile} was cancelled.
+        /// </summary>
+        internal static string NameofPickUowStatesFileWasCancelled {
+            get {
+                return ResourceManager.GetString("NameofPickUowStatesFileWasCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No file provided.
         /// </summary>
         internal static string NoFileProvided {
             get {
                 return ResourceManager.GetString("NoFileProvided", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No units-of-work selected.
+        /// </summary>
+        internal static string NoUOWStatesSelected {
+            get {
+                return ResourceManager.GetString("NoUOWStatesSelected", resourceCulture);
             }
         }
         
@@ -286,11 +565,29 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Product.
+        /// </summary>
+        internal static string Product {
+            get {
+                return ResourceManager.GetString("Product", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Program.
         /// </summary>
         internal static string Program {
             get {
                 return ResourceManager.GetString("Program", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ran into an error while deserializing: &apos;{message}&apos;.
+        /// </summary>
+        internal static string RanIntoAnErrorWhileDeserializingMessage {
+            get {
+                return ResourceManager.GetString("RanIntoAnErrorWhileDeserializingMessage", resourceCulture);
             }
         }
         
@@ -318,6 +615,15 @@ namespace MauiXmlSplitter.Resources {
         internal static string Save {
             get {
                 return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Secrets.
+        /// </summary>
+        internal static string Secrets {
+            get {
+                return ResourceManager.GetString("Secrets", resourceCulture);
             }
         }
         
@@ -376,6 +682,15 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Splitting XML file {XmlFilePath} into {NumNodes} fragments.
+        /// </summary>
+        internal static string SplittingXMLFileXmlFilePathIntoNumNodesFragments {
+            get {
+                return ResourceManager.GetString("SplittingXMLFileXmlFilePathIntoNumNodesFragments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to States File.
         /// </summary>
         internal static string StatesFile {
@@ -394,11 +709,47 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The directory path format &apos;{OutputDirectory}&apos; is not supported.
+        /// </summary>
+        internal static string TheDirectoryPathFormatOutputDirectoryIsNotSupported {
+            get {
+                return ResourceManager.GetString("TheDirectoryPathFormatOutputDirectoryIsNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The directory path &apos;{OutputDirectory}&apos; is invalid.
+        /// </summary>
+        internal static string TheDirectoryPathOutputDirectoryIsInvalid {
+            get {
+                return ResourceManager.GetString("TheDirectoryPathOutputDirectoryIsInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file.
         /// </summary>
         internal static string TheFile {
             get {
                 return ResourceManager.GetString("TheFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The XML docnbr &apos;{Docnbr}&apos; does not match the UOW docnbr &apos;{UowStatesDocnbr}&apos;.
+        /// </summary>
+        internal static string TheXMLDocnbrDocnbrDoesNotMatchTheUOWDocnbrUowStatesDocnbr {
+            get {
+                return ResourceManager.GetString("TheXMLDocnbrDocnbrDoesNotMatchTheUOWDocnbrUowStatesDocnbr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The XML had no docnbr attribute.
+        /// </summary>
+        internal static string TheXMLHadNoDocnbrAttribute {
+            get {
+                return ResourceManager.GetString("TheXMLHadNoDocnbrAttribute", resourceCulture);
             }
         }
         
@@ -421,6 +772,24 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to UOW not parsed.
+        /// </summary>
+        internal static string UOWNotParsed {
+            get {
+                return ResourceManager.GetString("UOWNotParsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wrote fragment &apos;{name}&apos;.
+        /// </summary>
+        internal static string WroteFragmentName {
+            get {
+                return ResourceManager.GetString("WroteFragmentName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to XML docnbr &apos;{xmlDocnbr}&apos; does not match UOW states file docnbr &apos;{uowDocnbr}&apos;.
         /// </summary>
         internal static string XMLDocnbrXmlDocnbrDoesNotMatchUOWStatesFileDocnbrUowDocnbr {
@@ -435,6 +804,42 @@ namespace MauiXmlSplitter.Resources {
         internal static string XMLFile {
             get {
                 return ResourceManager.GetString("XMLFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XML load failed with &apos;{message}&apos;.
+        /// </summary>
+        internal static string XMLLoadFailedWithMessage {
+            get {
+                return ResourceManager.GetString("XMLLoadFailedWithMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XML nodes were empty: No checkout units to export..
+        /// </summary>
+        internal static string XMLNodesWereEmptyNoCheckoutUnitsToExport {
+            get {
+                return ResourceManager.GetString("XMLNodesWereEmptyNoCheckoutUnitsToExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XmlSplitter.
+        /// </summary>
+        internal static string XmlSplitter {
+            get {
+                return ResourceManager.GetString("XmlSplitter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have permission to create a directory at &apos;{OutputDirectory}&apos;.
+        /// </summary>
+        internal static string YouDoNotHavePermissionToCreateADirectoryAtOutputDirectory {
+            get {
+                return ResourceManager.GetString("YouDoNotHavePermissionToCreateADirectoryAtOutputDirectory", resourceCulture);
             }
         }
     }

@@ -1,7 +1,7 @@
-﻿using System.Text.Json.Serialization;
-using Google.Protobuf.WellKnownTypes;
+﻿using Google.Protobuf.WellKnownTypes;
 using RestSharp;
 using RestSharp.Authenticators;
+using System.Text.Json.Serialization;
 
 namespace MauiXmlSplitter.Data;
 

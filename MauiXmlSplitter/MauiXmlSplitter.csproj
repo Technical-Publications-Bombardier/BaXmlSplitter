@@ -41,7 +41,7 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 		<Description>Work-in-progress exporting tool: An XML splitting application for segmenting the Bombardier flight and maintenance manuals into in-progress units of work.</Description>
 		<Company>Bombardier Aviation Ltd.</Company>
-		<Copyright>© $(Company), 2023</Copyright>
+		<Copyright>© $(Company), 2024</Copyright>
 		<PackageProjectUrl>https://github.com/Technical-Publications-Bombardier/BaXmlSplitter</PackageProjectUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageReleaseNotes>Maui Blazor Hybrid</PackageReleaseNotes>
@@ -61,6 +61,8 @@
 		<NeutralLanguage>en</NeutralLanguage>
 		<ApplicationInsightsResourceId>/subscriptions/3285c695-aa27-442e-82a9-9598a78777ad/resourceGroups/Bombardier/providers/microsoft.insights/components/BaXmlSplitter</ApplicationInsightsResourceId>
 		<UserSecretsId>c2cde140-c484-4162-bcb9-4855403081ea</UserSecretsId>
+		<SignAssembly>False</SignAssembly>
+		<DelaySign>True</DelaySign>
 	</PropertyGroup>
 	<!-- 1. Install npm packages -->
 	<Target Name="NpmInstall" Inputs="package.json" Outputs="node_modules/.install-stamp">
@@ -182,6 +184,7 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
 		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
 		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
+		<AndroidKeyStore>False</AndroidKeyStore>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
@@ -196,12 +199,14 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
 		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
+		<RuntimeIdentifier>$(RuntimeIdentifierOverride)</RuntimeIdentifier>
 		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
 		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
 		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
+		<AndroidKeyStore>False</AndroidKeyStore>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
@@ -218,4 +223,5 @@
 		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
 		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
 	</PropertyGroup>
+	
 </Project>

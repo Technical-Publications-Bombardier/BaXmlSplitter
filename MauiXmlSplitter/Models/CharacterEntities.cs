@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace MauiXmlSplitter.Models
 {
@@ -15,7 +10,7 @@ namespace MauiXmlSplitter.Models
         public string Hex
         {
             get => character.ToString("X4");
-            set => character = int.Parse(value,System.Globalization.NumberStyles.HexNumber);
+            set => character = int.Parse(value, System.Globalization.NumberStyles.HexNumber);
         }
         public string Description { get; set; } = string.Empty;
     }

@@ -11,7 +11,7 @@
   <mp:PhoneIdentity PhoneProductId="8C562279-8901-40D6-88A9-DDB6003CA017" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>$placeholder$</DisplayName>
+    <DisplayName>@AppResources.AppName</DisplayName>
     <PublisherDisplayName>Mavaddat Javid</PublisherDisplayName>
     <Logo>$placeholder$.png</Logo>
   </Properties>

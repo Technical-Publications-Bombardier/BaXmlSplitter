@@ -149,7 +149,7 @@
         }
         ViewModel.PropertyChanged += (sender, e) =>
         {
-            if (e.PropertyName is nameof(ViewModel.UowStatesFile) or nameof(ViewModel.SourceXml)) StateHasChanged();
+            if (e.PropertyName is nameof(ViewModel.UowStatesFile) or nameof(ViewModel.SourceXml) or nameof(ViewModel.PossiblePrograms)) StateHasChanged();
         };
     }
 

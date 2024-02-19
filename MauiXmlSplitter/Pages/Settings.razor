@@ -5,12 +5,29 @@
 @inject CultureInfo Locale
 <h3>Settings</h3>
 <Tabs>
-    <Tab Title="Application" IsActive="true">
+    <Tab Title="@AppResources.Application" IsActive="true">
         <Content>
             <form>
                 <div class="mb-3">
+                    @if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName != Preferences.Default.Get(nameof(SettingsViewModel.Culture),
+                             CultureInfo.CurrentCulture.TwoLetterISOLanguageName))
+                    {
+                        <Alert Color="AlertColor.Warning" Dismissable="true">
+                            <span class="mdi mdi-translate"></span>
+                            @if (Preferences.Default.Get(nameof(SettingsViewModel.Culture),
+                            CultureInfo.CurrentCulture.TwoLetterISOLanguageName) == "fr")
+                            {
+
+                                <span><strong>Pas encore changé</strong> Veuillez redémarrer l'application pour effectuer le changement de langue.</span>
+                            }
+                            else
+                            {
+                                <span><strong>Not yet changed</strong> Please restart the application to effect the language change.</span>
+                            }
+                        </Alert>
+                    }
                     <Dropdown id="languages">
-                        <DropdownToggleButton Color="ButtonColor.Secondary">Language</DropdownToggleButton>
+                        <DropdownToggleButton Color="ButtonColor.Secondary">@AppResources.Language</DropdownToggleButton>
                         <DropdownMenu>
                             <DropdownItem value="en" class="d-flex justify-content-evenly" @onclick="@(() => Locale = ViewModel.Culture = new CultureInfo("en"))" Active="@(ViewModel.Culture.TwoLetterISOLanguageName == "en")">
                                 <span>@AppResources.English</span><span>🇬🇧</span>
@@ -21,19 +38,19 @@
                         </DropdownMenu>
                     </Dropdown>
                 </div>
-                <Button Color="ButtonColor.Primary" @onclick="@(args => Preferences.Default.Set(nameof(ViewModel.Culture),ViewModel.Culture.TwoLetterISOLanguageName))" Type="ButtonType.Submit">@AppResources.Save</Button>
+                <Button Color="ButtonColor.Primary" @onclick="@(args => Preferences.Default.Set(nameof(ViewModel.Culture), ViewModel.Culture.TwoLetterISOLanguageName))" Type="ButtonType.Submit">@AppResources.Save</Button>
             </form>
 
         </Content>
     </Tab>
-    <Tab Title="Secrets">
+    <Tab Title="@AppResources.Secrets">
         <Content>
             <form>
                 <div class="mb-3">
                     <label for="hashicorp-client-secret" class="form-label">HashiCorp @AppResources.ClientSecret</label>
-                    <input type="password" class="form-control" id="hashicorp-client-secret" @bind-value="ViewModel.HcpSecret" />
+                    <input type="password" class="form-control" id="hashicorp-client-secret" @bind-value="ViewModel.HcpSecret"/>
                 </div>
-                <Button @onclick="() => Preferences.Set(nameof(ViewModel.HcpSecret),ViewModel.HcpSecret)" Type="ButtonType.Submit" Color="ButtonColor.Primary">@AppResources.Save</Button>
+                <Button @onclick="() => Preferences.Set(nameof(ViewModel.HcpSecret), ViewModel.HcpSecret)" Type="ButtonType.Submit" Color="ButtonColor.Primary">@AppResources.Save</Button>
             </form>
 
         </Content>
@@ -49,9 +66,11 @@
         Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture = Locale;
         await Task.CompletedTask;
     }
+
     /// <inheritdoc />
     protected override void OnInitialized()
     {
         Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture = Locale;
     }
+
 }

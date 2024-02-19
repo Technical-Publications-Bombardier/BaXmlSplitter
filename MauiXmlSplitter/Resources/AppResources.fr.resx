@@ -117,6 +117,39 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="About" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="AnIOErrorOccurredWhileCreatingADirectoryAtOutputDirectory" xml:space="preserve">
+    <value>Une erreur d'E/S s'est produite lors de la création d'un répertoire à '{OutputDirectory}'</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Outil d'exportation des travaux en cours : une application de fractionnement XML pour segmenter les manuels de vol et de maintenance de Bombardier en unités de travail en cours.</value>
+  </data>
+  <data name="Application" xml:space="preserve">
+    <value>Application</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Séparatrice XML de Bombardier en cours de réalisation</value>
+  </data>
+  <data name="AppVersion" xml:space="preserve">
+    <value>Version de l'appli</value>
+  </data>
+  <data name="AttemptedSplitNotReadyOutputDirectoryNotProvided" xml:space="preserve">
+    <value>Tentative de fractionnement non prête : répertoire de sortie non fourni</value>
+  </data>
+  <data name="AttemptedSplitNotReadyProgramNotProvided" xml:space="preserve">
+    <value>Tentative de scission non prête : programme non fourni</value>
+  </data>
+  <data name="AttemptedSplitNotReadyUnitOfWorkStatesNotProvided" xml:space="preserve">
+    <value>Tentative de fractionnement non prête : états des unités de travail non fournis</value>
+  </data>
+  <data name="AttemptedSplitNotReadyXMLNotProvided" xml:space="preserve">
+    <value>Tentative de fractionnement non prête : XML non fourni</value>
+  </data>
+  <data name="Authors" xml:space="preserve">
+    <value>Auteurs</value>
+  </data>
   <data name="Browse" xml:space="preserve">
     <value>Parcourir</value>
   </data>
@@ -125,6 +158,9 @@
   </data>
   <data name="CancelledXMLSelection" xml:space="preserve">
     <value>Sélection XML annulée</value>
+  </data>
+  <data name="CheckoutItemsAreNull" xml:space="preserve">
+    <value>Les articles à la caisse sont nuls</value>
   </data>
   <data name="ChooseOutputDirectory" xml:space="preserve">
     <value>Choisissez le répertoire de sortie</value>
@@ -135,17 +171,44 @@
   <data name="ClientSecret" xml:space="preserve">
     <value>Secret client</value>
   </data>
+  <data name="ClosestManualFoundForProgramManualIsClosestManual" xml:space="preserve">
+    <value>Le manuel le plus proche trouvé pour {Programme} {Manuel} est {Manuel le plus proche}</value>
+  </data>
   <data name="CouldNotLoadStaticResources" xml:space="preserve">
     <value>Impossible de charger les ressources statiques</value>
   </data>
+  <data name="CouldNotParseUOWStatesFile" xml:space="preserve">
+    <value>Impossible d'analyser le fichier des états des unités de travail</value>
+  </data>
   <data name="CouldNotReadDocnbrFromUOWStatesFile" xml:space="preserve">
-    <value>Impossible de lire le docnbr à partir du fichier d'états UOW</value>
+    <value>Impossible de lire le docnbr à partir du fichier d'états unités de travail</value>
   </data>
   <data name="CouldNotReadDocnbrFromXML" xml:space="preserve">
     <value>Impossible de lire le document à partir de XML</value>
   </data>
+  <data name="CreatedOutputDirectoryOutputDirectory" xml:space="preserve">
+    <value>Répertoire de sortie créé : '{OutputDirectory}'</value>
+  </data>
+  <data name="CreatingOutputDirectoryOutputDirectory" xml:space="preserve">
+    <value>Création du répertoire de sortie : '{OutputDirectory}'</value>
+  </data>
+  <data name="DeserializedCheckoutItemsWithNumItemsItems" xml:space="preserve">
+    <value>CheckoutItems désérialisés avec {NumItems} éléments</value>
+  </data>
+  <data name="DeserializedDocnbrManualFromProgramWithNumItemsItems" xml:space="preserve">
+    <value>Numéro de document et manuel du programme désérialisé avec des éléments {NumItems}</value>
+  </data>
+  <data name="DeserializedLookupEntitiesWithNumItemsItems" xml:space="preserve">
+    <value>LookupEntities désérialisées avec {NumItems} éléments</value>
+  </data>
+  <data name="DeserializedProgramPerDocnbrWithNumItemsItems" xml:space="preserve">
+    <value>ProgramPerDocnbr désérialisé avec {NumItems} éléments</value>
+  </data>
+  <data name="DeserializedStatesPerProgramWithNumItemsItems" xml:space="preserve">
+    <value>StatesPerProgram désérialisé avec {NumItems} éléments</value>
+  </data>
   <data name="DoesNotAppearToProvideValidUOWStates" xml:space="preserve">
-    <value>ne semble pas fournir des états UOW valides</value>
+    <value>ne semble pas fournir des états unités de travail valides</value>
   </data>
   <data name="English" xml:space="preserve">
     <value>Anglais</value>
@@ -156,6 +219,9 @@
   <data name="ExecuteSplit" xml:space="preserve">
     <value>Exécuter le fractionnement</value>
   </data>
+  <data name="FailedToLoadXMLMessage" xml:space="preserve">
+    <value>Échec du chargement du XML : '{message}'</value>
+  </data>
   <data name="FileAppearsNotToBePlaintext" xml:space="preserve">
     <value>Le fichier ne semble pas être en texte brut</value>
   </data>
@@ -165,8 +231,14 @@
   <data name="FileWasEmptyOrTooShort" xml:space="preserve">
     <value>Le fichier était vide ou trop court</value>
   </data>
+  <data name="FoundNumUnitsOfWorkInTheManual" xml:space="preserve">
+    <value>{num} unités de travail trouvées dans le manuel</value>
+  </data>
   <data name="French" xml:space="preserve">
     <value>Français</value>
+  </data>
+  <data name="GraphicAlt" xml:space="preserve">
+    <value>Une représentation graphique isométrique du processus de fractionnement XML</value>
   </data>
   <data name="InitializationWasCancelled" xml:space="preserve">
     <value>L'initialisation a été annulée</value>
@@ -180,11 +252,32 @@
   <data name="InvalidFileChosenForUnitsOfWorkStates" xml:space="preserve">
     <value>Fichier non valide choisi pour les états d'unités de travail</value>
   </data>
+  <data name="InvalidUOWFileUowStatesFileChosen" xml:space="preserve">
+    <value>Fichier unités de travail non valide '{UowStatesFile}' choisi</value>
+  </data>
+  <data name="InvalidUOWFileUowStatesFileChosenMessage" xml:space="preserve">
+    <value>Fichier unités de travail non valide '{UowStatesFile}' choisi : '{message}'</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Langue</value>
+  </data>
   <data name="MaintenanceFlightManual" xml:space="preserve">
     <value>Manuel de maintenance/vol</value>
   </data>
+  <data name="ManualFromDocnbrIsNull" xml:space="preserve">
+    <value>Le manuel de docnbr est nul</value>
+  </data>
+  <data name="MauiProgramCreateMauiApp" xml:space="preserve">
+    <value>Création de l'application</value>
+  </data>
+  <data name="NameofPickUowStatesFileWasCancelled" xml:space="preserve">
+    <value>{nameof(PickUowStatesFile)} a été annulé</value>
+  </data>
   <data name="NoFileProvided" xml:space="preserve">
     <value>Aucun fichier fourni</value>
+  </data>
+  <data name="NoUOWStatesSelected" xml:space="preserve">
+    <value>Aucune unité de travail sélectionnée</value>
   </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
@@ -192,8 +285,14 @@
   <data name="OutputDirectory" xml:space="preserve">
     <value>Dossier de sortie</value>
   </data>
+  <data name="Product" xml:space="preserve">
+    <value>Produit</value>
+  </data>
   <data name="Program" xml:space="preserve">
     <value>Programme</value>
+  </data>
+  <data name="RanIntoAnErrorWhileDeserializingMessage" xml:space="preserve">
+    <value>J'ai rencontré une erreur lors de la désérialisation : '{message}'</value>
   </data>
   <data name="Reload" xml:space="preserve">
     <value>Recharger</value>
@@ -203,6 +302,9 @@
   </data>
   <data name="Save" xml:space="preserve">
     <value>Sauvegarder</value>
+  </data>
+  <data name="Secrets" xml:space="preserve">
+    <value>Secrets</value>
   </data>
   <data name="SelectCSDBProgram" xml:space="preserve">
     <value>Sélectionnez le programme CSDB</value>
@@ -222,14 +324,29 @@
   <data name="SplitManual" xml:space="preserve">
     <value>Manuel divisé</value>
   </data>
+  <data name="SplittingXMLFileXmlFilePathIntoNumNodesFragments" xml:space="preserve">
+    <value>Découpage du fichier XML {XmlFilePath} en fragments {NumNodes}</value>
+  </data>
   <data name="StatesFile" xml:space="preserve">
     <value>Fichier des États</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Statut</value>
   </data>
+  <data name="TheDirectoryPathFormatOutputDirectoryIsNotSupported" xml:space="preserve">
+    <value>Le format de chemin d'accès '{OutputDirectory}' n'est pas pris en charge</value>
+  </data>
+  <data name="TheDirectoryPathOutputDirectoryIsInvalid" xml:space="preserve">
+    <value>Le chemin d'accès au répertoire '{OutputDirectory}' n'est pas valide</value>
+  </data>
   <data name="TheFile" xml:space="preserve">
     <value>Le fichier</value>
+  </data>
+  <data name="TheXMLDocnbrDocnbrDoesNotMatchTheUOWDocnbrUowStatesDocnbr" xml:space="preserve">
+    <value>Le document XML '{Docnbr}' ne correspond pas au document UOW '{UowStatesDocnbr}'</value>
+  </data>
+  <data name="TheXMLHadNoDocnbrAttribute" xml:space="preserve">
+    <value>Le XML n'avait pas d'attribut docnbr</value>
   </data>
   <data name="TheXMLLoadingWasCancelled" xml:space="preserve">
     <value>Le chargement XML a été annulé</value>
@@ -237,10 +354,28 @@
   <data name="UnitsOfWork" xml:space="preserve">
     <value>Unités de travail</value>
   </data>
+  <data name="UOWNotParsed" xml:space="preserve">
+    <value>UOW non analysé</value>
+  </data>
+  <data name="WroteFragmentName" xml:space="preserve">
+    <value>A écrit le fragment '{name}'</value>
+  </data>
   <data name="XMLDocnbrXmlDocnbrDoesNotMatchUOWStatesFileDocnbrUowDocnbr" xml:space="preserve">
-    <value>Le document XML '{xmlDocnbr}' ne correspond pas au fichier d'états UOW docnbr '{uowDocnbr}'</value>
+    <value>Le document XML '{xmlDocnbr}' ne correspond pas au docnbr de fichier d'états unités de travail '{uowDocnbr}'</value>
   </data>
   <data name="XMLFile" xml:space="preserve">
     <value>Fichier XML</value>
+  </data>
+  <data name="XMLLoadFailedWithMessage" xml:space="preserve">
+    <value>Le chargement XML a échoué avec '{message}'</value>
+  </data>
+  <data name="XMLNodesWereEmptyNoCheckoutUnitsToExport" xml:space="preserve">
+    <value>Les nœuds XML étaient vides : aucune unité de paiement à exporter.</value>
+  </data>
+  <data name="XmlSplitter" xml:space="preserve">
+    <value>Séparateur XML</value>
+  </data>
+  <data name="YouDoNotHavePermissionToCreateADirectoryAtOutputDirectory" xml:space="preserve">
+    <value>Vous n'avez pas la permission de créer un répertoire à '{OutputDirectory}'</value>
   </data>
 </root>

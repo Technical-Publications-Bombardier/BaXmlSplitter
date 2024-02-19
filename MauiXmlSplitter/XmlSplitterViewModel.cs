@@ -1,7 +1,3 @@
-﻿using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Globalization;
-using System.Text.RegularExpressions;
 using BlazorBootstrap;
 using BlazorContextMenu;
 using CommunityToolkit.Maui.Storage;
@@ -10,6 +6,10 @@ using MauiXmlSplitter.Models;
 using MauiXmlSplitter.Resources;
 using MauiXmlSplitter.Shared;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace MauiXmlSplitter;
 
@@ -122,7 +122,8 @@ public partial class XmlSplitterViewModel(
     /// <summary>
     ///     The units-of-work load success
     /// </summary>
-    [ObservableProperty] private (bool Success, XmlSplitter.ReasonForUowFailure Reason) uowLoadSuccess = (false,
+    [ObservableProperty]
+    private (bool Success, XmlSplitter.ReasonForUowFailure Reason) uowLoadSuccess = (false,
         XmlSplitter.ReasonForUowFailure.NoFileProvided);
 
     /// <summary>
@@ -467,8 +468,8 @@ public partial class XmlSplitterViewModel(
         }
         catch (OperationCanceledException)
         {
-            Debug.WriteLine($"{nameof(PickUowStatesFile)} was cancelled");
-            logger.LogDebug($"{nameof(PickUowStatesFile)} was cancelled");
+            Debug.WriteLine(AppResources.NameofPickUowStatesFileWasCancelled, nameof(PickUowStatesFile));
+            logger.LogDebug(AppResources.NameofPickUowStatesFileWasCancelled, nameof(PickUowStatesFile));
         }
         finally
         {
@@ -500,7 +501,7 @@ public partial class XmlSplitterViewModel(
             xmlSplitter.UowStates = await xmlSplitter.ParseUowContentAsync(token).ConfigureAwait(false);
             if (xmlSplitter.UowStates is not { } parsedStates)
             {
-                logger.LogCritical("Could not parse UOW states file");
+                logger.LogCritical(AppResources.CouldNotParseUOWStatesFile);
                 return;
             }
             UowModalClosed = new TaskCompletionSource<bool>();
@@ -508,7 +509,7 @@ public partial class XmlSplitterViewModel(
             await UowModalClosed.Task.ConfigureAwait(true); // Wait for the modal to close
             if (States is null || !StatesAreSelected)
             {
-                logger.LogWarning("No UOW states selected");
+                logger.LogWarning(AppResources.NoUOWStatesSelected);
                 return;
             }
             xmlSplitter.FullyQualifiedSelectedStates = parsedStates.Where(state =>
@@ -549,6 +550,10 @@ public partial class XmlSplitterViewModel(
                 if (e.PropertyName == nameof(UowStatesFile)) await SelectUowFile(UowStatesFile, cts.Token);
             };
             await xmlSplitter.LoadAssets(cts.Token);
+            xmlSplitter.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == nameof(xmlSplitter.XmlContent)) OnPropertyChanged(nameof(PossiblePrograms));
+            };
             Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = locale;
             logger.LogInformation(AppResources.InitializedXmlSplitterViewModel);
         }

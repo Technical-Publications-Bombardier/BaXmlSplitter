@@ -219,6 +219,10 @@ code,
     flex: var(--golden-ratio) 1 50%;
 }
 
+#console > pre > code > span:last-child {
+    color: rgba(0,0,0,0);
+}
+
 /*#endregion Infobox */
 
 /*#region Media Queries */

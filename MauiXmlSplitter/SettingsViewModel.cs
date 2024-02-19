@@ -38,17 +38,17 @@ public partial class SettingsViewModel(
     /// <value>
     /// The culture.
     /// </value>
-    public CultureInfo Culture { get; set; } = new(Preferences.Default.Get(nameof(Culture),locale.TwoLetterISOLanguageName));
+    public CultureInfo Culture { get; set; } = new(Preferences.Default.Get(nameof(Culture), locale.TwoLetterISOLanguageName));
     /// <inheritdoc />
     public void Dispose()
     {
-        GC.SuppressFinalize( this );
+        GC.SuppressFinalize(this);
     }
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
         await Task.CompletedTask;
-        GC.SuppressFinalize( this );
+        GC.SuppressFinalize(this);
     }
 }

@@ -12,7 +12,7 @@ namespace MauiXmlSplitter
     public class XmlSplitReport : List<XmlSplitReportEntry>
     {
 
-        public string Name { get; init; } = DateTime.Now.ToString(ReportTimestampFormat,CultureInfo.InvariantCulture);
+        public string Name { get; init; } = DateTime.Now.ToString(ReportTimestampFormat, CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Gets the parent tag names.
@@ -46,7 +46,7 @@ namespace MauiXmlSplitter
         /// The fields
         /// </summary>
         private static readonly string[] Fields = typeof(XmlSplitReportEntry).GetFields(BindingFlags.Public | BindingFlags.Instance).Cast<FieldInfo>().Select(field => field.Name).ToArray();
-        
+
         protected const string ReportTimestampFormat = "yyyy - MM - dd - HH - mm - ss - fffffff";
         /// <summary>
         /// Available report formats
@@ -93,10 +93,10 @@ namespace MauiXmlSplitter
                         break;
                     }
                 case ReportFormat.Html:
-                {
-                    
-                    break;
-                }
+                    {
+
+                        break;
+                    }
                 default: break;
             }
 

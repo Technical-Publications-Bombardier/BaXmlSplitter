@@ -1,76 +1,96 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
-		Microsoft ResX Schema
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
 
-		Version 1.3
-
-		The primary goals of this format is to allow a simple XML format 
-		that is mostly human readable. The generation and parsing of the 
-		various data types are done through the TypeConverter classes 
-		associated with the data types.
-
-		Example:
-
-		... ado.net/XML headers & schema ...
-		<resheader name="resmimetype">text/microsoft-resx</resheader>
-		<resheader name="version">1.3</resheader>
-		<resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-		<resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-		<data name="Name1">this is my long string</data>
-		<data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-		<data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-			[base64 mime encoded serialized .NET Framework object]
-		</data>
-		<data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-			[base64 mime encoded string representing a byte array form of the .NET Framework object]
-		</data>
-
-		There are any number of "resheader" rows that contain simple 
-		name/value pairs.
-
-		Each data row contains a name, and value. The row also contains a 
-		type or mimetype. Type corresponds to a .NET class that support 
-		text/value conversion through the TypeConverter architecture. 
-		Classes that don't support this are serialized and stored with the 
-		mimetype set.
-
-		The mimetype is used for serialized objects, and tells the 
-		ResXResourceReader how to depersist the object. This is currently not 
-		extensible. For a given mimetype the value must be set accordingly:
-
-		Note - application/x-microsoft.net.object.binary.base64 is the format 
-		that the ResXResourceWriter will generate, however the reader can 
-		read any of the formats listed below.
-
-		mimetype: application/x-microsoft.net.object.binary.base64
-		value   : The object must be serialized with 
-			: System.Serialization.Formatters.Binary.BinaryFormatter
-			: and then encoded with base64 encoding.
-
-		mimetype: application/x-microsoft.net.object.soap.base64
-		value   : The object must be serialized with 
-			: System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-			: and then encoded with base64 encoding.
-
-		mimetype: application/x-microsoft.net.object.bytearray.base64
-		value   : The object must be serialized into a byte array 
-			: using a System.ComponentModel.TypeConverter
-			: and then encoded with base64 encoding.
-	-->
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -89,14 +109,47 @@
     <value>text/microsoft-resx</value>
   </resheader>
   <resheader name="version">
-    <value>1.3</value>
+    <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AnIOErrorOccurredWhileCreatingADirectoryAtOutputDirectory" xml:space="preserve">
+    <value>An I/O error occurred while creating a directory at '{OutputDirectory}'</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Work-in-progress exporting tool: An XML splitting application for segmenting the Bombardier flight and maintenance manuals into in-progress units of work.</value>
+  </data>
+  <data name="Application" xml:space="preserve">
+    <value>Application</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Bombardier Work-in-Progress XML Splitter</value>
+  </data>
+  <data name="AppVersion" xml:space="preserve">
+    <value>App Version</value>
+  </data>
+  <data name="AttemptedSplitNotReadyOutputDirectoryNotProvided" xml:space="preserve">
+    <value>Attempted split not ready: output directory not provided</value>
+  </data>
+  <data name="AttemptedSplitNotReadyProgramNotProvided" xml:space="preserve">
+    <value>Attempted split not ready: program not provided</value>
+  </data>
+  <data name="AttemptedSplitNotReadyUnitOfWorkStatesNotProvided" xml:space="preserve">
+    <value>Attempted split not ready: unit-of-work states not provided</value>
+  </data>
+  <data name="AttemptedSplitNotReadyXMLNotProvided" xml:space="preserve">
+    <value>Attempted split not ready: XML not provided</value>
+  </data>
+  <data name="Authors" xml:space="preserve">
+    <value>Authors</value>
+  </data>
   <data name="Browse" xml:space="preserve">
     <value>Browse</value>
   </data>
@@ -106,14 +159,26 @@
   <data name="CancelledXMLSelection" xml:space="preserve">
     <value>Cancelled XML Selection</value>
   </data>
+  <data name="CheckoutItemsAreNull" xml:space="preserve">
+    <value>Checkout items are null</value>
+  </data>
   <data name="ChooseOutputDirectory" xml:space="preserve">
     <value>Choose Output Directory</value>
+  </data>
+  <data name="ClearConsole" xml:space="preserve">
+    <value>Clear Console</value>
   </data>
   <data name="ClientSecret" xml:space="preserve">
     <value>Client Secret</value>
   </data>
+  <data name="ClosestManualFoundForProgramManualIsClosestManual" xml:space="preserve">
+    <value>Closest manual found for {Program} {Manual} is {ClosestManual}</value>
+  </data>
   <data name="CouldNotLoadStaticResources" xml:space="preserve">
     <value>Could not load static resources</value>
+  </data>
+  <data name="CouldNotParseUOWStatesFile" xml:space="preserve">
+    <value>Could not parse units-of-work states file</value>
   </data>
   <data name="CouldNotReadDocnbrFromUOWStatesFile" xml:space="preserve">
     <value>Could not read docnbr from UOW states file</value>
@@ -121,8 +186,29 @@
   <data name="CouldNotReadDocnbrFromXML" xml:space="preserve">
     <value>Could not read docnbr from XML</value>
   </data>
+  <data name="CreatedOutputDirectoryOutputDirectory" xml:space="preserve">
+    <value>Created output directory: '{OutputDirectory}'</value>
+  </data>
+  <data name="CreatingOutputDirectoryOutputDirectory" xml:space="preserve">
+    <value>Creating output directory: '{OutputDirectory}'</value>
+  </data>
+  <data name="DeserializedCheckoutItemsWithNumItemsItems" xml:space="preserve">
+    <value>Deserialized CheckoutItems with {NumItems} items</value>
+  </data>
+  <data name="DeserializedDocnbrManualFromProgramWithNumItemsItems" xml:space="preserve">
+    <value>Deserialized DocnbrManualFromProgram with {NumItems} items</value>
+  </data>
+  <data name="DeserializedLookupEntitiesWithNumItemsItems" xml:space="preserve">
+    <value>Deserialized LookupEntities with {NumItems} items</value>
+  </data>
+  <data name="DeserializedProgramPerDocnbrWithNumItemsItems" xml:space="preserve">
+    <value>Deserialized ProgramPerDocnbr with {NumItems} items</value>
+  </data>
+  <data name="DeserializedStatesPerProgramWithNumItemsItems" xml:space="preserve">
+    <value>Deserialized StatesPerProgram with {NumItems} items</value>
+  </data>
   <data name="DoesNotAppearToProvideValidUOWStates" xml:space="preserve">
-    <value>does not appear to provide valid UOW states</value>
+    <value>Does not appear to provide valid unit-of-work states</value>
   </data>
   <data name="English" xml:space="preserve">
     <value>English</value>
@@ -132,6 +218,9 @@
   </data>
   <data name="ExecuteSplit" xml:space="preserve">
     <value>Execute Split</value>
+  </data>
+  <data name="FailedToLoadXMLMessage" xml:space="preserve">
+    <value>Failed to load XML: '{message}'</value>
   </data>
   <data name="FileAppearsNotToBePlaintext" xml:space="preserve">
     <value>File appears not to be plaintext</value>
@@ -145,8 +234,14 @@
     <value>File was empty or too short</value>
     <comment>Reason for UOW states file parsing failure.</comment>
   </data>
+  <data name="FoundNumUnitsOfWorkInTheManual" xml:space="preserve">
+    <value>Found {num} units of work in the manual</value>
+  </data>
   <data name="French" xml:space="preserve">
     <value>French</value>
+  </data>
+  <data name="GraphicAlt" xml:space="preserve">
+    <value>An isometric graphic representation of the XML splitting process</value>
   </data>
   <data name="InitializationWasCancelled" xml:space="preserve">
     <value>Initialization was cancelled</value>
@@ -158,23 +253,50 @@
     <value>Initializing XmlSplitterViewModel</value>
   </data>
   <data name="InvalidFileChosenForUnitsOfWorkStates" xml:space="preserve">
-	  <value>Invalid file chosen for units-of-work states</value>
+    <value>Invalid file chosen for units-of-work states</value>
+  </data>
+  <data name="InvalidUOWFileUowStatesFileChosen" xml:space="preserve">
+    <value>Invalid UOW file '{UowStatesFile}' chosen</value>
+  </data>
+  <data name="InvalidUOWFileUowStatesFileChosenMessage" xml:space="preserve">
+    <value>Invalid UOW file '{UowStatesFile}' chosen: '{message}'</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
   </data>
   <data name="MaintenanceFlightManual" xml:space="preserve">
     <value>Maintenance/Flight Manual</value>
+  </data>
+  <data name="ManualFromDocnbrIsNull" xml:space="preserve">
+    <value>Manual from docnbr is null</value>
+  </data>
+  <data name="MauiProgramCreateMauiApp" xml:space="preserve">
+    <value>Created the Application</value>
+  </data>
+  <data name="NameofPickUowStatesFileWasCancelled" xml:space="preserve">
+    <value>{PickUowStatesFile} was cancelled</value>
   </data>
   <data name="NoFileProvided" xml:space="preserve">
     <value>No file provided</value>
     <comment>Reason for UOW states file parsing failure.</comment>
   </data>
+  <data name="NoUOWStatesSelected" xml:space="preserve">
+    <value>No units-of-work selected</value>
+  </data>
   <data name="OK" xml:space="preserve">
     <value>OK</value>
   </data>
   <data name="OutputDirectory" xml:space="preserve">
-	  <value>Output Directory</value>
+    <value>Output Directory</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>Product</value>
   </data>
   <data name="Program" xml:space="preserve">
     <value>Program</value>
+  </data>
+  <data name="RanIntoAnErrorWhileDeserializingMessage" xml:space="preserve">
+    <value>Ran into an error while deserializing: '{message}'</value>
   </data>
   <data name="Reload" xml:space="preserve">
     <value>Reload</value>
@@ -185,11 +307,14 @@
   <data name="Save" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="Secrets" xml:space="preserve">
+    <value>Secrets</value>
+  </data>
   <data name="SelectCSDBProgram" xml:space="preserve">
     <value>Select CSDB Program</value>
   </data>
   <data name="SelectUnitsOfWorkToExtractByStates" xml:space="preserve">
-	  <value>Select units-of-work to extract by states</value>
+    <value>Select units-of-work to extract by states</value>
   </data>
   <data name="SelectUOWFile" xml:space="preserve">
     <value>Select UOW States File</value>
@@ -204,17 +329,41 @@
   <data name="SplitManual" xml:space="preserve">
     <value>Split Manual</value>
   </data>
+  <data name="SplittingXMLFileXmlFilePathIntoNumNodesFragments" xml:space="preserve">
+    <value>Splitting XML file {XmlFilePath} into {NumNodes} fragments</value>
+  </data>
   <data name="StatesFile" xml:space="preserve">
-	  <value>States File</value>
+    <value>States File</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TheDirectoryPathFormatOutputDirectoryIsNotSupported" xml:space="preserve">
+    <value>The directory path format '{OutputDirectory}' is not supported</value>
+  </data>
+  <data name="TheDirectoryPathOutputDirectoryIsInvalid" xml:space="preserve">
+    <value>The directory path '{OutputDirectory}' is invalid</value>
   </data>
   <data name="TheFile" xml:space="preserve">
     <value>The file</value>
+  </data>
+  <data name="TheXMLDocnbrDocnbrDoesNotMatchTheUOWDocnbrUowStatesDocnbr" xml:space="preserve">
+    <value>The XML docnbr '{Docnbr}' does not match the UOW docnbr '{UowStatesDocnbr}'</value>
+  </data>
+  <data name="TheXMLHadNoDocnbrAttribute" xml:space="preserve">
+    <value>The XML had no docnbr attribute</value>
   </data>
   <data name="TheXMLLoadingWasCancelled" xml:space="preserve">
     <value>The XML loading was cancelled</value>
   </data>
   <data name="UnitsOfWork" xml:space="preserve">
-	  <value>Units-of-Work</value>
+    <value>Units-of-Work</value>
+  </data>
+  <data name="UOWNotParsed" xml:space="preserve">
+    <value>UOW not parsed</value>
+  </data>
+  <data name="WroteFragmentName" xml:space="preserve">
+    <value>Wrote fragment '{name}'</value>
   </data>
   <data name="XMLDocnbrXmlDocnbrDoesNotMatchUOWStatesFileDocnbrUowDocnbr" xml:space="preserve">
     <value>XML docnbr '{xmlDocnbr}' does not match UOW states file docnbr '{uowDocnbr}'</value>
@@ -222,10 +371,16 @@
   <data name="XMLFile" xml:space="preserve">
     <value>XML File</value>
   </data>
-  <data name="ClearConsole" xml:space="preserve">
-	  <value>Clear Console</value>
+  <data name="XMLLoadFailedWithMessage" xml:space="preserve">
+    <value>XML load failed with '{message}'</value>
   </data>
-  <data name="Status" xml:space="preserve">
-	  <value>Status</value>
+  <data name="XMLNodesWereEmptyNoCheckoutUnitsToExport" xml:space="preserve">
+    <value>XML nodes were empty: No checkout units to export.</value>
+  </data>
+  <data name="XmlSplitter" xml:space="preserve">
+    <value>XmlSplitter</value>
+  </data>
+  <data name="YouDoNotHavePermissionToCreateADirectoryAtOutputDirectory" xml:space="preserve">
+    <value>You do not have permission to create a directory at '{OutputDirectory}'</value>
   </data>
 </root>

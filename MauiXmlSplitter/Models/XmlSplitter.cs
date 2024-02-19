@@ -1,4 +1,9 @@
-﻿using System.Collections;
+using BlazorBootstrap;
+using CommunityToolkit.Mvvm.ComponentModel;
+using F23.StringSimilarity;
+using MauiXmlSplitter.Resources;
+using Microsoft.Extensions.Logging;
+using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Security.Cryptography;
@@ -7,10 +12,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml;
-using BlazorBootstrap;
-using CommunityToolkit.Mvvm.ComponentModel;
-using F23.StringSimilarity;
-using Microsoft.Extensions.Logging;
 using static MauiXmlSplitter.Models.CsdbContext;
 using Path = System.IO.Path;
 
@@ -19,7 +20,7 @@ namespace MauiXmlSplitter.Models;
 /// <summary>
 ///     XML Splitter class
 /// </summary>
-public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlSplitReport report): ObservableObject
+public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlSplitReport report) : ObservableObject
 {
     public enum ReasonForUowFailure
     {
@@ -148,10 +149,11 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
             try
             {
                 xml.LoadXml(xmlContent);
+                OnPropertyChanged();
             }
             catch (XmlException exception)
             {
-                logger.LogError("Failed to load XML: '{message}'",exception.Message);
+                logger.LogError(exception, AppResources.FailedToLoadXMLMessage, exception.Message);
             }
         }
     }
@@ -394,7 +396,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
                 bestMatchManualKey.Enqueue(manualNameKey, Jaccard.Distance(Manual, manualNameKey));
             return bestMatchManualKey.Dequeue();
         });
-        logger.LogTrace("Closest manual found for {Program} {Manual} is {ClosestManual}", Program, Manual,
+        logger.LogTrace(AppResources.ClosestManualFoundForProgramManualIsClosestManual, Program, Manual,
             closestManual);
         return checkoutItems[csdbProgram][closestManual];
     }
@@ -450,14 +452,14 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
             if (checkoutItems is not { Count: > 0 })
             {
                 checkoutItems = await DeserializeCheckoutItems(token);
-                logger.LogTrace("Deserialized CheckoutItems with {NumItems} items", checkoutItems.Count);
+                logger.LogTrace(AppResources.DeserializedCheckoutItemsWithNumItemsItems, checkoutItems.Count);
                 Debug.Assert(checkoutItems is { Count: > 0 }, "Checkout items were empty");
             }
 
             if (manualFromDocnbr is not { Count: > 0 })
             {
                 manualFromDocnbr = await DeserializeDocnbrManualFromProgram(token);
-                logger.LogTrace("Deserialized DocnbrManualFromProgram with {NumItems} items",
+                logger.LogTrace(AppResources.DeserializedDocnbrManualFromProgramWithNumItemsItems,
                     manualFromDocnbr.Count);
                 Debug.Assert(manualFromDocnbr is { Count: > 0 }, "Manual from docnbr was empty");
             }
@@ -465,27 +467,27 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
             if (programPerDocnbr is not { Count: > 0 })
             {
                 programPerDocnbr = await DeserializeProgramPerDocnbr(token);
-                logger.LogTrace("Deserialized ProgramPerDocnbr with {NumItems} items", programPerDocnbr.Count);
+                logger.LogTrace(AppResources.DeserializedProgramPerDocnbrWithNumItemsItems, programPerDocnbr.Count);
                 Debug.Assert(programPerDocnbr is { Count: > 0 }, "Program per docnbr was empty");
             }
 
             if (statesPerProgram is not { Count: > 0 })
             {
                 statesPerProgram = await DeserializeStatesPerProgram(token);
-                logger.LogTrace("Deserialized StatesPerProgram with {NumItems} items", statesPerProgram.Count);
+                logger.LogTrace(AppResources.DeserializedStatesPerProgramWithNumItemsItems, statesPerProgram.Count);
                 Debug.Assert(statesPerProgram is { Count: > 0 }, "States per program was empty");
             }
 
             if (lookupEntities?.Any() != true)
             {
                 lookupEntities = await DeserializeLookupEntities(token);
-                logger.LogTrace("Deserialized LookupEntities with {NumItems} items", lookupEntities.Count());
+                logger.LogTrace(AppResources.DeserializedLookupEntitiesWithNumItemsItems, lookupEntities.Count());
                 Debug.Assert(lookupEntities.Any(), "Character entities lookup was empty");
             }
         }
         catch (Exception e) when (!Debugger.IsAttached)
         {
-            logger.LogCritical("Ran into an error while deserializing: '{message}'", e.Message);
+            logger.LogCritical(e, AppResources.RanIntoAnErrorWhileDeserializingMessage, e.Message);
         }
         catch (Exception e)
         {
@@ -563,13 +565,13 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
             }
             catch (Exception e) when (!Debugger.IsAttached)
             {
-                logger.LogError("Invalid UOW file '{UowStatesFile}' chosen: '{message}'", uowStatesFile, e.Message);
+                logger.LogError(e, AppResources.InvalidUOWFileUowStatesFileChosenMessage, uowStatesFile, e.Message);
                 return null;
             }
 
         if (StateMatches is null || StateMatches.Count == 0)
         {
-            logger.LogError("Invalid UOW file '{UowStatesFile}' chosen", uowStatesFile);
+            logger.LogError(AppResources.InvalidUOWFileUowStatesFileChosen, uowStatesFile);
             return null;
         }
 
@@ -695,7 +697,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
             // write the fragment to the outPath
             await Task.Run(() => xmlFragment.Save(outPath)).ConfigureAwait(false);
 
-            logger.LogTrace("Wrote fragment '{name}'", Path.GetFileName(outPath));
+            logger.LogTrace(AppResources.WroteFragmentName, Path.GetFileName(outPath));
         }
     }
 
@@ -704,63 +706,63 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
         progress.Report(0);
         if (string.IsNullOrEmpty(uowContent))
         {
-            logger.LogWarning("Attempted split not ready: unit-of-work states not provided");
+            logger.LogWarning(AppResources.AttemptedSplitNotReadyUnitOfWorkStatesNotProvided);
             return false;
         }
 
         if (string.IsNullOrEmpty(Program))
         {
-            logger.LogWarning("Attempted split not ready: program not provided");
+            logger.LogWarning(AppResources.AttemptedSplitNotReadyProgramNotProvided);
             return false;
         }
 
         if (xmlSourceFile is null && string.IsNullOrEmpty(xmlContent))
         {
-            logger.LogWarning("Attempted split not ready: XML not provided");
+            logger.LogWarning(AppResources.AttemptedSplitNotReadyXMLNotProvided);
             return false;
         }
 
         if (string.IsNullOrEmpty(outputDirectory))
         {
-            logger.LogWarning("Attempted split not ready: output directory not provided");
+            logger.LogWarning(AppResources.AttemptedSplitNotReadyOutputDirectoryNotProvided);
             return false;
         }
 
         // check if outputDirectory exists, if not, create it
         if (!Directory.Exists(outputDirectory))
         {
-            logger.LogTrace("Creating output directory: '{OutputDirectory}'", outputDirectory);
+            logger.LogTrace(AppResources.CreatingOutputDirectoryOutputDirectory, outputDirectory);
             try
             {
                 _ = Directory.CreateDirectory(outputDirectory);
-                logger.LogTrace("Created output directory: '{OutputDirectory}'", outputDirectory);
+                logger.LogTrace(AppResources.CreatedOutputDirectoryOutputDirectory, outputDirectory);
             }
             catch (IOException ex) when (!Debugger.IsAttached)
             {
-                logger.LogError(ex, "An I/O error occurred while creating a directory at '{OutputDirectory}'",
+                logger.LogError(ex, AppResources.AnIOErrorOccurredWhileCreatingADirectoryAtOutputDirectory,
                     outputDirectory);
                 return false;
             }
             catch (UnauthorizedAccessException ex) when (!Debugger.IsAttached)
             {
-                logger.LogError(ex, "You do not have permission to create a directory at '{OutputDirectory}'",
+                logger.LogError(ex, AppResources.YouDoNotHavePermissionToCreateADirectoryAtOutputDirectory,
                     outputDirectory);
                 return false;
             }
             catch (ArgumentException ex) when (!Debugger.IsAttached)
             {
-                logger.LogError(ex, "The directory path '{OutputDirectory}' is invalid", outputDirectory);
+                logger.LogError(ex, AppResources.TheDirectoryPathOutputDirectoryIsInvalid, outputDirectory);
                 return false;
             }
             catch (NotSupportedException ex) when (!Debugger.IsAttached)
             {
-                logger.LogError(ex, "The directory path format '{OutputDirectory}' is not supported", outputDirectory);
+                logger.LogError(ex, AppResources.TheDirectoryPathFormatOutputDirectoryIsNotSupported, outputDirectory);
                 return false;
             }
 
             if (possibleStatesInManual is null || xmlContent is null)
             {
-                logger.LogError("UOW not parsed");
+                logger.LogError(AppResources.UOWNotParsed);
                 return false;
             }
         }
@@ -780,7 +782,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
     {
         if (!IsReadyVerbose(progress) || UowStates?.Any() != true)
             return false;
-        logger.LogInformation("Found {num} units of work in the manual", UowStates.Count());
+        logger.LogInformation(AppResources.FoundNumUnitsOfWorkInTheManual, UowStates.Count());
 
         try
         {
@@ -788,7 +790,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
         }
         catch (XmlException xmlException)
         {
-            logger.LogCritical("XML load failed with '{message}'", xmlException.Message);
+            logger.LogCritical(xmlException, AppResources.XMLLoadFailedWithMessage, xmlException.Message);
             ModalOption option = new()
             {
                 FooterButtonColor = ButtonColor.Danger,
@@ -806,37 +808,37 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
         // Compare the docnbr to UowStatesDocnbr
         if (xml.DocumentElement?.GetAttribute("docnbr") is not { } docnbr)
         {
-            logger.LogError("The XML had no docnbr attribute");
+            logger.LogError(AppResources.TheXMLHadNoDocnbrAttribute);
             return false;
         }
 
         if (docnbr != UowStatesDocnbr)
         {
-            logger.LogWarning("The XML docnbr '{Docnbr}' does not match the UOW docnbr '{UowStatesDocnbr}'", docnbr,
+            logger.LogWarning(AppResources.TheXMLDocnbrDocnbrDoesNotMatchTheUOWDocnbrUowStatesDocnbr, docnbr,
                 UowStatesDocnbr);
             return false;
         }
 
         if (checkoutItems is null)
         {
-            logger.LogError("Checkout items are null");
+            logger.LogError(AppResources.CheckoutItemsAreNull);
             return false;
         }
 
         if (manualFromDocnbr is null)
         {
-            logger.LogError("Manual from docnbr is null");
+            logger.LogError(AppResources.ManualFromDocnbrIsNull);
             return false;
         }
 
         if (await GetXmlNodesAsync().ConfigureAwait(false) is not { } nodes || nodes.Length == 0)
         {
-            logger.LogError("XML nodes were empty: No checkout units to export.");
+            logger.LogError(AppResources.XMLNodesWereEmptyNoCheckoutUnitsToExport);
             return false;
         }
 
         await WriteNodesAsync(nodes, Path.GetFileNameWithoutExtension(XmlSourceFile), OutputDirectory, progress);
-        logger.LogInformation("Splitting XML file {XmlFilePath} into {NumNodes} fragments", xmlSourceFile,
+        logger.LogInformation(AppResources.SplittingXMLFileXmlFilePathIntoNumNodesFragments, xmlSourceFile,
             nodes.Length.ToString());
         progress.Report(1);
         return true;
@@ -845,3 +847,6 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
     [GeneratedRegex("""\W*""")]
     private static partial Regex StripNonWordChars();
 }
+
+
+
