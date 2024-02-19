@@ -17,6 +17,7 @@ namespace MauiXmlSplitter;
 /// </summary>
 /// <seealso cref="CommunityToolkit.Mvvm.ComponentModel.ObservableObject" />
 public partial class SettingsViewModel(
+    CultureInfo locale,
     ConcurrentDictionary<DateTime, LogRecord> logs,
     ILogger<SettingsViewModel> logger,
     ModalService modalService
@@ -24,6 +25,12 @@ public partial class SettingsViewModel(
     : ObservableObject, IDisposable, IAsyncDisposable
 
 {
+    /// <summary>
+    /// Gets or sets the HashiCorp Client Secret.
+    /// </summary>
+    /// <value>
+    /// The HashiCorp Client Secret.
+    /// </value>
     public string? HcpSecret { get; set; }
     /// <summary>
     /// Gets or sets the culture.
@@ -31,7 +38,7 @@ public partial class SettingsViewModel(
     /// <value>
     /// The culture.
     /// </value>
-    public CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+    public CultureInfo Culture { get; set; } = new(Preferences.Default.Get(nameof(Culture),locale.TwoLetterISOLanguageName));
     /// <inheritdoc />
     public void Dispose()
     {

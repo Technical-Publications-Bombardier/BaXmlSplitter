@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace BaXmlSplitter;
+namespace MauiXmlSplitter.Data;
 
 /// <summary>
 /// A reusable log action for unhandled exceptions with a specific log level, event id, and message template.

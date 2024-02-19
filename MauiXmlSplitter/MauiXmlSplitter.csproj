@@ -126,6 +126,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.22.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.7" />
@@ -150,6 +151,21 @@
 
 	<ItemGroup>
 		<Folder Include="wwwroot\css\bootstrap\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Resources\AppResources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>AppResources.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\AppResources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 	<!-- Build Properties must be defined within these property groups to ensure successful publishing

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BaXmlSplitter
+namespace MauiXmlSplitter.Data
 {
     public class ObjectAttribute
     {
@@ -11,5 +11,7 @@ namespace BaXmlSplitter
         public string AttributeName { get; set; }
 
         public string AttributeValue { get; set; }
+        // Navigation property
+        public ObjectNew? ObjectNew { get; set; }
     }
 }

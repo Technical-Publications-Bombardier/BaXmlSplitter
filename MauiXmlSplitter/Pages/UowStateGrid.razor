@@ -1,9 +1,7 @@
 ﻿@using MauiXmlSplitter.Models
 @inject XmlSplitterViewModel ViewModel
 
-<Grid TItem="UowState" Class="table table-hover table-bordered"
-      DataProvider="ViewModel.GridDataUowStatesProviderAsync" AllowFiltering="true" AllowPaging="true" PageSize="5"
-      AllowSorting="true" Responsive="true">
+<Grid AllowFiltering="false" AllowPaging="true" AllowSelection="true" AllowSorting="true" Class="table table-hover table-bordered" DataProvider="ViewModel.GridDataUowStatesProviderAsync" SelectedItemsChanged="ViewModel.OnSelectedUowStatesChanged" PageSize="5" Responsive="true" SelectionMode="GridSelectionMode.Multiple" TItem="UowState">
 
     <GridColumn TItem="UowState" HeaderText="Id" PropertyName="StateValue"
                 SortKeySelector="item => item.StateValue ?? 0">
@@ -16,13 +14,5 @@
     <GridColumn TItem="UowState" HeaderText="Remarks" PropertyName="Remark"
                 SortKeySelector="item => item.Remark ?? string.Empty">
         @context.Remark
-    </GridColumn>
-    <GridColumn TItem="UowState" PropertyName="IsSelected" Filterable="false" Sortable="false">
-        <HeaderContent>
-            <Switch @bind-Value="ViewModel.IsAllCheckedUowStates"/>
-        </HeaderContent>
-        <ChildContent>
-            <Switch @bind-Value="@context.IsSelected"/>
-        </ChildContent>
     </GridColumn>
 </Grid>

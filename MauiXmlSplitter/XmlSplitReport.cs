@@ -9,8 +9,10 @@ namespace MauiXmlSplitter
     /// <summary>
     /// The XML splitting result report in XML, CSV, and TSV.
     /// </summary>
-    internal class XmlSplitReport : List<XmlSplitReportEntry>
+    public class XmlSplitReport : List<XmlSplitReportEntry>
     {
+
+        public string Name { get; init; } = DateTime.Now.ToString(ReportTimestampFormat,CultureInfo.InvariantCulture);
 
         /// <summary>
         /// Gets the parent tag names.
@@ -49,7 +51,7 @@ namespace MauiXmlSplitter
         /// <summary>
         /// Available report formats
         /// </summary>
-        internal enum ReportFormat
+        public enum ReportFormat
         {
             /// <summary>
             /// Comma-separated values
@@ -82,7 +84,7 @@ namespace MauiXmlSplitter
                 case ReportFormat.Csv:
                 case ReportFormat.Tsv:
                     {
-                        await WriteCsvReport();
+                        await WriteCsvReportAsync();
                         break;
                     }
                 case ReportFormat.Xml:
@@ -90,12 +92,16 @@ namespace MauiXmlSplitter
                         await Task.Run(WriteXmlReport);
                         break;
                     }
+                case ReportFormat.Html:
+                {
+                    
+                    break;
+                }
                 default: break;
             }
 
             return;
-
-            async Task WriteCsvReport()
+            async Task WriteCsvReportAsync()
             {
                 await using StreamWriter writer = new(outPath);
                 var separator = outFormat == ReportFormat.Csv ? ',' : '\t';
@@ -206,10 +212,11 @@ namespace MauiXmlSplitter
             }
         }
     }
+
     /// <summary>
     /// An entry per unit of work in the final report on splitting the source XML.
     /// </summary>
-    internal class XmlSplitReportEntry
+    public class XmlSplitReportEntry
     {
         /// <summary>
         /// The node number

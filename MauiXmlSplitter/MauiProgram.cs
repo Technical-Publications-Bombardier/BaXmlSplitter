@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Globalization;
 using System.Reflection;
 using BlazorBootstrap;
 using CommunityToolkit.Maui;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Logging;
 // ReSharper disable once RedundantUsingDirective
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Maui.Platform;
 
 namespace MauiXmlSplitter;
 
@@ -38,18 +40,11 @@ public static class MauiProgram
         builder.Configuration.AddConfiguration(config);
         builder
             .UseMauiApp<App>()
-            .UseMauiCommunityToolkit()
-            .ConfigureFonts(fonts =>
-            {
-                fonts.AddFont(@".\Resources\Fonts\Gabarito\Gabarito-VariableFont_wght.ttf",
-                    "Gabarito-VariableFont_wght");
-                fonts.AddFont(@".\Resources\Fonts\MonoidNerdFont\MonoidNerdFont-Bold.ttf", "MonoidNerdFont-Bold");
-                fonts.AddFont(@".\Resources\Fonts\MonoidNerdFont\MonoidNerdFont-Italic.ttf", "MonoidNerdFont-Italic");
-                fonts.AddFont(@".\Resources\Fonts\MonoidNerdFont\MonoidNerdFont-Regular.ttf", "MonoidNerdFont-Regular");
-                fonts.AddFont(@".\Resources\Fonts\MonoidNerdFont\MonoidNerdFont-Retina.ttf", "MonoidNerdFont-Retina");
-            });
+            .UseMauiCommunityToolkit();
         builder.Services.AddSingleton(new MainPage());
-        builder.Services.AddSingleton<Dispatcher>();
+        builder.Services.AddLocalization();
+        builder.Services.AddSingleton<XmlSplitReport>();
+        builder.Services.AddSingleton<CultureInfo>(_ => new CultureInfo(Preferences.Default.Get(nameof(SettingsViewModel.Culture),CultureInfo.CurrentCulture.TwoLetterISOLanguageName)));
         builder.Services.AddSingleton<ConcurrentDictionary<DateTime, LogRecord>>();
         builder.Services.AddSingleton<ModalService>();
         builder.Services.AddSingleton<ILogger<XmlSplitterViewModel>>(services =>

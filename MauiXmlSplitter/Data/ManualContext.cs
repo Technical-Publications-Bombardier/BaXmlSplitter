@@ -1,11 +1,8 @@
-﻿using System.Globalization;
-using System.Numerics;
-using MauiXmlSplitter.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-namespace BaXmlSplitter;
+﻿using Microsoft.EntityFrameworkCore;
 
-internal class ManualContext(CsdbContext.CsdbProgram program, string baOraConnectionString) : DbContext
+namespace MauiXmlSplitter.Data;
+
+public class ManualContext(CsdbContext.CsdbProgram program, string baOraConnectionString) : DbContext
 {
     private static readonly Dictionary<CsdbContext.CsdbProgram, string> ServiceNameTable = new()
     {
@@ -61,5 +58,10 @@ internal class ManualContext(CsdbContext.CsdbProgram program, string baOraConnec
         modelBuilder.Entity<InnerSubQueryForKeys>().HasNoKey().ToView(null);
         modelBuilder.Entity<SubQueryForKeys>().HasNoKey().ToView(null);
         modelBuilder.Entity<ManualsPerKey>().HasNoKey().ToView(null);
+        modelBuilder.Entity<ObjectNew>()
+            .HasMany(on => on.ObjectAttributes)
+            .WithOne(oa => oa.ObjectNew)
+            .HasForeignKey(oa => oa.ObjectRef);
+
     }
 }

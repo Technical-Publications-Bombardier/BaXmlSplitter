@@ -1,4 +1,4 @@
-﻿namespace BaXmlSplitter
+﻿namespace MauiXmlSplitter.Data
 {
     class BaManual
     {

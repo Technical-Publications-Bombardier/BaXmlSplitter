@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml;
 using BlazorBootstrap;
+using CommunityToolkit.Mvvm.ComponentModel;
 using F23.StringSimilarity;
 using Microsoft.Extensions.Logging;
 using static MauiXmlSplitter.Models.CsdbContext;
@@ -15,7 +16,10 @@ using Path = System.IO.Path;
 
 namespace MauiXmlSplitter.Models;
 
-public partial class XmlSplitter(ILogger logger, ModalService modalService)
+/// <summary>
+///     XML Splitter class
+/// </summary>
+public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlSplitReport report): ObservableObject
 {
     public enum ReasonForUowFailure
     {
@@ -115,14 +119,17 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
     /// </summary>
     private string? xmlSourceFile;
 
-    /// <summary>
-    ///     The XPath string that would be used to select the nodes to split from the XML. This is calculated from the tag
-    ///     names and key values in the UOW states file.
-    /// </summary>
-    private string? xpath;
 
     /// <summary>The fully populated unit-of-work states that are selected by the user for export.</summary>
     public IEnumerable<UowState>? FullyQualifiedSelectedStates { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the UOW states as defined in the UOW states file.
+    /// </summary>
+    /// <value>
+    ///     The uow states.
+    /// </value>
+    public IEnumerable<UowState>? UowStates { get; set; }
 
     public Hashtable PossibleStatesInManual => possibleStatesInManual ?? [];
 
@@ -135,16 +142,30 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
     public string XmlContent
     {
         get => xmlContent ?? string.Empty;
-        set => xmlContent = value;
+        set
+        {
+            xmlContent = value;
+            try
+            {
+                xml.LoadXml(xmlContent);
+            }
+            catch (XmlException exception)
+            {
+                logger.LogError("Failed to load XML: '{message}'",exception.Message);
+            }
+        }
     }
 
     /// <summary>
-    ///     Gets the XPath.
+    ///     The XPath string that would be used to select the nodes to split from the XML. This is calculated from the tag
+    ///     names and key values in the UOW states file.
     /// </summary>
     /// <value>
-    ///     The XPath that would select the nodes for export.
+    ///     A join on the XPath for all states in the <see cref="FullyQualifiedSelectedStates" />.
     /// </value>
-    public string XPath => xpath ?? string.Empty;
+    public string XPath => FullyQualifiedSelectedStates is null
+        ? string.Empty
+        : string.Join('|', FullyQualifiedSelectedStates.Select(state => state.XPath));
 
     /// <summary>
     ///     Gets the docnbr.
@@ -179,7 +200,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
     /// <value>
     ///     The name of the XML source file base.
     /// </value>
-    internal string XmlSourceFileBaseName => XmlFilenameRe()
+    public string XmlSourceFileBaseName => XmlFilenameRe()
         .Replace(Path.GetFileNameWithoutExtension(xmlSourceFile ?? string.Empty),
             m => TerminusCharPattern().Replace(m.Groups["basename"].Value, string.Empty));
 
@@ -207,6 +228,12 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
         set => outputDirectory = value;
     }
 
+    /// <summary>
+    /// Gets the possible <see cref="CsdbProgram"/> programs.
+    /// </summary>
+    /// <value>
+    /// The possible <see cref="CsdbProgram"/> programs.
+    /// </value>
     public string[] PossiblePrograms
     {
         get
@@ -233,7 +260,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
         }
     }
 
-    private bool IsLoadingXml { get; set; }
+    private bool IsLoadingXml { get; }
 
     public string Manual
     {
@@ -304,10 +331,12 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
 
     internal async Task<(bool, ReasonForUowFailure)> UowPreliminaryCheck(string filePath)
     {
+        if (string.IsNullOrEmpty(filePath))
+            return (false, ReasonForUowFailure.NoFileProvided);
         const int numLines = 5; // number of lines to check provisionally
         var isUowText =
             (Success: true, Reason: ReasonForUowFailure.None); // assume file is text until assumption is falsified
-        await Task.Run(CheckLines);
+        await Task.Run(CheckLinesArePlaintext);
         return isUowText;
 
         bool CheckLineIsPlaintext(in string line)
@@ -319,7 +348,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
             return isPlaintext;
         }
 
-        void CheckLines()
+        void CheckLinesArePlaintext()
         {
             using var sr = new StreamReader(filePath);
             var provisionalUowStatesDocnbr = UowStatesDocnbr;
@@ -365,23 +394,28 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
                 bestMatchManualKey.Enqueue(manualNameKey, Jaccard.Distance(Manual, manualNameKey));
             return bestMatchManualKey.Dequeue();
         });
-        logger.LogInformation("Closest manual found for {Program} is {ClosestManual}", Program, closestManual);
+        logger.LogTrace("Closest manual found for {Program} {Manual} is {ClosestManual}", Program, Manual,
+            closestManual);
         return checkoutItems[csdbProgram][closestManual];
     }
 
+    /// <summary>
+    ///     Asynchronously gets the XML nodes for the selected UOW states.
+    /// </summary>
+    /// <returns></returns>
     private async Task<XmlNode[]> GetXmlNodesAsync()
     {
-        if (!xml.HasChildNodes || string.IsNullOrEmpty(xpath))
+        if (!xml.HasChildNodes || string.IsNullOrEmpty(XPath))
             return [];
         var checkoutElementNames = await GetCheckoutElementNamesAsync().ConfigureAwait(false);
         if (checkoutElementNames.Length == 0)
         {
-            if (await Task.Run(() => xml.SelectNodes(xpath)).ConfigureAwait(false) is { } plainNodes)
+            if (await Task.Run(() => xml.SelectNodes(XPath)).ConfigureAwait(false) is { } plainNodes)
                 return plainNodes.Cast<XmlNode>().ToArray();
             return [];
         }
 
-        if (await Task.Run(() => xml.SelectNodesByCheckout(xpath, checkoutElementNames)).ConfigureAwait(false) is
+        if (await Task.Run(() => xml.SelectNodesByCheckout(XPath, checkoutElementNames)).ConfigureAwait(false) is
             { } checkoutNodes)
             return checkoutNodes;
         return [];
@@ -394,34 +428,36 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
     [GeneratedRegex(@"(?<basename>[\w_-]+[\d-]{8,}).*", RegexOptions.Compiled | RegexOptions.Multiline, 15 * 1000)]
     internal static partial Regex XmlFilenameRe();
 
-    [SuppressMessage("Performance", "CA1869:Cache and reuse 'JsonSerializerOptions' instances",
-        Justification =
-            "We deserialize this exactly once on start-up, so it would be overkill to cache the JsonSerializerOptions.")]
+    /// <summary>
+    ///     Loads the static assets.
+    /// </summary>
+    /// <param name="token">The token.</param>
+    /// <returns></returns>
     public async Task LoadAssets(CancellationToken token = default)
     {
         try
         {
             // add the custom converters to the JsonSerializerOptions options
 
-            foreach (var converterType in new Type[]
-                         { typeof(CsdbProgramConverter), typeof(UowStateConverter), typeof(CharacterEntitiesConverter) })
-            {
+            foreach (var converterType in new[]
+                     {
+                         typeof(CsdbProgramConverter), typeof(UowStateConverter), typeof(CharacterEntitiesConverter)
+                     })
                 if (options.Converters.All(c => c.GetType() != converterType) &&
                     Activator.CreateInstance(converterType) as JsonConverter is { } converter)
                     options.Converters.Add(converter);
-            }
 
             if (checkoutItems is not { Count: > 0 })
             {
                 checkoutItems = await DeserializeCheckoutItems(token);
-                logger.LogInformation("Deserialized CheckoutItems with {NumItems} items", checkoutItems.Count);
+                logger.LogTrace("Deserialized CheckoutItems with {NumItems} items", checkoutItems.Count);
                 Debug.Assert(checkoutItems is { Count: > 0 }, "Checkout items were empty");
             }
 
             if (manualFromDocnbr is not { Count: > 0 })
             {
                 manualFromDocnbr = await DeserializeDocnbrManualFromProgram(token);
-                logger.LogInformation("Deserialized DocnbrManualFromProgram with {NumItems} items",
+                logger.LogTrace("Deserialized DocnbrManualFromProgram with {NumItems} items",
                     manualFromDocnbr.Count);
                 Debug.Assert(manualFromDocnbr is { Count: > 0 }, "Manual from docnbr was empty");
             }
@@ -429,27 +465,27 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
             if (programPerDocnbr is not { Count: > 0 })
             {
                 programPerDocnbr = await DeserializeProgramPerDocnbr(token);
-                logger.LogInformation("Deserialized ProgramPerDocnbr with {NumItems} items", programPerDocnbr.Count);
+                logger.LogTrace("Deserialized ProgramPerDocnbr with {NumItems} items", programPerDocnbr.Count);
                 Debug.Assert(programPerDocnbr is { Count: > 0 }, "Program per docnbr was empty");
             }
 
             if (statesPerProgram is not { Count: > 0 })
             {
                 statesPerProgram = await DeserializeStatesPerProgram(token);
-                logger.LogInformation("Deserialized StatesPerProgram with {NumItems} items", statesPerProgram.Count);
+                logger.LogTrace("Deserialized StatesPerProgram with {NumItems} items", statesPerProgram.Count);
                 Debug.Assert(statesPerProgram is { Count: > 0 }, "States per program was empty");
             }
 
-            if (lookupEntities?.Any() != false)
+            if (lookupEntities?.Any() != true)
             {
                 lookupEntities = await DeserializeLookupEntities(token);
-                logger.LogInformation("Deserialized LookupEntities with {NumItems} items", lookupEntities.Count());
+                logger.LogTrace("Deserialized LookupEntities with {NumItems} items", lookupEntities.Count());
                 Debug.Assert(lookupEntities.Any(), "Character entities lookup was empty");
             }
         }
         catch (Exception e) when (!Debugger.IsAttached)
         {
-            logger.LogCritical($"Ran into an error while deserializing: '{e.Message}'");
+            logger.LogCritical("Ran into an error while deserializing: '{message}'", e.Message);
         }
         catch (Exception e)
         {
@@ -513,7 +549,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
     /// <summary>
     ///     Parses the units-of-work states file content asynchronously.
     /// </summary>
-    /// <returns>An array if the <see cref="UowState" /> states.</returns>
+    /// <returns>An array of the fully-qualified <see cref="UowState" /> states.</returns>
     internal async Task<UowState[]?> ParseUowContentAsync(CancellationToken token)
     {
         possibleStatesInManual = [];
@@ -523,11 +559,11 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
         if (StateMatches is null || StateMatches.Count == 0)
             try
             {
-                StateMatches = await TryGetUowMatchesAsync(previousUowCts.Token);
+                StateMatches = await TryGetUowMatchesAsync(previousUowCts.Token).ConfigureAwait(false);
             }
             catch (Exception e) when (!Debugger.IsAttached)
             {
-                logger.LogError("Invalid UOW file '{UowStatesFile}' chosen", uowStatesFile);
+                logger.LogError("Invalid UOW file '{UowStatesFile}' chosen: '{message}'", uowStatesFile, e.Message);
                 return null;
             }
 
@@ -639,15 +675,31 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
         return builder.ToString();
     }
 
-    /// <summary>
-    ///     Executes the split.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-    /// <param name="progress"></param>
-    /// <param name="token"></param>
-    public async Task<bool> ExecuteSplit(object sender, EventArgs e, IProgress<double> progress,
-        CancellationToken token)
+    private async Task WriteNodesAsync(IReadOnlyList<XmlNode> nodes, string baseName, string dirPath,
+        IProgress<double> progress)
+    {
+        var nodeNum = 1;
+        for (var i = 0; i < nodes.Count; i++)
+        {
+            progress.Report(100.0 * (i + 1) / nodes.Count);
+            BaXmlDocument xmlFragment = new()
+            {
+                ResolveEntities = false
+            };
+            xmlFragment.AppendChild(xmlFragment.ImportNode(nodes[i], true));
+            var key = nodes[i].Attributes?["key"]?.Value ?? StripNonWordChars()
+                .Replace(Convert.ToBase64String(SHA256.HashData(BitConverter.GetBytes(nodes[i].GetHashCode()))),
+                    string.Empty);
+            var outPath = Path.Combine(dirPath, $"{baseName}-{key}.xml");
+
+            // write the fragment to the outPath
+            await Task.Run(() => xmlFragment.Save(outPath)).ConfigureAwait(false);
+
+            logger.LogTrace("Wrote fragment '{name}'", Path.GetFileName(outPath));
+        }
+    }
+
+    public bool IsReadyVerbose(IProgress<double> progress)
     {
         progress.Report(0);
         if (string.IsNullOrEmpty(uowContent))
@@ -705,21 +757,38 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
                 logger.LogError(ex, "The directory path format '{OutputDirectory}' is not supported", outputDirectory);
                 return false;
             }
+
+            if (possibleStatesInManual is null || xmlContent is null)
+            {
+                logger.LogError("UOW not parsed");
+                return false;
+            }
         }
 
-        if (await ParseUowContentAsync(token) is not { } states || possibleStatesInManual is null || xmlContent is null)
-        {
-            logger.LogError("UOW not parsed");
+        return true;
+    }
+
+    /// <summary>
+    ///     Executes the split.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+    /// <param name="progress"></param>
+    /// <param name="token"></param>
+    public async Task<bool> ExecuteSplit(object sender, EventArgs e, IProgress<double> progress,
+        CancellationToken token)
+    {
+        if (!IsReadyVerbose(progress) || UowStates?.Any() != true)
             return false;
-        }
+        logger.LogInformation("Found {num} units of work in the manual", UowStates.Count());
 
         try
         {
-            await Task.Run(() => xml.LoadXml(xmlContent), token).ConfigureAwait(false);
+            await Task.Run(() => xml.LoadXml(xmlContent!), token).ConfigureAwait(false);
         }
-        catch(XmlException xmlException)
+        catch (XmlException xmlException)
         {
-            logger.LogCritical("XML load failed with '{message}'",xmlException.Message);
+            logger.LogCritical("XML load failed with '{message}'", xmlException.Message);
             ModalOption option = new()
             {
                 FooterButtonColor = ButtonColor.Danger,
@@ -733,6 +802,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
             };
             await modalService.ShowAsync(option);
         }
+
         // Compare the docnbr to UowStatesDocnbr
         if (xml.DocumentElement?.GetAttribute("docnbr") is not { } docnbr)
         {
@@ -747,33 +817,31 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService)
             return false;
         }
 
-        if (checkoutItems is null || manualFromDocnbr is null)
+        if (checkoutItems is null)
         {
-            logger.LogError("Checkout items or manual from docnbr are null");
+            logger.LogError("Checkout items are null");
+            return false;
+        }
+
+        if (manualFromDocnbr is null)
+        {
+            logger.LogError("Manual from docnbr is null");
             return false;
         }
 
         if (await GetXmlNodesAsync().ConfigureAwait(false) is not { } nodes || nodes.Length == 0)
         {
-            logger.LogError("XML nodes were empty");
+            logger.LogError("XML nodes were empty: No checkout units to export.");
             return false;
         }
 
+        await WriteNodesAsync(nodes, Path.GetFileNameWithoutExtension(XmlSourceFile), OutputDirectory, progress);
         logger.LogInformation("Splitting XML file {XmlFilePath} into {NumNodes} fragments", xmlSourceFile,
             nodes.Length.ToString());
         progress.Report(1);
         return true;
     }
 
-    public async Task LoadXml(object sender, EventArgs e, CancellationToken token = default)
-    {
-        if (string.IsNullOrEmpty(xmlSourceFile))
-            return;
-        IsLoadingXml = true;
-        xmlContent = await File.ReadAllTextAsync(xmlSourceFile, token).ConfigureAwait(false);
-        if (string.IsNullOrEmpty(xmlContent))
-            throw new IOException("XML content empty after file read.");
-        await Task.Run(() => xml.LoadXml(xmlContent), token).ConfigureAwait(false);
-        IsLoadingXml = false;
-    }
+    [GeneratedRegex("""\W*""")]
+    private static partial Regex StripNonWordChars();
 }

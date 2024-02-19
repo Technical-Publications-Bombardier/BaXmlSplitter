@@ -1,32 +1,35 @@
 ﻿@page "/"
+@using System.Globalization
 @using MauiXmlSplitter.Models
+@using MauiXmlSplitter.Resources
 @using Microsoft.Extensions.Logging
 @inject XmlSplitterViewModel ViewModel
 @inject ILogger<XmlSplitterViewModel> Logger
 @inject IJSRuntime JSRuntime
+@inject CultureInfo Locale
 <div id="splitter">
     <h1>XML Splitter</h1>
 
     <p>
         <label>
-            <span class="text-truncate">Maintenance/Flight Manual&nbsp;</span><span>XML File:</span>
+            <span class="text-truncate">@AppResources.MaintenanceFlightManual&nbsp;</span><span>@AppResources.XMLFile:</span>
         </label>
         <span class="select-file">
             <InputText @bind-Value="ViewModel.SourceXml" />
-            <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickXmlFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingXmlFile">Browse</Button>
+            <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickXmlFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingXmlFile">@AppResources.Browse</Button>
         </span>
     </p>
 
     <p>
         <label>
-            <span class="text-truncate">Units-of-Work&nbsp;</span><span>States File:</span>
+            <span class="text-truncate">@AppResources.UnitsOfWork&nbsp;</span><span>@AppResources.StatesFile:</span>
         </label>
         @if (!(ViewModel.UowLoadSuccess.Success || ViewModel.UowLoadSuccess.Reason == XmlSplitter.ReasonForUowFailure.NoFileProvided))
         {
             <Tooltip Title="@XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadSuccess.Reason]" Color="TooltipColor.Danger">
                 <span class="select-file error">
                     <InputText @bind-Value="ViewModel.UowStatesFile"/>
-                    <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickUowStatesFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingUowStatesFile">Browse</Button>
+                    <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickUowStatesFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingUowStatesFile">@AppResources.Browse</Button>
                 </span>
             </Tooltip>
         }
@@ -34,16 +37,16 @@
         {
             <span class="select-file">
                 <InputText @bind-Value="ViewModel.UowStatesFile"/>
-                <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickUowStatesFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingUowStatesFile">Browse</Button>
+                <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickUowStatesFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingUowStatesFile">@AppResources.Browse</Button>
             </span>
         }
         <div id="uowStatesFileInvalidModal">
-            <Modal @ref="ViewModel.InvalidUowStatesFileModal" Title="Invalid file chosen for units-of-work states" IsVerticallyCentered="true">
+            <Modal @ref="ViewModel.InvalidUowStatesFileModal" Title="@AppResources.InvalidFileChosenForUnitsOfWorkStates" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
                 <BodyTemplate>
-                    <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon>The file <code>@ViewModel.UowStatesFile</code> does not appear to provide valid UOW states: @XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadSuccess.Reason]
+                    <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon>@AppResources.TheFile <code>@ViewModel.UowStatesFile</code> @AppResources.DoesNotAppearToProvideValidUOWStates: @XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadSuccess.Reason]
                 </BodyTemplate>
                 <FooterTemplate>
-                    <Button Color="ButtonColor.Primary" @onclick="_ => ViewModel.InvalidUowStatesFileModal.HideAsync()">OK</Button>
+                    <Button Color="ButtonColor.Primary" @onclick="_ => ViewModel.InvalidUowStatesFileModal.HideAsync()">@AppResources.OK</Button>
                 </FooterTemplate>
             </Modal>
         </div>
@@ -51,17 +54,17 @@
 
     <p>
         <label>
-            <span class="text-truncate">Output Directory</span><span>:</span>
+            <span class="text-truncate">@AppResources.OutputDirectory</span><span>:</span>
         </label>
         <span class="select-file">
             <InputText @bind-Value="ViewModel.OutputDirectory"/>
-            <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickOutputFolder(this, e)" Size="Size.Small">Browse</Button>
+            <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickOutputFolder(this, e)" Size="Size.Small">@AppResources.Browse</Button>
         </span>
     </p>
 
     <p id="selectProgram">
         <label>
-            <span class="text-truncate">@ViewModel.ProgramPickerTitle CSDB&nbsp;</span><span>Program:</span>
+            <span class="text-truncate">@ViewModel.ProgramPickerTitle CSDB&nbsp;</span><span>@AppResources.Program:</span>
         </label>
         <span>
             <select disabled="@(ViewModel.PossiblePrograms.Count() <= 1)" @bind="ViewModel.Program">
@@ -72,15 +75,6 @@
             </select>
         </span>
     </p>
-    <Modal @ref="ViewModel.SelectUowModal" title="Select UOW States" UseStaticBackdrop="true" CloseOnEscape="false">
-        <BodyTemplate>
-            <UowStateGrid/>
-        </BodyTemplate>
-        <FooterTemplate>
-            <Button Color="ButtonColor.Secondary" @onclick="(e)=>{ ViewModel.StatesAreSelected = false; ViewModel.SelectUowModal.HideAsync(); }">Cancel</Button>
-            <Button Color="ButtonColor.Primary" @onclick="(e) => ViewModel.StatesAreSelected = true">OK</Button>
-        </FooterTemplate>
-    </Modal>
     <p>
         @if (ViewModel.IsExecuting)
         {
@@ -90,24 +84,24 @@
         }
         else
         {
-            <Button Color="ButtonColor.Primary" @onclick="e => ViewModel.SplitXmlCommand(this, e)" Disabled="@(!ViewModel.IsReadyToExecuteSplit)">Execute Split</Button>
+            <Button Color="ButtonColor.Primary" @onclick="e => ViewModel.SplitXmlCommand(this, e)" Disabled="@(!ViewModel.IsReadyToExecuteSplit)">@AppResources.ExecuteSplit</Button>
         }
     </p>
     <div id="infobox">
         <span id="requirements">
-            <label>Required:</label>
+            <label>@AppResources.Required:</label>
             <ol>
-                <li class="@(ViewModel.XmlIsProvided ? "done" : "")">Select XML File</li>
-                <li class="@(ViewModel.UowLoadSuccess.Success ? "done" : "")">Select UOW States File</li>
-                <li class="@(ViewModel.OutDirIsProvided ? "done" : "")">Choose Output Directory</li>
-                <li class="@(ViewModel.ProgramIsProvided ? "done" : "")">Select CSDB Program</li>
+                <li class="@(ViewModel.XmlIsProvided ? "done" : "")">@AppResources.SelectXMLFile</li>
+                <li class="@(ViewModel.UowLoadSuccess.Success ? "done" : "")">@AppResources.SelectUOWFile</li>
+                <li class="@(ViewModel.OutDirIsProvided ? "done" : "")">@AppResources.ChooseOutputDirectory</li>
+                <li class="@(ViewModel.ProgramIsProvided ? "done" : "")">@AppResources.SelectCSDBProgram</li>
             </ol>
         </span>
         <ContextMenu Id="clearConsole">
-            <Item OnClick="@ViewModel.ClearLogs">Clear Console</Item>
+            <Item OnClick="@ViewModel.ClearLogs">@AppResources.ClearConsole</Item>
         </ContextMenu>
         <ContextMenuTrigger id="console" MenuId="clearConsole">
-            <div>Status</div>
+            <div>@AppResources.Status</div>
             <pre>
         <code>
             <!-- The status goes here -->
@@ -127,6 +121,17 @@
     </div>
 </div>
 
+<div id="selectUow">
+    <Modal @ref="ViewModel.SelectUowModal" title="@AppResources.SelectUnitsOfWorkToExtractByStates" UseStaticBackdrop="true" CloseOnEscape="false" IsVerticallyCentered="true">
+        <BodyTemplate>
+            <UowStateGrid/>
+        </BodyTemplate>
+        <FooterTemplate>
+            <Button Color="ButtonColor.Secondary" @onclick="(e)=>{ ViewModel.StatesAreSelected = false; ViewModel.SelectUowModal.HideAsync(); ViewModel.UowModalClosed.SetCanceled();  }">@AppResources.Cancel</Button>
+            <Button Color="ButtonColor.Primary" @onclick="(e) => { ViewModel.StatesAreSelected = true; ViewModel.SelectUowModal.HideAsync(); ViewModel.UowModalClosed.SetResult(true); }">@AppResources.OK</Button>
+        </FooterTemplate>
+    </Modal>
+</div>
 
 @code {
     [Inject] ModalService ModalService { get; set; } = default!;
@@ -135,6 +140,7 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture = Locale;
         await ViewModel.InitializeAsync();
         if (Logger is BaLogger baLogger && SynchronizationContext.Current is not null)
         {

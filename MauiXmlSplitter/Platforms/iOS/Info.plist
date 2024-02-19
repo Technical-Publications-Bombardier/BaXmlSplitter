@@ -30,5 +30,19 @@
 	<string>Assets.xcassets/appicon.appiconset</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.1</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>de</string>
+		<string>es</string>
+		<string>fr</string>
+		<string>ja</string>
+		<string>pt</string> <!-- Brazil -->
+		<string>pt-PT</string> <!-- Portugal -->
+		<string>ru</string>
+		<string>zh-Hans</string>
+		<string>zh-Hant</string>
+	</array>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
 </dict>
 </plist>

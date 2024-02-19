@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace BaXmlSplitter
+namespace MauiXmlSplitter.Data
 {
-    internal class InnerSubQueryForKeys
+    public class InnerSubQueryForKeys
     {
         [Required]
         public int ParentObjectId { get; set; }

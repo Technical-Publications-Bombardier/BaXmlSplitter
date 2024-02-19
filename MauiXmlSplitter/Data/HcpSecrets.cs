@@ -1,11 +1,9 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Google.Protobuf.WellKnownTypes;
 using RestSharp;
 using RestSharp.Authenticators;
-using static BaXmlSplitter.Remote.HashiCorpClient;
 
-namespace BaXmlSplitter;
+namespace MauiXmlSplitter.Data;
 
 internal partial class Remote
 {

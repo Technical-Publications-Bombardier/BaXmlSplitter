@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BaXmlSplitter;
+namespace MauiXmlSplitter.Data;
 
 public class Anchor
 {

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 // ReSharper disable UnusedMember.Global
 
-namespace BaXmlSplitter
+namespace MauiXmlSplitter.Data
 {
     public static class CsdbContext
     {

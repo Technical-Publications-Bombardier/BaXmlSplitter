@@ -1,11 +1,13 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using BlazorBootstrap;
 using BlazorContextMenu;
 using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using MauiXmlSplitter.Models;
+using MauiXmlSplitter.Resources;
 using MauiXmlSplitter.Shared;
 using Microsoft.Extensions.Logging;
 
@@ -16,9 +18,11 @@ namespace MauiXmlSplitter;
 /// </summary>
 /// <seealso cref="CommunityToolkit.Mvvm.ComponentModel.ObservableObject" />
 public partial class XmlSplitterViewModel(
+    CultureInfo locale,
     ConcurrentDictionary<DateTime, LogRecord> logs,
     ILogger<XmlSplitterViewModel> logger,
-    ModalService modalService
+    ModalService modalService,
+    XmlSplitReport report
 )
     : ObservableObject, IDisposable, IAsyncDisposable
 
@@ -29,10 +33,10 @@ public partial class XmlSplitterViewModel(
     public static readonly Dictionary<XmlSplitter.ReasonForUowFailure, string> UowFailureReasonElaboration = new()
     {
         { XmlSplitter.ReasonForUowFailure.None, string.Empty },
-        { XmlSplitter.ReasonForUowFailure.NoFileProvided, "No file provided" },
-        { XmlSplitter.ReasonForUowFailure.NotPlaintextFile, "File appears not to be plaintext" },
-        { XmlSplitter.ReasonForUowFailure.NotEnoughContent, "File was empty or too short" },
-        { XmlSplitter.ReasonForUowFailure.DidNotMeetExpectedPattern, "File did not meet expected pattern" }
+        { XmlSplitter.ReasonForUowFailure.NoFileProvided, AppResources.NoFileProvided },
+        { XmlSplitter.ReasonForUowFailure.NotPlaintextFile, AppResources.FileAppearsNotToBePlaintext },
+        { XmlSplitter.ReasonForUowFailure.NotEnoughContent, AppResources.FileWasEmptyOrTooShort },
+        { XmlSplitter.ReasonForUowFailure.DidNotMeetExpectedPattern, AppResources.FileDidNotMeetExpectedPattern }
     };
 
     /// <summary>
@@ -70,15 +74,13 @@ public partial class XmlSplitterViewModel(
     /// <summary>
     ///     The timeout
     /// </summary>
-    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(15.0);
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5.0);
 
 
     /// <summary>
     ///     The XML splitter
     /// </summary>
-    private readonly XmlSplitter xmlSplitter = new(logger, modalService);
-
-    private Regex docnbrRe = DocnbrFromXmlRe();
+    private readonly XmlSplitter xmlSplitter = new(logger, modalService, report);
 
     /// <summary>
     ///     The invalid units-of-work states file modal
@@ -112,9 +114,9 @@ public partial class XmlSplitterViewModel(
     [ObservableProperty] private IQueryable<UowState>? states;
 
     /// <summary>
-    ///     The states are selected
+    ///     Whether the states are selected
     /// </summary>
-    public bool StatesAreSelected = false;
+    [ObservableProperty] private bool statesAreSelected;
 
 
     /// <summary>
@@ -240,6 +242,9 @@ public partial class XmlSplitterViewModel(
         }
     }
 
+    public TaskCompletionSource<bool> UowModalClosed { get; set; } = new();
+
+
     /// <summary>
     ///     Gets or sets the units-of-work states file.
     /// </summary>
@@ -356,7 +361,7 @@ public partial class XmlSplitterViewModel(
     }
 
     /// <summary>
-    ///     Grids the data units-of-work states provider asynchronous.
+    ///     Provides the units-of-work states asynchronously for the <see cref="BlazorBootstrap.Grid{UowState}" />.
     /// </summary>
     /// <param name="request">The request.</param>
     /// <returns></returns>
@@ -366,6 +371,16 @@ public partial class XmlSplitterViewModel(
         return await Task.FromResult(request.ApplyTo(PossibleStatesInManual));
     }
 
+    /// <summary>
+    /// Called when [selected uow states changed].
+    /// </summary>
+    /// <param name="chosenStates">The chosen states.</param>
+    /// <returns></returns>
+    public async Task OnSelectedUowStatesChanged(HashSet<UowState> chosenStates)
+    {
+        States = chosenStates.AsQueryable();
+        await Task.CompletedTask;
+    }
 
     /// <summary>
     ///     Picks the XML file.
@@ -378,32 +393,39 @@ public partial class XmlSplitterViewModel(
         PickOptions options = new()
         {
             FileTypes = XmlType,
-            PickerTitle = "Select XML File"
+            PickerTitle = AppResources.SelectXMLFile
         };
         if (await FilePicker.Default.PickAsync(options) is { FullPath: not null } result)
             await SelectXmlFile(result.FullPath, cts.Token);
     }
 
+    /// <summary>
+    /// Helper method for text field (by path) or GUI XML file selection.
+    /// </summary>
+    /// <param name="fullPath">The full path to the XML file.</param>
+    /// <param name="token">The cancellation token.</param>
+    /// <returns></returns>
     private async Task SelectXmlFile(string fullPath, CancellationToken token)
     {
         try
         {
-            if(SourceXml != fullPath)
+            if (SourceXml != fullPath)
                 SourceXml = fullPath;
             LoadingXmlFile = true;
             xmlSplitter.XmlContent = await File.ReadAllTextAsync(SourceXml, token).ConfigureAwait(false);
+            xmlSplitter.XmlSourceFile = SourceXml;
         }
         catch (OperationCanceledException)
         {
             var option = new ModalOption
             {
                 FooterButtonColor = ButtonColor.Warning,
-                FooterButtonText = "OK",
+                FooterButtonText = AppResources.OK,
                 IsVerticallyCentered = true,
-                Message = "The XML loading was cancelled",
+                Message = AppResources.TheXMLLoadingWasCancelled,
                 ShowFooterButton = true,
                 Size = ModalSize.Regular,
-                Title = "Cancelled XML Selection",
+                Title = AppResources.CancelledXMLSelection,
                 Type = ModalType.Warning
             };
             await ModalService.ShowAsync(option);
@@ -425,7 +447,7 @@ public partial class XmlSplitterViewModel(
         PickOptions options = new()
         {
             FileTypes = UowType,
-            PickerTitle = "Select UOW File"
+            PickerTitle = AppResources.SelectUOWFile
         };
         if (await FilePicker.Default.PickAsync(options) is { FullPath: not null } result)
             await SelectUowFile(result.FullPath, cts.Token);
@@ -463,62 +485,88 @@ public partial class XmlSplitterViewModel(
     public async Task SplitXmlCommand(object sender, EventArgs e, CancellationToken token = default)
     {
         IsExecuting = true;
-        var docnbrFromXml = DocnbrFromXmlRe().Match(xmlSplitter.XmlContent).Groups["docnbr"].Value;
-        var docnbrFromUow = DocnbrFromUowRe().Match(xmlSplitter.UowContent).Groups["docnbr"].Value;
+        try
+        {
+            var docnbrFromXml = DocnbrFromXmlRe().Match(xmlSplitter.XmlContent).Groups["docnbr"].Value;
+            var docnbrFromUow = DocnbrFromUowRe().Match(xmlSplitter.UowContent).Groups["docnbr"].Value;
 
-        if (string.IsNullOrEmpty(docnbrFromXml))
-            logger.LogCritical("Could not read docnbr from XML");
-        if (string.IsNullOrEmpty(docnbrFromUow))
-            logger.LogCritical("Could not read docnbr from UOW states file");
-        if (docnbrFromUow != docnbrFromXml)
-            logger.LogCritical("XML docnbr '{xmlDocnbr}' does not match UOW states file docnbr '{uowDocnbr}'",
-                docnbrFromXml, docnbrFromUow);
-
-        await xmlSplitter.ExecuteSplit(sender, e, new Progress<double>(value => Progress = value), token)
-            .ConfigureAwait(true);
-        IsExecuting = false;
+            if (string.IsNullOrEmpty(docnbrFromXml))
+                logger.LogCritical(AppResources.CouldNotReadDocnbrFromXML);
+            if (string.IsNullOrEmpty(docnbrFromUow))
+                logger.LogCritical(AppResources.CouldNotReadDocnbrFromUOWStatesFile);
+            if (docnbrFromUow != docnbrFromXml)
+                logger.LogCritical(AppResources.XMLDocnbrXmlDocnbrDoesNotMatchUOWStatesFileDocnbrUowDocnbr,
+                    docnbrFromXml, docnbrFromUow);
+            xmlSplitter.UowStates = await xmlSplitter.ParseUowContentAsync(token).ConfigureAwait(false);
+            if (xmlSplitter.UowStates is not { } parsedStates)
+            {
+                logger.LogCritical("Could not parse UOW states file");
+                return;
+            }
+            UowModalClosed = new TaskCompletionSource<bool>();
+            await SelectUowModal.ShowAsync().ConfigureAwait(true); // Sets this.States
+            await UowModalClosed.Task.ConfigureAwait(true); // Wait for the modal to close
+            if (States is null || !StatesAreSelected)
+            {
+                logger.LogWarning("No UOW states selected");
+                return;
+            }
+            xmlSplitter.FullyQualifiedSelectedStates = parsedStates.Where(state =>
+                States.Select(uow => uow.StateValue).Contains(state.StateValue));
+            await xmlSplitter.ExecuteSplit(sender, e, new Progress<double>(value => Progress = value), token)
+                .ConfigureAwait(true);
+        }
+        finally
+        {
+            IsExecuting = false;
+        }
     }
 
+    /// <summary>
+    ///     Initializes the Xml Splitter View Model asynchronously.
+    /// </summary>
+    /// <returns></returns>
     public async Task InitializeAsync()
     {
         IsLoading = true;
         var cts = new CancellationTokenSource();
         try
         {
-            logger.LogInformation("Initializing XmlSplitterViewModel");
+            logger.LogInformation(AppResources.InitializingXmlSplitterViewModel);
             PropertyChanged += async (sender, e) =>
             {
                 if (e.PropertyName != nameof(SourceXml) ||
                     Path.GetDirectoryName(SourceXml) is not { } xmlDirectory) return;
                 await SelectXmlFile(SourceXml, cts.Token);
                 var wipDir = new char[xmlDirectory.Length + 1 + XmlSplitter.DefaultOutputDir.Length];
-                OutputDirectory = (Path.TryJoin(Path.GetDirectoryName(SourceXml), XmlSplitter.DefaultOutputDir,
+                OutputDirectory = Path.TryJoin(Path.GetDirectoryName(SourceXml), XmlSplitter.DefaultOutputDir,
                     wipDir, out _)
                     ? string.Concat(wipDir)
-                    : OutputDirectory) ?? OutputDirectory;
+                    : OutputDirectory;
             };
             PropertyChanged += async (sender, e) =>
             {
                 if (e.PropertyName == nameof(UowStatesFile)) await SelectUowFile(UowStatesFile, cts.Token);
             };
             await xmlSplitter.LoadAssets(cts.Token);
-            logger.LogInformation("Initialized XmlSplitterViewModel");
+            Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentUICulture = locale;
+            logger.LogInformation(AppResources.InitializedXmlSplitterViewModel);
         }
         catch (OperationCanceledException)
         {
-            Debug.WriteLine("Initialization was cancelled");
+            Debug.WriteLine(AppResources.InitializationWasCancelled);
         }
         catch when (!Debugger.IsAttached)
         {
             ModalOption option = new()
             {
                 FooterButtonColor = ButtonColor.Danger,
-                FooterButtonText = "Reload",
+                FooterButtonText = AppResources.Reload,
                 IsVerticallyCentered = true,
-                Message = "Could not load static resources",
+                Message = AppResources.CouldNotLoadStaticResources,
                 ShowFooterButton = true,
                 Size = ModalSize.Regular,
-                Title = "Error initializing",
+                Title = AppResources.ErrorInitializing,
                 Type = ModalType.Danger
             };
             await ModalService.ShowAsync(option).ContinueWith(_ => InitializeAsync(), cts.Token);
@@ -529,16 +577,16 @@ public partial class XmlSplitterViewModel(
         }
     }
 
+    public string XmlSourceFileBaseName => xmlSplitter.XmlSourceFileBaseName;
+    /// <summary>
+    ///     Clears the logs.
+    /// </summary>
+    /// <param name="e">The <see cref="BlazorContextMenu.ItemClickEventArgs" /> instance containing the event data.</param>
     public void ClearLogs(ItemClickEventArgs e)
     {
         Debug.WriteLine(
             $"Item Clicked => Menu: {e.ContextMenuId}, MenuTarget: {e.ContextMenuTargetId}, IsCanceled: {e.IsCanceled}, MenuItem: {e.MenuItemElement}, MouseEvent: {e.MouseEvent}");
         Logs.Clear();
-    }
-
-    public void SelectStates()
-    {
-        // return States is null ? [] : [.. States.Where(s => s.IsSelected)];
     }
 
     [GeneratedRegex("""docnbr="(?<docnbr>[^"]+)""")]

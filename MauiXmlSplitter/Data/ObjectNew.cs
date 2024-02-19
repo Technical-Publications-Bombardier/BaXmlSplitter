@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BaXmlSplitter
+namespace MauiXmlSplitter.Data
 {
     public class ObjectNew
     {
@@ -68,5 +68,7 @@ namespace BaXmlSplitter
         public int? Checksum { get; set; }
 
         public int? Flags { get; set; }
+        // Navigation property
+        public List<ObjectAttribute>? ObjectAttributes { get; set; }
     }
 }

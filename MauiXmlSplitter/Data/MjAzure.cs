@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BaXmlSplitter;
+namespace MauiXmlSplitter.Data;
 
 /// <summary>
 /// The Azure Application Insights details
