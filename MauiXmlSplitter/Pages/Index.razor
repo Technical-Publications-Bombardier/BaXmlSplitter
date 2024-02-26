@@ -2,8 +2,10 @@
 @using System.Globalization
 @using MauiXmlSplitter.Models
 @using MauiXmlSplitter.Resources
+@using Microsoft.Extensions.Azure
 @using Microsoft.Extensions.Logging
 @inject XmlSplitterViewModel ViewModel
+@inject NavigationManager NavigationManager
 @inject ILogger<XmlSplitterViewModel> Logger
 @inject IJSRuntime JSRuntime
 @inject CultureInfo Locale
@@ -24,9 +26,9 @@
         <label>
             <span class="text-truncate">@AppResources.UnitsOfWork&nbsp;</span><span>@AppResources.StatesFile:</span>
         </label>
-        @if (!(ViewModel.UowLoadSuccess.Success || ViewModel.UowLoadSuccess.Reason == XmlSplitter.ReasonForUowFailure.NoFileProvided))
+        @if (!(ViewModel.UowLoadAttempt.Success || ViewModel.UowLoadAttempt.Reason == XmlSplitter.ReasonForUowFailure.NoFileProvided))
         {
-            <Tooltip Title="@XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadSuccess.Reason]" Color="TooltipColor.Danger">
+            <Tooltip Title="@XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadAttempt.Reason]" Color="TooltipColor.Danger">
                 <span class="select-file error">
                     <InputText @bind-Value="ViewModel.UowStatesFile"/>
                     <Button Color="ButtonColor.Secondary" @onclick="e => ViewModel.PickUowStatesFile(this, e)" Size="Size.Small" Loading="@ViewModel.LoadingUowStatesFile">@AppResources.Browse</Button>
@@ -43,7 +45,7 @@
         <div id="uowStatesFileInvalidModal">
             <Modal @ref="ViewModel.InvalidUowStatesFileModal" Title="@AppResources.InvalidFileChosenForUnitsOfWorkStates" IsVerticallyCentered="true" Size="ModalSize.ExtraLarge">
                 <BodyTemplate>
-                    <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon>@AppResources.TheFile <code>@ViewModel.UowStatesFile</code> @AppResources.DoesNotAppearToProvideValidUOWStates: @XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadSuccess.Reason]
+                    <Icon Name="IconName.ExclamationTriangleFill" class="me-2"></Icon>@AppResources.TheFile <code>@ViewModel.UowStatesFile</code> @AppResources.DoesNotAppearToProvideValidUOWStates: @XmlSplitterViewModel.UowFailureReasonElaboration[ViewModel.UowLoadAttempt.Reason]
                 </BodyTemplate>
                 <FooterTemplate>
                     <Button Color="ButtonColor.Primary" @onclick="_ => ViewModel.InvalidUowStatesFileModal.HideAsync()">@AppResources.OK</Button>
@@ -66,6 +68,9 @@
         <label>
             <span class="text-truncate">@ViewModel.ProgramPickerTitle CSDB&nbsp;</span><span>@AppResources.Program:</span>
         </label>
+        <Tooltip Title=@AppResources.CsdbProgramInferred Color="TooltipColor.Success">
+            <span id="program-checkmark" class="@(ViewModel.PossiblePrograms.Count() <= 1 ? "mdi mdi-check-circle" : "hide")"></span>
+        </Tooltip>
         <span>
             <select disabled="@(ViewModel.PossiblePrograms.Count() <= 1)" @bind="ViewModel.Program">
                 @foreach (var program in ViewModel.PossiblePrograms)
@@ -92,9 +97,9 @@
             <label>@AppResources.Required:</label>
             <ol>
                 <li class="@(ViewModel.XmlIsProvided ? "done" : "")">@AppResources.SelectXMLFile</li>
-                <li class="@(ViewModel.UowLoadSuccess.Success ? "done" : "")">@AppResources.SelectUOWFile</li>
+                <li class="@(ViewModel.UowLoadAttempt.Success ? "done" : "")">@AppResources.SelectUOWFile</li>
                 <li class="@(ViewModel.OutDirIsProvided ? "done" : "")">@AppResources.ChooseOutputDirectory</li>
-                <li class="@(ViewModel.ProgramIsProvided ? "done" : "")">@AppResources.SelectCSDBProgram</li>
+                <li class="@(ViewModel.ProgramIsProvided || ViewModel.PossiblePrograms.Count() == 1 ? "done" : "")">@AppResources.SelectCSDBProgram</li>
             </ol>
         </span>
         <ContextMenu Id="clearConsole">
@@ -135,24 +140,41 @@
 
 @code {
     [Inject] ModalService ModalService { get; set; } = default!;
-
+    /// <summary>
+    ///  Navigates to the <see cref="SplittingReport"/> report page
+    /// </summary>
+    /// <param name="outputDir"></param>
+    private void NavigateToReportPage(string outputDir)
+    {
+        NavigationManager.NavigateTo($"/report?{nameof(outputDir)}={outputDir}");
+    }
     /// <inheritdoc />
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture = Locale;
         await ViewModel.InitializeAsync();
-        if (Logger is BaLogger baLogger && SynchronizationContext.Current is not null)
+        if (SynchronizationContext.Current is not null)
         {
-            Logger = new BaLogger(SynchronizationContext.Current, ViewModel.Logs, LogLevel.Trace);
-            baLogger.OnLogAdded += StateHasChanged;
+            ViewModel.NavigateToReport += NavigateToReportPage;
+            if (Logger is BaLogger baLogger)
+            {
+                Logger = new BaLogger(SynchronizationContext.Current, ViewModel.Logs, LogLevel.Trace);
+                baLogger.OnLogAdded += StateHasChanged;
+            }
         }
-        ViewModel.PropertyChanged += (sender, e) =>
+        ViewModel.PropertyChanged += async (sender, e) =>
         {
-            if (e.PropertyName is nameof(ViewModel.UowStatesFile) or nameof(ViewModel.SourceXml) or nameof(ViewModel.PossiblePrograms)) StateHasChanged();
+            if (e.PropertyName is nameof(ViewModel.UowStatesFile) or nameof(ViewModel.SourceXml) or nameof(ViewModel.PossiblePrograms) or nameof(ViewModel.LoadingUowStatesFile) or nameof(ViewModel.IsReadyToExecuteSplit) or nameof(ViewModel.LoadingXmlFile) or nameof(ViewModel.OutputDirectory) or nameof(ViewModel.ProgramIsProvided))
+                await InvokeAsync(StateHasChanged);
+        };
+        ViewModel.PropertyChanged += async (sender, e) =>
+        {
+            if (e.PropertyName is not nameof(ViewModel.PossiblePrograms) || ViewModel.PossiblePrograms.Count() != 1) return;
+            ViewModel.Program = ViewModel.PossiblePrograms.First();
+            await InvokeAsync(StateHasChanged);
         };
     }
-
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

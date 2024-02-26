@@ -192,6 +192,9 @@
   <data name="CreatingOutputDirectoryOutputDirectory" xml:space="preserve">
     <value>Creating output directory: '{OutputDirectory}'</value>
   </data>
+  <data name="CsdbProgramInferred" xml:space="preserve">
+    <value>CSDB Program succesfully identified from XML docnbr</value>
+  </data>
   <data name="DeserializedCheckoutItemsWithNumItemsItems" xml:space="preserve">
     <value>Deserialized CheckoutItems with {NumItems} items</value>
   </data>
@@ -215,6 +218,9 @@
   </data>
   <data name="ErrorInitializing" xml:space="preserve">
     <value>Error initializing</value>
+  </data>
+  <data name="ErrorLoadingXML" xml:space="preserve">
+    <value>Error loading XML</value>
   </data>
   <data name="ExecuteSplit" xml:space="preserve">
     <value>Execute Split</value>
@@ -307,6 +313,12 @@
   <data name="Save" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="Saving" xml:space="preserve">
+	  <value>Saving...</value>
+  </data>
+  <data name="SavingFragmentsCancelled" xml:space="preserve">
+	  <value>Saving fragments cancelled</value>
+  </data>
   <data name="Secrets" xml:space="preserve">
     <value>Secrets</value>
   </data>
@@ -356,11 +368,20 @@
   <data name="TheXMLLoadingWasCancelled" xml:space="preserve">
     <value>The XML loading was cancelled</value>
   </data>
+  <data name="UnableToSaveToWriteToPathOutput" xml:space="preserve">
+    <value>Unable to save to write to path {output}</value>
+  </data>
+  <data name="UnableToWriteToOutputPath" xml:space="preserve">
+    <value>Unable to write to output path</value>
+  </data>
   <data name="UnitsOfWork" xml:space="preserve">
     <value>Units-of-Work</value>
   </data>
   <data name="UOWNotParsed" xml:space="preserve">
     <value>UOW not parsed</value>
+  </data>
+  <data name="WritingSplitReportAsFormat" xml:space="preserve">
+    <value>Writing split report as {format}</value>
   </data>
   <data name="WroteFragmentName" xml:space="preserve">
     <value>Wrote fragment '{name}'</value>

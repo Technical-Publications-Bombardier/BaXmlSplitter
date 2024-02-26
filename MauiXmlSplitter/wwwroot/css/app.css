@@ -46,6 +46,10 @@
 }
 
 
+:root {
+    --bb-sidebar-top-row-background-color: #003E51;
+}
+
 /* Set the font for flag emojis */
 span#emoji, #languages .d-flex > span:nth-child(2) {
     font-family: 'Noto Color Emoji', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -62,11 +66,48 @@ span#emoji, #languages .d-flex > span:nth-child(2) {
     --golden-ratio: 1.618033988749894;
     --neon-pink: rgb(255, 20, 147);
 }
-
+#bbdlogo img {
+    width: 100vw;
+}
 #selectUow .modal-content {
     width: revert !important;
 }
 
+#program-checkmark {
+    position: relative;
+    color: green;
+    right: 1em;
+}
+
+.bb-tooltip-success .tooltip-arrow {
+    left: -1.15em !important;
+}
+
+#program-checkmark::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1em;
+    height: 1em;
+    border-radius: 50%;
+    box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00, 0 0 20px #00ff00;
+    animation: glow 1s ease-out forwards;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00, 0 0 20px #00ff00;
+    }
+
+    100% {
+        box-shadow: 0 0 0px #00ff00, 0 0 0px #00ff00, 0 0 0px #00ff00, 0 0 0px #00ff00;
+    }
+}
+.hide {
+    display: none;
+}
 article {
     overflow-y: clip;
 }
@@ -203,16 +244,29 @@ input[name='ViewModel.OutputDirectory'] button {
     grid-area: BrowseOutDir;
 }
 
-code,
-#splitter select,
-#console::before {
+code, #splitter select, #console::before {
     font-family: 'MonoidNerdFont-Regular', 'Adjusted Lucida Sans Typewriter Fallback', 'Lucida Sans Typewriter', monospace;
+    font-size: 0.80rem !important;
+    background-color: revert !important;
 }
-
+th code {
+    padding: 0 !important;
+}
 #requirements {
     flex: 1 1 50%;
 }
+#requirements li {
+    font-weight: 800;
+}
 
+.done {
+    color: grey;
+    text-decoration: line-through;
+    font-weight: revert !important;
+    list-style-position: inside;
+    position: relative;
+    right: 1.05em;
+}
 #console {
     width: var(--console-width);
     max-height: calc(var(--console-width) / var(--golden-ratio));
@@ -226,20 +280,28 @@ code,
 /*#endregion Infobox */
 
 /*#region Media Queries */
-@media (max-width: 760px) {
+@media (min-width: 640px) {
+
+    #bbdlogo .navbar-brand-image.me-2, #bbdlogo a {
+        margin-right: 0 !important;
+    }
+}
+@media (max-width: 640px) and (min-width: 290px){
+
+    .navbar-brand.d-flex.align-items-center {
+        position: absolute;
+    }
+
+ }
+@media (min-width: 640px) and (max-width: 760px) {
 
     #console {
         max-width: 100vw;
     }
+
 }
 
 @media (max-width: 640px) {
-
-    .navbar-brand img {
-        max-height: fit-content;
-        width: 100%;
-    }
-
     #infobox {
         flex-wrap: wrap;
     }
@@ -274,12 +336,12 @@ code,
     height: calc(var(--console-width) / var(--golden-ratio));
     color: white;
     /* Set the text color to white for better visibility */
-    outline: 1px solid darkslategray;
+    outline: 1px solid var(--bb-sidebar-top-row-background-color);
 }
 
-#console pre {
-    background-color: darkslategray;
-}
+    #console pre {
+        background-color: var(--bb-sidebar-top-row-background-color);
+    }
 
 #console code {
     overflow-y: auto;
@@ -444,12 +506,6 @@ a,
     min-width: 25vw;
     width: var(--input-width);
 }
-
-.done {
-    color: grey;
-    text-decoration: line-through;
-}
-
 #selectProgram, .select-file {
     display: grid;
     grid-template-columns: 1fr min-content;

@@ -286,6 +286,15 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to CSDB Program succesfully identified from XML docnbr.
+        /// </summary>
+        internal static string CsdbProgramInferred {
+            get {
+                return ResourceManager.GetString("CsdbProgramInferred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deserialized CheckoutItems with {NumItems} items.
         /// </summary>
         internal static string DeserializedCheckoutItemsWithNumItemsItems {
@@ -358,6 +367,15 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error loading XML.
+        /// </summary>
+        internal static string ErrorLoadingXML {
+            get {
+                return ResourceManager.GetString("ErrorLoadingXML", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Execute Split.
         /// </summary>
         internal static string ExecuteSplit {
@@ -426,6 +444,15 @@ namespace MauiXmlSplitter.Resources {
         internal static string GraphicAlt {
             get {
                 return ResourceManager.GetString("GraphicAlt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have permission to create a directory at &apos;{OutputDirectory}&apos;.
+        /// </summary>
+        internal static string htmlPage {
+            get {
+                return ResourceManager.GetString("htmlPage", resourceCulture);
             }
         }
         
@@ -619,6 +646,24 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Saving....
+        /// </summary>
+        internal static string Saving {
+            get {
+                return ResourceManager.GetString("Saving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saving fragments cancelled.
+        /// </summary>
+        internal static string SavingFragmentsCancelled {
+            get {
+                return ResourceManager.GetString("SavingFragmentsCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Secrets.
         /// </summary>
         internal static string Secrets {
@@ -763,6 +808,24 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to save to write to path {output}.
+        /// </summary>
+        internal static string UnableToSaveToWriteToPathOutput {
+            get {
+                return ResourceManager.GetString("UnableToSaveToWriteToPathOutput", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to write to output path.
+        /// </summary>
+        internal static string UnableToWriteToOutputPath {
+            get {
+                return ResourceManager.GetString("UnableToWriteToOutputPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Units-of-Work.
         /// </summary>
         internal static string UnitsOfWork {
@@ -777,6 +840,15 @@ namespace MauiXmlSplitter.Resources {
         internal static string UOWNotParsed {
             get {
                 return ResourceManager.GetString("UOWNotParsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Writing split report as {format}.
+        /// </summary>
+        internal static string WritingSplitReportAsFormat {
+            get {
+                return ResourceManager.GetString("WritingSplitReportAsFormat", resourceCulture);
             }
         }
         

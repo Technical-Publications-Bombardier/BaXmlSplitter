@@ -63,6 +63,13 @@
 		<UserSecretsId>c2cde140-c484-4162-bcb9-4855403081ea</UserSecretsId>
 		<SignAssembly>False</SignAssembly>
 		<DelaySign>True</DelaySign>
+		<GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+		<AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+		<GenerateTestArtifacts>True</GenerateTestArtifacts>
+		<AppInstallerUri>https://blobstoragedev001.blob.core.windows.net/bastorage/</AppInstallerUri>
+		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	</PropertyGroup>
 	<!-- 1. Install npm packages -->
 	<Target Name="NpmInstall" Inputs="package.json" Outputs="node_modules/.install-stamp">
@@ -81,7 +88,7 @@
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
+		<MauiImage Update="Resources\Images\appiconfg.svg" BaseSize="456,456" />
 
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
@@ -115,11 +122,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.20.0-beta.1" />
-		<PackageReference Include="Blazor.Bootstrap" Version="1.11.1" />
+		<PackageReference Include="Blazor.Bootstrap" Version="2.0.0" />
 		<PackageReference Include="Blazor.ContextMenu" Version="1.17.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-		<PackageReference Include="DartSassBuilder" Version="1.0.0" />
+		<PackageReference Include="DartSassBuilder" Version="1.1.0" />
 		<PackageReference Include="F23.StringSimilarity" Version="6.0.0" />
 		<PackageReference Include="Google.Protobuf" Version="3.26.0-rc2" />
 		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0" />

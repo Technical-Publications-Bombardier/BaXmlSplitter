@@ -7,9 +7,12 @@
     <base href="/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.css" />
     <link rel="stylesheet" href="css/bootstrap-icons/bootstrap-icons.css" />
+    <!-- ReSharper disable once Html.PathError -->
     <link href="_content/Blazor.Bootstrap/blazor.bootstrap.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
+    <!-- ReSharper disable once Html.PathError -->
     <link href="MauiXmlSplitter.styles.css" rel="stylesheet" />
+    <!-- ReSharper disable once Html.PathError -->
     <link href="_content/Blazor.ContextMenu/blazorContextMenu.min.css" rel="stylesheet" />
 </head>
 
@@ -25,6 +28,7 @@
         <a class="dismiss">🗙</a>
     </div>
 
+    <!-- ReSharper disable once Html.PathError -->
     <script src="_framework/blazor.webview.js" autostart="false"></script>
     <script src="_content/Blazor.ContextMenu/blazorContextMenu.min.js"></script>
     <!-- #region Blazor.Bootstrap -->
@@ -40,6 +44,9 @@
                 });
                 observer.observe(element, { childList: true });
             }
+        }
+        window.getRenderedHtml = function () {
+            return document.querySelector("#splittingReport").outerHTML;
         }
     </script>
 </body>

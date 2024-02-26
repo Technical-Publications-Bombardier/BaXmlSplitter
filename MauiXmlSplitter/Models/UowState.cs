@@ -264,31 +264,31 @@ namespace MauiXmlSplitter.Models
                 // Set the corresponding property of the UowState instance
                 switch (propertyName)
                 {
-                    case "statename":
+                    case var property when string.Equals(property,"statename",StringComparison.InvariantCultureIgnoreCase):
                         uowState.StateName = reader.GetString();
                         break;
-                    case "value":
+                    case var property when string.Equals(property,"value",StringComparison.InvariantCultureIgnoreCase):
                         uowState.StateValue = reader.GetInt32();
                         break;
-                    case "remark":
+                    case var property when string.Equals(property,"remark",StringComparison.InvariantCultureIgnoreCase):
                         uowState.Remark = reader.GetString();
                         break;
-                    case "xpath":
+                    case var property when string.Equals(property,"xpath",StringComparison.InvariantCultureIgnoreCase):
                         uowState.XPath = reader.GetString();
                         break;
-                    case "tagname":
+                    case var property when string.Equals(property,"tagname",StringComparison.InvariantCultureIgnoreCase):
                         uowState.TagName = reader.GetString();
                         break;
-                    case "key":
+                    case var property when string.Equals(property,"key",StringComparison.InvariantCultureIgnoreCase):
                         uowState.Key = reader.GetString();
                         break;
-                    case "resource":
+                    case var property when string.Equals(property,"resource",StringComparison.InvariantCultureIgnoreCase):
                         uowState.Resource = reader.GetString();
                         break;
-                    case "title":
+                    case var property when string.Equals(property,"title",StringComparison.InvariantCultureIgnoreCase):
                         uowState.Title = reader.GetString();
                         break;
-                    case "level":
+                    case var property when string.Equals(property,"level",StringComparison.InvariantCultureIgnoreCase):
                         uowState.Level = reader.GetString();
                         break;
                     default:
@@ -306,15 +306,15 @@ namespace MauiXmlSplitter.Models
             writer.WriteStartObject();
 
             // Write the properties of the UowState instance
-            writer.WriteString("statename", value.StateName);
-            writer.WriteNumber("value", value.StateValue ?? 0);
-            writer.WriteString("remark", value.Remark);
-            writer.WriteString("xpath", value.XPath);
-            writer.WriteString("tagname", value.TagName);
-            writer.WriteString("key", value.Key);
-            writer.WriteString("resource", value.Resource);
-            writer.WriteString("title", value.Title);
-            writer.WriteString("level", value.Level);
+            writer.WriteString("StateName", value.StateName);
+            writer.WriteNumber("Value", value.StateValue ?? 0);
+            writer.WriteString("Remark", value.Remark);
+            writer.WriteString("XPath", value.XPath);
+            writer.WriteString("TagName", value.TagName);
+            writer.WriteString("Key", value.Key);
+            writer.WriteString("Resource", value.Resource);
+            writer.WriteString("Title", value.Title);
+            writer.WriteString("Level", value.Level);
 
             // Write the end object token
             writer.WriteEndObject();

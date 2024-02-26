@@ -1,23 +1,25 @@
+#if ANDROID
+using Android.Runtime;
+#endif
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Reflection;
 using BlazorBootstrap;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
+using MauiXmlSplitter.Models;
 using MauiXmlSplitter.Resources;
 using MauiXmlSplitter.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 // ReSharper disable once RedundantUsingDirective
 using Microsoft.ApplicationInsights;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.ApplicationInsights;
-using Microsoft.Maui.Platform;
 
 namespace MauiXmlSplitter;
 
 /// <summary>
-/// Xml Splitter program
+///     Xml Splitter program
 /// </summary>
 public static class MauiProgram
 {
@@ -29,7 +31,7 @@ public static class MauiProgram
 #endif
 
     /// <summary>
-    /// Creates the MAUI application.
+    ///     Creates the MAUI application.
     /// </summary>
     /// <returns></returns>
     public static MauiApp CreateMauiApp()
@@ -45,16 +47,41 @@ public static class MauiProgram
             .UseMauiCommunityToolkit();
         builder.Services.AddSingleton(new MainPage());
         builder.Services.AddLocalization();
-        builder.Services.AddSingleton<XmlSplitReport>();
-        builder.Services.AddSingleton<CultureInfo>(_ => new CultureInfo(Preferences.Default.Get(nameof(SettingsViewModel.Culture), CultureInfo.CurrentCulture.TwoLetterISOLanguageName)));
-        builder.Services.AddSingleton<ConcurrentDictionary<DateTime, LogRecord>>();
+        builder.Services.AddTransient<BaXmlDocument>(_ => new BaXmlDocument
+        {
+            ResolveEntities = false
+        });
+        builder.Services.AddSingleton<CultureInfo>(_ =>
+            new CultureInfo(Preferences.Default.Get(nameof(SettingsViewModel.Culture),
+                CultureInfo.CurrentCulture.TwoLetterISOLanguageName)));
         builder.Services.AddSingleton<ModalService>();
+        builder.Services.AddSingleton<ConcurrentDictionary<DateTime, LogRecord>>();
         builder.Services.AddSingleton<ILogger<XmlSplitterViewModel>>(services =>
         {
             var logs = services.GetRequiredService<ConcurrentDictionary<DateTime, LogRecord>>();
-            return new BaLogger(SynchronizationContext.Current, logs, LogLevel.Trace);
+            return SynchronizationContext.Current != null
+                ? new BaLogger(SynchronizationContext.Current, logs, LogLevel.Trace)
+                : default!;
         });
-        builder.Services.AddSingleton<XmlSplitterViewModel>();
+        builder.Services.AddSingleton<ConcurrentBag<XmlSplitReportEntry>>();
+        builder.Services.AddSingleton<IXmlSplitReport<XmlSplitter>>(services =>
+        {
+            var report = services.GetRequiredService<ConcurrentBag<XmlSplitReportEntry>>();
+            return SynchronizationContext.Current != null
+                ? new XmlSplitReport(SynchronizationContext.Current, string.Empty)
+                : default!;
+        });
+        builder.Services.AddSingleton<XmlSplitterViewModel>(services =>
+        {
+            var locale = services.GetRequiredService<CultureInfo>();
+            var logs = services.GetRequiredService<ConcurrentDictionary<DateTime, LogRecord>>();
+            var logger = services.GetRequiredService<ILogger<XmlSplitterViewModel>>();
+            var report = services.GetRequiredService<IXmlSplitReport<XmlSplitter>>();
+            var modalService = services.GetRequiredService<ModalService>();
+            return SynchronizationContext.Current != null
+                ? new XmlSplitterViewModel(locale, logs, logger, modalService, SynchronizationContext.Current, report)
+                : default!;
+        });
         builder.Services.AddSingleton<SettingsViewModel>();
         builder.Services.AddSingleton(FolderPicker.Default);
         builder.Services.AddBlazorContextMenu();
@@ -66,7 +93,8 @@ public static class MauiProgram
         builder.Configuration.Bind("DetailedErrors", "true");
 
 #else
-        builder.Services.AddApplicationInsightsTelemetryWorkerService((a) => a.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
+        builder.Services.AddApplicationInsightsTelemetryWorkerService((a) => a.ConnectionString =
+ builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
         builder.Services.AddLogging(logging => logging.AddApplicationInsights(
             telConfig => telConfig.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"],
             options => { }));
@@ -103,4 +131,3 @@ ObjCRuntime.MarshalManagedExceptionMode.UnwindNativeCode;
         return host;
     }
 }
-

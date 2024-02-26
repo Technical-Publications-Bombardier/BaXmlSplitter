@@ -1,8 +1,3 @@
-using BlazorBootstrap;
-using CommunityToolkit.Mvvm.ComponentModel;
-using F23.StringSimilarity;
-using MauiXmlSplitter.Resources;
-using Microsoft.Extensions.Logging;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -12,6 +7,12 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml;
+using BlazorBootstrap;
+using CommunityToolkit.Mvvm.ComponentModel;
+using F23.StringSimilarity;
+using MauiXmlSplitter.Pages;
+using MauiXmlSplitter.Resources;
+using Microsoft.Extensions.Logging;
 using static MauiXmlSplitter.Models.CsdbContext;
 using Path = System.IO.Path;
 
@@ -20,7 +21,7 @@ namespace MauiXmlSplitter.Models;
 /// <summary>
 ///     XML Splitter class
 /// </summary>
-public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlSplitReport report) : ObservableObject
+public partial class XmlSplitter(ILogger logger, ModalService modalService, IXmlSplitReport<XmlSplitter> report, BaXmlDocument xml) : ObservableObject
 {
     public enum ReasonForUowFailure
     {
@@ -36,12 +37,6 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
     /// </summary>
     public const string DefaultOutputDir = "WIP";
 
-    /// <summary>The timestamp format.</summary>
-    internal const string LogTimestampFormat = "HH:mm:ss.fffffff";
-
-    /// <summary>The report timestamp format</summary>
-    internal const string ReportTimestampFormat = "yyyy - MM - dd - HH - mm - ss - fffffff";
-
     /// <summary>The CSDB programs.</summary>
     internal static readonly string[] Programs =
         Enum.GetNames<CsdbProgram>().Where(e => e != Enum.GetName(CsdbProgram.None)).ToArray();
@@ -53,12 +48,6 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
 
     private readonly JsonSerializerOptions options = new();
 
-    /// <summary>The XML object that will parse the XML content. </summary>
-    /// <seealso cref="BaXmlDocument" />
-    private readonly BaXmlDocument xml = new()
-    {
-        ResolveEntities = false
-    };
 
     /// <summary>
     ///     The CSDB element names eligible for importing to RWS Contenta. Initialized by
@@ -140,16 +129,24 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
         set => uowContent = value;
     }
 
+    private byte[] xmlContentHash = [];
+
     public string XmlContent
     {
         get => xmlContent ?? string.Empty;
         set
         {
             xmlContent = value;
+            OnPropertyChanged();
+            if (string.IsNullOrEmpty(xmlContent)) return;
+            var newContentHash = MD5.HashData(Encoding.UTF8.GetBytes(xmlContent));
+            if (xmlContentHash == newContentHash)
+                return;
+            xmlContentHash = newContentHash;
             try
             {
+                xml = new BaXmlDocument();
                 xml.LoadXml(xmlContent);
-                OnPropertyChanged();
             }
             catch (XmlException exception)
             {
@@ -231,10 +228,10 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
     }
 
     /// <summary>
-    /// Gets the possible <see cref="CsdbProgram"/> programs.
+    ///     Gets the possible <see cref="CsdbProgram" /> programs.
     /// </summary>
     /// <value>
-    /// The possible <see cref="CsdbProgram"/> programs.
+    ///     The possible <see cref="CsdbProgram" /> programs.
     /// </value>
     public string[] PossiblePrograms
     {
@@ -396,13 +393,13 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
                 bestMatchManualKey.Enqueue(manualNameKey, Jaccard.Distance(Manual, manualNameKey));
             return bestMatchManualKey.Dequeue();
         });
-        logger.LogTrace(AppResources.ClosestManualFoundForProgramManualIsClosestManual, Program, Manual,
+        if(Manual != closestManual) logger.LogTrace(AppResources.ClosestManualFoundForProgramManualIsClosestManual, Program, Manual,
             closestManual);
         return checkoutItems[csdbProgram][closestManual];
     }
 
     /// <summary>
-    ///     Asynchronously gets the XML nodes for the selected UOW states.
+    ///     Asynchronously gets the XML nodes by checkout element names. The <see cref="XPath"/> also restricts the list to just the selected states.
     /// </summary>
     /// <returns></returns>
     private async Task<XmlNode[]> GetXmlNodesAsync()
@@ -427,7 +424,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
     private static partial Regex TerminusCharPattern();
 
     /// <summary>The XML filename regular expression pattern.</summary>
-    [GeneratedRegex(@"(?<basename>[\w_-]+[\d-]{8,}).*", RegexOptions.Compiled | RegexOptions.Multiline, 15 * 1000)]
+    [GeneratedRegex(@"(?<basename>[\w_-]+[\d-]{8,}).*", RegexOptions.Compiled | RegexOptions.Multiline, 15*1000)]
     internal static partial Regex XmlFilenameRe();
 
     /// <summary>
@@ -678,9 +675,8 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
     }
 
     private async Task WriteNodesAsync(IReadOnlyList<XmlNode> nodes, string baseName, string dirPath,
-        IProgress<double> progress)
+        IProgress<double> progress, CancellationToken token = default)
     {
-        var nodeNum = 1;
         for (var i = 0; i < nodes.Count; i++)
         {
             progress.Report(100.0 * (i + 1) / nodes.Count);
@@ -689,17 +685,48 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
                 ResolveEntities = false
             };
             xmlFragment.AppendChild(xmlFragment.ImportNode(nodes[i], true));
-            var key = nodes[i].Attributes?["key"]?.Value ?? StripNonWordChars()
-                .Replace(Convert.ToBase64String(SHA256.HashData(BitConverter.GetBytes(nodes[i].GetHashCode()))),
-                    string.Empty);
+            var key = GetFragmentName(nodes[i]);
             var outPath = Path.Combine(dirPath, $"{baseName}-{key}.xml");
 
             // write the fragment to the outPath
-            await Task.Run(() => xmlFragment.Save(outPath)).ConfigureAwait(false);
+            await Task.Run(async () =>
+            {
+                try
+                {
+                    xmlFragment.Save(outPath);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    logger.LogCritical(e, MauiXmlSplitter.Resources.AppResources.UnableToSaveToWriteToPathOutput, outPath); 
+                    ModalOption option = new()
+                    {
+                        FooterButtonColor = ButtonColor.Danger,
+                        FooterButtonText = AppResources.OK,
+                        IsVerticallyCentered = true,
+                        Message = e.Message,
+                        ShowFooterButton = true,
+                        Size = ModalSize.Regular,
+                        Title = MauiXmlSplitter.Resources.AppResources.UnableToWriteToOutputPath,
+                        Type = ModalType.Danger
+                    };
+                    await modalService.ShowAsync(option);
+                    throw new OperationCanceledException(token);
+                }
+            }, token).ConfigureAwait(false);
 
-            logger.LogTrace(AppResources.WroteFragmentName, Path.GetFileName(outPath));
+            logger.LogInformation(AppResources.WroteFragmentName, Path.GetFileName(outPath));
         }
     }
+
+    /// <summary>
+    /// Constructs the name of the fragment using the <c>key</c> attribute.
+    /// Where there is no <c>key</c> attribute, the <see cref="MD5"/> of the hash code is computed.
+    /// </summary>
+    /// <param name="xmlNode">The XML node.</param>
+    /// <returns>The <c>key</c> attribute or the <see cref="MD5"/> of the hash code.</returns>
+    public static string GetFragmentName(XmlNode xmlNode) => xmlNode.Attributes?["key"]?.Value ?? StripNonWordChars()
+        .Replace(Convert.ToBase64String(MD5.HashData(BitConverter.GetBytes(xmlNode.GetHashCode()))),
+            string.Empty);
 
     public bool IsReadyVerbose(IProgress<double> progress)
     {
@@ -780,13 +807,14 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
     public async Task<bool> ExecuteSplit(object sender, EventArgs e, IProgress<double> progress,
         CancellationToken token)
     {
+        if(report is XmlSplitReport bagOfReport) bagOfReport.Clear();
         if (!IsReadyVerbose(progress) || UowStates?.Any() != true)
             return false;
         logger.LogInformation(AppResources.FoundNumUnitsOfWorkInTheManual, UowStates.Count());
 
         try
         {
-            await Task.Run(() => xml.LoadXml(xmlContent!), token).ConfigureAwait(false);
+            await Task.Run(() => { xml = new BaXmlDocument(); xml.LoadXml(xmlContent!);}, token).ConfigureAwait(false);
         }
         catch (XmlException xmlException)
         {
@@ -794,12 +822,12 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
             ModalOption option = new()
             {
                 FooterButtonColor = ButtonColor.Danger,
-                FooterButtonText = "OK",
+                FooterButtonText = AppResources.OK,
                 IsVerticallyCentered = true,
                 Message = xmlException.Message,
                 ShowFooterButton = true,
                 Size = ModalSize.Regular,
-                Title = "Error loading XML",
+                Title = AppResources.ErrorLoadingXML,
                 Type = ModalType.Danger
             };
             await modalService.ShowAsync(option);
@@ -837,10 +865,76 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
             return false;
         }
 
-        await WriteNodesAsync(nodes, Path.GetFileNameWithoutExtension(XmlSourceFile), OutputDirectory, progress);
+        try
+        {
+            #region WriteXmlFragments
+            await WriteNodesAsync(nodes, XmlSourceFileBaseName, OutputDirectory, progress,
+                    token).ConfigureAwait(false); 
+            #endregion WriteXmlFragments
+
+            report.BaseName = XmlSourceFileBaseName;
+
+            #region CheckoutNodeBuilding
+            /* Populate checkout node children for report building */
+            Dictionary<XmlNode, List<StateWithNode>> childrenPerCheckoutItem = new(nodes.Length);
+            // ReSharper disable once MergeIntoPattern
+            if (FullyQualifiedSelectedStates is null || nodes.Length == 0 || (FullyQualifiedSelectedStates.Count() is { } statesCount && statesCount == 0)) throw new OperationCanceledException(token);
+            for (var i = 0; i < statesCount; i++)
+            {
+                progress.Report(100.0 * (i + 1) / statesCount);
+                if (FullyQualifiedSelectedStates.ElementAt(i) is not { XPath: { } xpath } state ||
+                    xml.SelectSingleNode(xpath) is not { } child) continue;
+                if (nodes.FirstOrDefault(possibleParent => SplittingReport.IsDescendant(possibleParent, child)) is not
+                    { } parent)
+                {
+                    Debug.WriteLineIf(await GetCheckoutElementNamesAsync() is {} checkoutElementNames && checkoutElementNames.Contains(FullyQualifiedSelectedStates.ElementAt(i).TagName),$"Could not find the parent node for state {state}","Error");
+                    continue;
+                }
+                if(childrenPerCheckoutItem.TryGetValue(parent, out var children))
+                    children.Add(new StateWithNode(state, child));
+                else
+                    childrenPerCheckoutItem.Add(parent, [new StateWithNode(state,child)]);
+            }
+            #endregion CheckoutNodeBuilding
+
+            #region ReportEntryBuilding
+            for (var i = 0; i < childrenPerCheckoutItem.Keys.Count; i++)
+            {
+                progress.Report(100.0 * (i + 1) / childrenPerCheckoutItem.Keys.Count);
+                var parent = childrenPerCheckoutItem.Keys.ElementAt(i);
+                report.AddEntries(childrenPerCheckoutItem[parent],parent,i+1);
+            }
+            #endregion ReportEntryBuilding
+
+            #region SaveReport
+
+            var reportTypes = Enum.GetValuesAsUnderlyingType<XmlSplitReport.ReportFormat>()
+                .Cast<XmlSplitReport.ReportFormat>().ToArray();
+            for (var i = 0; i < reportTypes.Length; i++)
+            {
+                progress.Report(100.0 * (i + 1) / childrenPerCheckoutItem.Keys.Count);
+                if (Enum.GetName(reportTypes[i]) is not { } extension)
+                {
+                    continue;
+                }
+                var outPath = Path.Join(OutputDirectory, $"{report.Name}.{extension.ToLowerInvariant()}");
+                await report.SaveAsync(outPath, reportTypes[i]).ConfigureAwait(false);
+                logger.LogInformation(AppResources.WritingSplitReportAsFormat, extension);
+            }
+
+            #endregion SaveReport
+        }
+        catch (OperationCanceledException)
+        {
+            logger.LogWarning(AppResources.SavingFragmentsCancelled);
+            return false;
+        }
+        finally
+        {
+            progress.Report(1);
+        }
         logger.LogInformation(AppResources.SplittingXMLFileXmlFilePathIntoNumNodesFragments, xmlSourceFile,
             nodes.Length.ToString());
-        progress.Report(1);
         return true;
     }
 
@@ -848,5 +942,33 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, XmlS
     private static partial Regex StripNonWordChars();
 }
 
+/// <summary>
+/// Struct to correlate <see cref="UowState"/> state with <see cref="XmlNode"/> node
+/// </summary>
+/// <seealso cref="System.IEquatable&lt;StateWithNode&gt;" />
+public record struct StateWithNode(UowState State, XmlNode Child)
+{
+    /// <summary>
+    /// Performs an implicit conversion from <see cref="MauiXmlSplitter.Models.StateWithNode"/> to <see cref="(MauiXmlSplitter.Models.UowState state, System.Xml.XmlNode child)"/>.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    /// <returns>
+    /// The result of the conversion.
+    /// </returns>
+    public static implicit operator (UowState state, XmlNode child)(StateWithNode value)
+    {
+        return (value.State, value.Child);
+    }
 
-
+    /// <summary>
+    /// Performs an implicit conversion from <see cref="(MauiXmlSplitter.Models.UowState State, System.Xml.XmlNode Child)"/> to <see cref="MauiXmlSplitter.Models.StateWithNode"/>.
+    /// </summary>
+    /// <param name="value">The value.</param>
+    /// <returns>
+    /// The result of the conversion.
+    /// </returns>
+    public static implicit operator StateWithNode((UowState State, XmlNode Child) value)
+    {
+        return new StateWithNode(value.State, value.Child);
+    }
+}
