@@ -1,7 +1,7 @@
-﻿using Google.Protobuf.WellKnownTypes;
+﻿using System.Text.Json.Serialization;
+using Google.Protobuf.WellKnownTypes;
 using RestSharp;
 using RestSharp.Authenticators;
-using System.Text.Json.Serialization;
 
 namespace MauiXmlSplitter.Data;
 
@@ -20,7 +20,7 @@ internal partial class Remote
         private readonly HashiCorpIdentity identity;
 
         /// <summary>
-        /// The internal <see cref="RestClient"/> client for receiving the HashiCorp secrets
+        /// The internal <see cref="RestSharp.RestClient"/> client for receiving the HashiCorp secrets
         /// </summary>
         private readonly RestClient hashiCorpClient;
 

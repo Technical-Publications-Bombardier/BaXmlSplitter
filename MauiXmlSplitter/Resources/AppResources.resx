@@ -314,10 +314,10 @@
     <value>Save</value>
   </data>
   <data name="Saving" xml:space="preserve">
-	  <value>Saving...</value>
+    <value>Saving...</value>
   </data>
   <data name="SavingFragmentsCancelled" xml:space="preserve">
-	  <value>Saving fragments cancelled</value>
+    <value>Saving fragments cancelled</value>
   </data>
   <data name="Secrets" xml:space="preserve">
     <value>Secrets</value>
@@ -397,6 +397,9 @@
   </data>
   <data name="XMLNodesWereEmptyNoCheckoutUnitsToExport" xml:space="preserve">
     <value>XML nodes were empty: No checkout units to export.</value>
+  </data>
+  <data name="XmlSplitReportWrittenAsHtml" xml:space="preserve">
+    <value>The XML splitting report was written as HTML at </value>
   </data>
   <data name="XmlSplitter" xml:space="preserve">
     <value>XmlSplitter</value>

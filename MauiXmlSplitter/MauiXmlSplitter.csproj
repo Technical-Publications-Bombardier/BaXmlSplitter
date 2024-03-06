@@ -123,12 +123,12 @@
 	<ItemGroup>
 		<PackageReference Include="Azure.Storage.Blobs" Version="12.20.0-beta.1" />
 		<PackageReference Include="Blazor.Bootstrap" Version="2.0.0" />
-		<PackageReference Include="Blazor.ContextMenu" Version="1.17.0" />
+		<PackageReference Include="Blazor.ContextMenu" Version="2.0.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="DartSassBuilder" Version="1.1.0" />
 		<PackageReference Include="F23.StringSimilarity" Version="6.0.0" />
-		<PackageReference Include="Google.Protobuf" Version="3.26.0-rc2" />
+		<PackageReference Include="Google.Protobuf" Version="3.26.0-rc3" />
 		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.22.0" />
 		<PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.22.0" />
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.2" />
@@ -179,56 +179,17 @@
 
 	<!-- Build Properties must be defined within these property groups to ensure successful publishing
        to the Mac App Store. See: https://aka.ms/maui-publish-app-store#define-build-properties-in-your-project-file -->
-	<PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst')) and '$(Configuration)' == 'Debug'">
-		<CodesignEntitlements>Platforms/MacCatalyst/Entitlements.Debug.plist</CodesignEntitlements>
+	<PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst'))">
+		<CodesignEntitlements>$(CodesignEntitlements)</CodesignEntitlements>
+		<UseHardenedRuntime Condition="'$(Configuration)'=='Release'">true</UseHardenedRuntime>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst')) and '$(Configuration)' == 'Release'">
-		<CodesignEntitlements>Platforms/MacCatalyst/Entitlements.Release.plist</CodesignEntitlements>
-		<UseHardenedRuntime>true</UseHardenedRuntime>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='$(Configuration)|net8.0-*|AnyCPU'">
 		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
 		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-		<AndroidKeyStore>False</AndroidKeyStore>
+		<AndroidKeyStore Condition="'$(Configuration)'=='Debug'">False</AndroidKeyStore>
+		<RuntimeIdentifier Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">$(RuntimeIdentifierOverride)</RuntimeIdentifier>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
-		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
-		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|AnyCPU'">
-		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
-		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
-		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
-		<RuntimeIdentifier>$(RuntimeIdentifierOverride)</RuntimeIdentifier>
-		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
-		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
-		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-		<AndroidKeyStore>False</AndroidKeyStore>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
-		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
-		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|AnyCPU'">
-		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
-		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|AnyCPU'">
-		<ApplicationTitle>Bombardier XML Splitter</ApplicationTitle>
-		<ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-	</PropertyGroup>
 	
 </Project>

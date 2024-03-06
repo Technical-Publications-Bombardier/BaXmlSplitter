@@ -4,8 +4,11 @@ using System.Text.Json.Serialization;
 
 // ReSharper disable UnusedMember.Global
 
-namespace MauiXmlSplitter.Data
+namespace TechPubsDatabase.Models
 {
+    /// <summary>
+    /// The CSDB db context.
+    /// </summary>
     public static class CsdbContext
     {
         /// <summary>The CSDB programs.</summary>
@@ -42,8 +45,13 @@ namespace MauiXmlSplitter.Data
             LJ4045PROD
         };
     }
+    /// <summary>
+    /// Deserializer for <see cref="CsdbContext.CsdbProgram"/>
+    /// </summary>
+    /// <seealso cref="CsdbContext.CsdbProgram" />
     public class CsdbProgramConverter : JsonConverter<CsdbContext.CsdbProgram>
     {
+        /// <inheritdoc />
         public override CsdbContext.CsdbProgram Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             // Read the string value from the JSON
@@ -59,6 +67,7 @@ namespace MauiXmlSplitter.Data
             throw new JsonException($"Invalid value for CsdbProgram: {value}");
         }
 
+        /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer, CsdbContext.CsdbProgram value, JsonSerializerOptions options)
         {
             // Write the enum value as a string to the JSON
@@ -66,6 +75,7 @@ namespace MauiXmlSplitter.Data
         }
 
         // Override the WriteAsPropertyName method
+        /// <inheritdoc />
         public override void WriteAsPropertyName(Utf8JsonWriter writer, CsdbContext.CsdbProgram value, JsonSerializerOptions options)
         {
             // Write the enum value as a string property name to the JSON
@@ -73,6 +83,7 @@ namespace MauiXmlSplitter.Data
         }
 
         // Override the ReadAsPropertyName method
+        /// <inheritdoc />
         public override CsdbContext.CsdbProgram ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             // Read the string property name from the JSON
@@ -88,6 +99,4 @@ namespace MauiXmlSplitter.Data
             throw new JsonException($"Invalid value for CsdbProgram: {value}");
         }
     }
-
-
 }

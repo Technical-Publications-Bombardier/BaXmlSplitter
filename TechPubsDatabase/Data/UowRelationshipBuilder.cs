@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using System.Xml;
+﻿using System.Xml;
 using Microsoft.EntityFrameworkCore;
 
-namespace MauiXmlSplitter.Data
+namespace TechPubsDatabase.Data
 {
     /// <summary>
     /// Build the child-parent relationship between units-of-work.
@@ -30,8 +29,9 @@ namespace MauiXmlSplitter.Data
         /// </summary>
         /// <param name="parentNode">The parent node.</param>
         /// <param name="parentObjectRef">The parent object reference.</param>
-        private void AppendChildren(XmlNode parentNode, int parentObjectRef)
+        private void AppendChildren(XmlNode parentNode, long parentObjectRef)
         {
+            if (context.ObjectNew == null) return;
             var children = context.ObjectNew
                 .Include(o => o.ObjectAttributes)
                 .Where(o => o.ParentObjectId == parentObjectRef)

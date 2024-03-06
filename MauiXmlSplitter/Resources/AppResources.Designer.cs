@@ -448,15 +448,6 @@ namespace MauiXmlSplitter.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You do not have permission to create a directory at &apos;{OutputDirectory}&apos;.
-        /// </summary>
-        internal static string htmlPage {
-            get {
-                return ResourceManager.GetString("htmlPage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Initialization was cancelled.
         /// </summary>
         internal static string InitializationWasCancelled {
@@ -894,6 +885,15 @@ namespace MauiXmlSplitter.Resources {
         internal static string XMLNodesWereEmptyNoCheckoutUnitsToExport {
             get {
                 return ResourceManager.GetString("XMLNodesWereEmptyNoCheckoutUnitsToExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The XML splitting report was written as HTML at .
+        /// </summary>
+        internal static string XmlSplitReportWrittenAsHtml {
+            get {
+                return ResourceManager.GetString("XmlSplitReportWrittenAsHtml", resourceCulture);
             }
         }
         

@@ -498,7 +498,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, IXml
     {
         await using var checkoutItemsStream =
             await FileSystem.OpenAppPackageFileAsync("CheckoutItems.json").ConfigureAwait(false);
-        await FileSystem.OpenAppPackageFileAsync("CheckoutItems.json").ConfigureAwait(false);
+        
         return await JsonSerializer
             .DeserializeAsync<Dictionary<CsdbProgram, Dictionary<string, string[]>>>(checkoutItemsStream, options,
                 token)
@@ -912,7 +912,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, IXml
                 .Cast<XmlSplitReport.ReportFormat>().ToArray();
             for (var i = 0; i < reportTypes.Length; i++)
             {
-                progress.Report(100.0 * (i + 1) / childrenPerCheckoutItem.Keys.Count);
+                progress.Report(100.0 * (i + 1) / reportTypes.Length);
                 if (Enum.GetName(reportTypes[i]) is not { } extension)
                 {
                     continue;
