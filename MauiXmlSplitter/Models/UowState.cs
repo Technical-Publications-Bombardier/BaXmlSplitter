@@ -234,6 +234,8 @@ namespace MauiXmlSplitter.Models
         /// </value>
         public bool IsSelected { get; set; }
     }
+
+    /// <inheritdoc />
     public class UowStateConverter : JsonConverter<UowState>
     {
         public override UowState Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -264,31 +266,31 @@ namespace MauiXmlSplitter.Models
                 // Set the corresponding property of the UowState instance
                 switch (propertyName)
                 {
-                    case var property when string.Equals(property,"statename",StringComparison.InvariantCultureIgnoreCase):
+                    case var _ when string.Equals(propertyName,"statename",StringComparison.InvariantCultureIgnoreCase):
                         uowState.StateName = reader.GetString();
                         break;
-                    case var property when string.Equals(property,"value",StringComparison.InvariantCultureIgnoreCase):
+                    case var _ when string.Equals(propertyName,"value",StringComparison.InvariantCultureIgnoreCase):
                         uowState.StateValue = reader.GetInt32();
                         break;
-                    case var property when string.Equals(property,"remark",StringComparison.InvariantCultureIgnoreCase):
+                    case var _ when string.Equals(propertyName,"remark",StringComparison.InvariantCultureIgnoreCase):
                         uowState.Remark = reader.GetString();
                         break;
-                    case var property when string.Equals(property,"xpath",StringComparison.InvariantCultureIgnoreCase):
+                    case var _ when string.Equals(propertyName,"xpath",StringComparison.InvariantCultureIgnoreCase):
                         uowState.XPath = reader.GetString();
                         break;
-                    case var property when string.Equals(property,"tagname",StringComparison.InvariantCultureIgnoreCase):
+                    case var _ when string.Equals(propertyName,"tagname",StringComparison.InvariantCultureIgnoreCase):
                         uowState.TagName = reader.GetString();
                         break;
-                    case var property when string.Equals(property,"key",StringComparison.InvariantCultureIgnoreCase):
+                    case var _ when string.Equals(propertyName,"key",StringComparison.InvariantCultureIgnoreCase):
                         uowState.Key = reader.GetString();
                         break;
-                    case var property when string.Equals(property,"resource",StringComparison.InvariantCultureIgnoreCase):
+                    case var _ when string.Equals(propertyName,"resource",StringComparison.InvariantCultureIgnoreCase):
                         uowState.Resource = reader.GetString();
                         break;
-                    case var property when string.Equals(property,"title",StringComparison.InvariantCultureIgnoreCase):
+                    case var _ when string.Equals(propertyName,"title",StringComparison.InvariantCultureIgnoreCase):
                         uowState.Title = reader.GetString();
                         break;
-                    case var property when string.Equals(property,"level",StringComparison.InvariantCultureIgnoreCase):
+                    case var _ when string.Equals(propertyName,"level",StringComparison.InvariantCultureIgnoreCase):
                         uowState.Level = reader.GetString();
                         break;
                     default:

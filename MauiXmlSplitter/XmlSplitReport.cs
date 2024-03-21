@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Xml;
 using MauiXmlSplitter.Models;
-using Microsoft.JSInterop;
 
 namespace MauiXmlSplitter;
 

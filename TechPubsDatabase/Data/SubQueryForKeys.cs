@@ -17,7 +17,7 @@ namespace TechPubsDatabase.Data
         [Required]
         [Column(TypeName = "NUMBER(12)")]
         [MaxLength(12)]
-        public long ObjectId { get; set; }
+        public long ObjectId { get; init; }
 
         /// <summary>
         /// Gets or sets the key.
@@ -28,6 +28,6 @@ namespace TechPubsDatabase.Data
         [Required]
         [Column(TypeName = "VARCHAR2(1999)")]
         [MaxLength(1999)]
-        public string? Key { get; set; }
+        public string? Key { get; init; }
     }
 }

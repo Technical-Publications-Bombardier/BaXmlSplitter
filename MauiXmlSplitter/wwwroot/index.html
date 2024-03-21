@@ -48,6 +48,25 @@
         window.getRenderedHtml = function () {
             return document.querySelector("#splittingReport").outerHTML;
         }
+        window.updateLogo = () => {
+            setTimeout(() => {
+                var logo = document.querySelector("#bbdlogo img");
+                var bbdlogo = document.querySelector("#bbdlogo");
+
+                if (logo != null && bbdlogo != null) {
+                    var bbdlogoWidth = bbdlogo.offsetWidth;
+
+                    if (bbdlogoWidth < 270) {
+                        logo.src = 'img/BA_Logo_White.svg';
+                    } else {
+                        logo.src = 'img/BBD_Logo_White.svg';
+                    }
+                }
+            }, 20);
+        }
+        window.onload = updateLogo;
+        window.onresize = updateLogo;
+
     </script>
 </body>
 

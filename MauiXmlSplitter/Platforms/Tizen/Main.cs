@@ -4,7 +4,7 @@ using System;
 
 namespace MauiXmlSplitter
 {
-    internal class Program : MauiApplication
+    internal partial class Program : MauiApplication
     {
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 

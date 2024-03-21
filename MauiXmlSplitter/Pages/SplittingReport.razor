@@ -190,7 +190,7 @@
     /// <summary>
     ///     The report formats
     /// </summary>
-    protected static string[] SplittingReportFileExtensions = Enum.GetNames<XmlSplitReport.ReportFormat>();
+    private static readonly string[] SplittingReportFileExtensions = Enum.GetNames<XmlSplitReport.ReportFormat>();
 
     private Modal? ReportModal { get; set; }
 

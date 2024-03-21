@@ -498,7 +498,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, IXml
     {
         await using var checkoutItemsStream =
             await FileSystem.OpenAppPackageFileAsync("CheckoutItems.json").ConfigureAwait(false);
-        
+
         return await JsonSerializer
             .DeserializeAsync<Dictionary<CsdbProgram, Dictionary<string, string[]>>>(checkoutItemsStream, options,
                 token)
@@ -697,7 +697,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, IXml
                 }
                 catch (UnauthorizedAccessException e)
                 {
-                    logger.LogCritical(e, MauiXmlSplitter.Resources.AppResources.UnableToSaveToWriteToPathOutput, outPath); 
+                    logger.LogCritical(e, MauiXmlSplitter.Resources.AppResources.UnableToSaveToWriteToPathOutput, outPath);
                     ModalOption option = new()
                     {
                         FooterButtonColor = ButtonColor.Danger,
@@ -869,7 +869,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, IXml
         {
             #region WriteXmlFragments
             await WriteNodesAsync(nodes, XmlSourceFileBaseName, OutputDirectory, progress,
-                    token).ConfigureAwait(false); 
+                    token).ConfigureAwait(false);
             #endregion WriteXmlFragments
 
             report.BaseName = XmlSourceFileBaseName;
@@ -949,7 +949,7 @@ public partial class XmlSplitter(ILogger logger, ModalService modalService, IXml
 public record struct StateWithNode(UowState State, XmlNode Child)
 {
     /// <summary>
-    /// Performs an implicit conversion from <see cref="MauiXmlSplitter.Models.StateWithNode"/> to <see cref="(MauiXmlSplitter.Models.UowState state, System.Xml.XmlNode child)"/>.
+    /// Performs an implicit conversion from <see cref="MauiXmlSplitter.Models.StateWithNode"/> to <see cref="XmlNode"/>.
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>
@@ -961,7 +961,7 @@ public record struct StateWithNode(UowState State, XmlNode Child)
     }
 
     /// <summary>
-    /// Performs an implicit conversion from <see cref="(MauiXmlSplitter.Models.UowState State, System.Xml.XmlNode Child)"/> to <see cref="MauiXmlSplitter.Models.StateWithNode"/>.
+    /// Performs an implicit conversion from <see cref="XmlNode"/> to <see cref="MauiXmlSplitter.Models.StateWithNode"/>.
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns>

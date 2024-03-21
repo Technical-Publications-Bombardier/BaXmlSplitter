@@ -633,7 +633,7 @@ public partial class XmlSplitterViewModel(
 
     [GeneratedRegex(@"^(?<docnbr>[^\r\n]*)")]
     private static partial Regex DocnbrFromUowRe();
-    
+
     [GeneratedRegex(@"\d{4}(?: - \d{2}){5} - \d{7}")]
     public static partial Regex ReportDateFormatRe();
 }

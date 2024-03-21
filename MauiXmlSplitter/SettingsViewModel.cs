@@ -1,15 +1,10 @@
 ﻿using System.Collections.Concurrent;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.CompilerServices;
 using BlazorBootstrap;
-using BlazorContextMenu;
-using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
-using MauiXmlSplitter.Models;
 using MauiXmlSplitter.Shared;
 using Microsoft.Extensions.Logging;
+
 namespace MauiXmlSplitter;
 
 /// <summary>

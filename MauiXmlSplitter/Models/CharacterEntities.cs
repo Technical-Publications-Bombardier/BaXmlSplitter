@@ -27,29 +27,58 @@ namespace MauiXmlSplitter.Models
 
             while (reader.Read())
             {
-                if (reader.TokenType == JsonTokenType.EndObject)
+                switch (reader.TokenType)
                 {
-                    return characterEntities;
-                }
-
-                if (reader.TokenType == JsonTokenType.PropertyName)
-                {
-                    var propertyName = reader.GetString();
-                    reader.Read();
-                    switch (propertyName)
+                    case JsonTokenType.EndObject:
+                        return characterEntities;
+                    case JsonTokenType.PropertyName:
                     {
-                        case "Entity":
-                            characterEntities.Entity = reader.GetString() ?? string.Empty;
-                            break;
-                        case "Hex":
-                            characterEntities.Hex = reader.GetString() ?? string.Empty;
-                            break;
-                        case "Description":
-                            characterEntities.Description = reader.GetString() ?? string.Empty;
-                            break;
-                        default:
-                            throw new JsonException();
+                        var propertyName = reader.GetString();
+                        reader.Read();
+                        switch (propertyName)
+                        {
+                            case "Entity":
+                                characterEntities.Entity = reader.GetString() ?? string.Empty;
+                                break;
+                            case "Hex":
+                                characterEntities.Hex = reader.GetString() ?? string.Empty;
+                                break;
+                            case "Description":
+                                characterEntities.Description = reader.GetString() ?? string.Empty;
+                                break;
+                            default:
+                                throw new JsonException();
+                        }
+
+                        break;
                     }
+                    case JsonTokenType.None:
+                        break;
+                    case JsonTokenType.StartObject:
+                        break;
+                    case JsonTokenType.StartArray:
+                        break;
+                    case JsonTokenType.EndArray:
+                        break;
+                    case JsonTokenType.Comment:
+                        break;
+                    case JsonTokenType.String:
+                        break;
+                    case JsonTokenType.Number:
+                        break;
+                    case JsonTokenType.True:
+                        break;
+                    case JsonTokenType.False:
+                        break;
+                    case JsonTokenType.Null:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException
+                        {
+                            HelpLink = null,
+                            HResult = 0,
+                            Source = null
+                        };
                 }
             }
 

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
 namespace MauiXmlSplitter.Shared;

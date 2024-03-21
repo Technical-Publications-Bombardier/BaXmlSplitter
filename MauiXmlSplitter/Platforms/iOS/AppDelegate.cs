@@ -1,10 +1,15 @@
-﻿using Foundation;
+﻿#if ANDROID
+using Android.Runtime;
+#endif
+using Foundation;
 
 namespace MauiXmlSplitter
 {
+    /// <inheritdoc />
     [Register("AppDelegate")]
-    public class AppDelegate : MauiUIApplicationDelegate
+    public partial class AppDelegate : MauiUIApplicationDelegate
     {
+        /// <inheritdoc />
         protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
     }
 }

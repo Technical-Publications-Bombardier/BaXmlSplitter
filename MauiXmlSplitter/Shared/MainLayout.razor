@@ -1,4 +1,5 @@
 ﻿@using MauiXmlSplitter.Resources
+@inject IJSRuntime JSRuntime
 @inherits LayoutComponentBase
 
 <div class="bb-page">
@@ -46,5 +47,11 @@
 
         return navItems;
     }
-    private void ToggleSidebar() => sidebar?.ToggleSidebar();
+
+    private async Task ToggleSidebar()
+    {
+        await JSRuntime.InvokeVoidAsync("updateLogo");
+        sidebar?.ToggleSidebar();
+    }
+
 }
