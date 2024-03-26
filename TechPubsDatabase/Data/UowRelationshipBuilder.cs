@@ -1,73 +1,108 @@
-﻿using System.Xml;
+﻿using System.Diagnostics;
+using System.Xml;
 using Microsoft.EntityFrameworkCore;
+using ManualState = TechPubsDatabase.Models.CsdbContext.ManualState;
 
-namespace TechPubsDatabase.Data
+namespace TechPubsDatabase.Data;
+
+/// <summary>
+///     Build the child-parent relationship between units-of-work.
+/// </summary>
+public class UowRelationshipBuilder(ManualContext context)
 {
     /// <summary>
-    /// Build the child-parent relationship between units-of-work.
+    /// Checks whether the unit-of-work <paramref name="uow"/> is within the publication state <paramref name="state"/>.
     /// </summary>
-    public class UowRelationshipBuilder(ManualContext context)
+    /// <param name="uow">The unit-of-work as a row in the <c>OBJECTNEW</c> table.</param>
+    /// <param name="state">The selected state.</param>
+    /// <returns><c>True</c> if the unit-of-work <paramref name="uow"/> is within the publication state <paramref name="state"/>, <c>False</c> otherwise.</returns>
+    private static bool UowHasPubState(ObjectNew uow, ManualState state)
     {
-        /// <summary>
-        /// Constructs the XML.
-        /// </summary>
-        /// <param name="rootObjectRef">The root object reference.</param>
-        /// <returns></returns>
-        public XmlDocument ConstructXml(int rootObjectRef)
+        return state switch
         {
-            var xmlDoc = new XmlDocument();
-            var rootNode = xmlDoc.CreateElement("root");
-            xmlDoc.AppendChild(rootNode);
+            ManualState.Official => uow.CurrentState == 2,
+            ManualState.WorkInProgress => uow.CurrentState != 2,
+            ManualState.None => false,
+            _ => throw new ArgumentOutOfRangeException(nameof(state), state,
+                "No units-of-work would be selected by this state")
+        };
+    }
 
-            AppendChildren(rootNode, rootObjectRef);
+    /// <summary>
+    ///     Constructs an <see cref="XmlDocument"/> to represent the states for each unit-of-work in the manual.
+    /// </summary>
+    /// <param name="rootName">The name of the root node.</param>
+    /// <param name="rootObjectId">The root object reference.</param>
+    /// <param name="pubState">The desired publication status of the manual</param>
+    /// <returns>An <see cref="XmlDocument"/> to represent the states for each unit-of-work in the manual</returns>
+    public XmlDocument ConstructXml(string rootName, long rootObjectId, ManualState pubState = ManualState.Official)
+    {
+        var xmlDoc = new XmlDocument();
+        var rootNode = xmlDoc.CreateElement(rootName);
+        xmlDoc.AppendChild(rootNode);
 
-            return xmlDoc;
-        }
+        AppendChildren(rootNode, rootObjectId, pubState);
 
-        /// <summary>
-        /// Appends the children.
-        /// </summary>
-        /// <param name="parentNode">The parent node.</param>
-        /// <param name="parentObjectRef">The parent object reference.</param>
-        private void AppendChildren(XmlNode parentNode, long parentObjectRef)
+        return xmlDoc;
+    }
+
+    /// <summary>
+    ///     Appends the children from <see cref="ObjectNew" /> by looking up the object ref.
+    /// </summary>
+    /// <param name="parentNode">The parent node.</param>
+    /// <param name="parentObjectId">The parent object reference.</param>
+    /// <param name="pubState">The desired publication status of the manual</param>
+    private void AppendChildren(XmlNode parentNode, long parentObjectId, ManualState pubState)
+    {
+        if (context.ObjectNew == null || pubState == ManualState.None) return;
+        var children = context.ObjectNew
+            .Include(o => o.ObjectAttributes)
+            .Include(o => o.State)
+            .Where(o => o.ParentObjectId == parentObjectId && o.CurrentState != null && o.CurrentState != 3 /* Filter out OBSOLETE */)
+            .ToList();
+        children = children.Where(o => UowHasPubState(o, pubState)).ToList();
+        Debug.WriteLineIf(children is { Count: > 0 }, $"There were no children for object ref {parentObjectId}",
+            "Information");
+        var childrenAtRevision = children.GroupBy(o => o.ObjectId).Select(group => new
         {
-            if (context.ObjectNew == null) return;
-            var children = context.ObjectNew
-                .Include(o => o.ObjectAttributes)
-                .Where(o => o.ParentObjectId == parentObjectRef)
-                .ToList();
+            ObjectId = group.Key,
+            LatestRevision = group.OrderByDescending(o => o.ValidTime)
+                .ThenByDescending(o => o.ObjectRef) // Use ObjectRef as a tie-breaker
+                .FirstOrDefault()
+        }).Where(g => g.LatestRevision != null);
+        foreach (var latestRevision in childrenAtRevision)
+        {
+            var attributesAtRevision = latestRevision.LatestRevision;
+            if (attributesAtRevision == null)
+                continue;
+            var groupObjectId = attributesAtRevision.ObjectId;
+            var groupObjectName = attributesAtRevision.ObjectName;
+            var groupCurrentState = attributesAtRevision.CurrentState;
 
-            foreach (var child in children)
+            if (string.IsNullOrEmpty(groupObjectName) || parentNode.OwnerDocument?.CreateElement(groupObjectName) is not
+                    { } childNode)
+                continue;
+            parentNode.AppendChild(childNode);
+
+            // Add the state name and value
+            if (groupCurrentState.HasValue)
             {
-                if (parentNode.OwnerDocument?.CreateElement("entity") is not { } childNode)
-                    continue;
-                parentNode.AppendChild(childNode);
-
-                foreach (var property in typeof(ObjectNew).GetProperties())
-                {
-                    var attribute = childNode.OwnerDocument.CreateAttribute(property.Name);
-                    attribute.Value = property.GetValue(child)?.ToString() ?? string.Empty;
-                    childNode.Attributes.Append(attribute);
-                }
-
-                if (child.ObjectAttributes == null)
-                    continue;
-
-                foreach (var objectAttribute in child.ObjectAttributes)
-                {
-                    var attributeNode = childNode.OwnerDocument.CreateElement("attribute");
-                    childNode.AppendChild(attributeNode);
-
-                    foreach (var property in typeof(ObjectAttribute).GetProperties())
-                    {
-                        var attribute = attributeNode.OwnerDocument.CreateAttribute(property.Name);
-                        attribute.Value = property.GetValue(objectAttribute)?.ToString() ?? string.Empty;
-                        attributeNode.Attributes.Append(attribute);
-                    }
-                }
-
-                AppendChildren(childNode, child.ObjectRef);
+                var state = childNode.OwnerDocument.CreateAttribute(nameof(ObjectNew.CurrentState));
+                state.Value = attributesAtRevision.CurrentState.ToString();
+                childNode.Attributes.Append(state);
             }
+
+            // Add the attributes
+            foreach (var uowAttribute in attributesAtRevision.ObjectAttributes?.Where(oa =>
+                         !string.IsNullOrEmpty(oa.AttributeName)) ?? [])
+            {
+                var attribute = childNode.OwnerDocument.CreateAttribute(uowAttribute.AttributeName!);
+                attribute.Value = uowAttribute.AttributeValue;
+                childNode.Attributes.Append(attribute);
+            }
+
+            if (groupObjectId != -1)
+                AppendChildren(childNode, parentObjectId: groupObjectId, pubState);
         }
     }
 }

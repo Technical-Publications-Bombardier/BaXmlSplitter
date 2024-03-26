@@ -61,7 +61,7 @@ namespace TechPubsDatabase.Data
         /// </value>
         [Column(TypeName = "VARCHAR2(1999)")]
         [MaxLength(1999)]
-        public DateTime? RevDate { get; set; }
+        public DateOnly? RevDate { get; set; }
         /// <summary>
         /// Gets or sets the valid time.
         /// </summary>

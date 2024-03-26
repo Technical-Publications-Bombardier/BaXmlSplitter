@@ -44,6 +44,25 @@ namespace TechPubsDatabase.Models
             /// </summary>
             LJ4045PROD
         };
+
+        /// <summary>
+        /// The publication status of the manual
+        /// </summary>
+        public enum ManualState
+        {
+            /// <summary>
+            /// No manual state provided
+            /// </summary>
+            None,
+            /// <summary>
+            /// The authored manual
+            /// </summary>
+            Official,
+            /// <summary>
+            /// The in-progress manual
+            /// </summary>
+            WorkInProgress
+        }
     }
     /// <summary>
     /// Deserializer for <see cref="CsdbContext.CsdbProgram"/>

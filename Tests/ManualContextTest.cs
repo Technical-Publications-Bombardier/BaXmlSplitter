@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using TechPubsDatabase.Data;
 using TechPubsDatabase.Models;
@@ -15,7 +16,7 @@ public class ManualContextTest
     private static readonly string? BaOraConnectionString = Configuration.GetConnectionString("BaOraConnectionString");
 
     // Arrange
-    private static readonly DbContextOptions<ManualContext> Options = new DbContextOptionsBuilder<ManualContext>()
+    private static readonly DbContextOptions<ManualContext> InMemoryOptions = new DbContextOptionsBuilder<ManualContext>()
         .UseInMemoryDatabase("TestDatabase") // Use in-memory database for testing
         .Options;
 
@@ -29,20 +30,20 @@ public class ManualContextTest
     public async Task AnchorTableTest()
     {
         // Insert seed data into the database using one instance of the context
-        await using (var context = new ManualContext(Options, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        await using (var context = new ManualContext(InMemoryOptions, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
         {
             context.Anchor?.Add(new Anchor
             {
                 AnchorRef = 1, ManualObjectRef = 1, SeqNo = 1, ObjectPath = "Test", ObjectRef = 1, Key = "Test",
                 Chg = 'A',
-                RevDate = "Test"
+                RevDate = "20010319"
             });
             await context.SaveChangesAsync();
         }
 
         // Act
         // Use a clean instance of the context to run the test
-        await using (var context = new ManualContext(Options, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        await using (var context = new ManualContext(InMemoryOptions, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
         {
             if (context.Anchor != null)
             {
@@ -58,7 +59,7 @@ public class ManualContextTest
     [Fact]
     public async Task DocumentTableTest()
     {
-        await using (var context = new ManualContext(Options, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        await using (var context = new ManualContext(InMemoryOptions, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
         {
             context.Document?.Add(new Document
             {
@@ -69,7 +70,7 @@ public class ManualContextTest
             await context.SaveChangesAsync();
         }
 
-        await using (var context = new ManualContext(Options, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        await using (var context = new ManualContext(InMemoryOptions, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
         {
             if (context.Document != null)
             {
@@ -85,7 +86,7 @@ public class ManualContextTest
     [Fact]
     public async Task ObjectAttributeTableTest()
     {
-        await using (var context = new ManualContext(Options, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        await using (var context = new ManualContext(InMemoryOptions, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
         {
             context.ObjectAttribute?.Add(new ObjectAttribute
             {
@@ -96,7 +97,7 @@ public class ManualContextTest
             await context.SaveChangesAsync();
         }
 
-        await using (var context = new ManualContext(Options, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        await using (var context = new ManualContext(InMemoryOptions, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
         {
             if (context.ObjectAttribute != null)
             {
@@ -112,7 +113,7 @@ public class ManualContextTest
     [Fact]
     public async Task ObjectNewTableTest()
     {
-        await using (var context = new ManualContext(Options, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        await using (var context = new ManualContext(InMemoryOptions, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
         {
             context.ObjectNew?.Add(new ObjectNew
             {
@@ -124,12 +125,12 @@ public class ManualContextTest
                 ValidTime = DateTime.Now,
                 ObsoleteTime = DateTime.Now,
                 OfflineTime = DateTime.Now,
-                ObjectType = 1
+                ObjectType = false
             });
             await context.SaveChangesAsync();
         }
 
-        await using (var context = new ManualContext(Options, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        await using (var context = new ManualContext(InMemoryOptions, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
         {
             if (context.ObjectNew != null)
             {
@@ -139,6 +140,78 @@ public class ManualContextTest
                 Assert.Equal(1, firstObjectNew.ObjectId);
                 // Add additional assertions for other properties as needed
             }
+        }
+    }
+
+    [Fact]
+    public async Task ConstructXml_WithValidRootObjectRef_ReturnsExpectedXmlDocument()
+    {
+        // Arrange
+        await using (var context = new ManualContext(InMemoryOptions, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        {
+            Assert.NotNull(context);
+            Assert.NotNull(context.ObjectNew);
+            // Seed the database with necessary data
+            context.ObjectNew.Add(new ObjectNew
+            {
+                ObjectRef = 1,
+                ParentObjectId = null,
+                // Add other properties as needed
+            });
+
+            context.ObjectNew.Add(new ObjectNew
+            {
+                ObjectRef = 2,
+                ParentObjectId = 1,
+                // Add other properties as needed
+            });
+
+            await context.SaveChangesAsync();
+        }
+
+        // Act
+        await using (var context = new ManualContext(InMemoryOptions, CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        {
+            var builder = new UowRelationshipBuilder(context);
+            var xmlDocument = builder.ConstructXml("test",1);
+
+            // Assert
+            Assert.NotNull(xmlDocument);
+            Assert.Equal("test", xmlDocument.DocumentElement?.Name);
+            // Add other assertions to verify the structure and content of the generated XML
+        }
+    }
+    [Fact]
+    public async Task ConstructXml_WithIfmGvx_ReturnsExpectedXmlDocument()
+    {
+        // Arrange
+        const string docnbr = "IFM_GVXER";
+        ManualMetadata? ifmGvxerMetadata;
+        await using (var context = new ManualContext(CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        {
+            var cancellationSource = new CancellationTokenSource();
+            Assert.NotNull(context);
+            Assert.True(await context.Database.CanConnectAsync(cancellationSource.Token));
+            // Get the manual state
+
+            ifmGvxerMetadata = (await context.GetManualMetaDataAsync([docnbr])).FirstOrDefault();
+            Assert.NotNull(ifmGvxerMetadata);
+            foreach (var property in typeof(ManualMetadata).GetProperties())
+            {
+                Assert.NotNull(property.GetValue(ifmGvxerMetadata));
+            }
+        }
+
+        // Act
+        await using (var context = new ManualContext(CsdbContext.CsdbProgram.B_IFM, BaOraConnectionString!))
+        {
+            var builder = new UowRelationshipBuilder(context);
+            var xmlDocument = builder.ConstructXml(docnbr, ifmGvxerMetadata.ParentObjectId);
+
+            // Assert
+            Assert.NotNull(xmlDocument);
+            Assert.Equal(docnbr, xmlDocument.DocumentElement?.Name);
+            xmlDocument.Save("test.xml");
         }
     }
 }

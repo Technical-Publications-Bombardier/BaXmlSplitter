@@ -247,8 +247,7 @@ namespace TechPubsDatabase.Data
         /// </value>
         [Required]
         [Column(TypeName = "NUMBER(1)")]
-        [MaxLength(1)]
-        public byte ObjectType { get; set; }
+        public bool ObjectType { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the data.
@@ -297,5 +296,7 @@ namespace TechPubsDatabase.Data
         /// The object attributes.
         /// </value>
         public List<ObjectAttribute>? ObjectAttributes { get; set; }
+
+        public State? State { get; set; }
     }
 }
