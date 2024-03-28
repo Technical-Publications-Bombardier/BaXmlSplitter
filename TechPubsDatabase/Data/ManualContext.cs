@@ -158,7 +158,7 @@ public partial class ManualContext(
         );
     }
 
-    public async Task<IEnumerable<ManualMetadata?>> GetManualMetaDataAsync(IEnumerable<string> docnbrs)
+    public async Task<IEnumerable<ManualMetadata?>> GetManualMetaDataAsync(IEnumerable<string> docnbrs, CancellationToken token = default)
     {
         var query = $"""
                      with ranked_subq as (
@@ -195,7 +195,7 @@ public partial class ManualContext(
                      		  from objectnew o
                      		  left join objectattribute manual
                      		on o.objectref = manual.objectref
-                     		   and manual.attributename = 'MANUAL',
+                     		   and (manual.attributename = 'MANUAL' or manual.attributename = 'MANUALTYPE'),
                      		       objectattribute docnbr,
                      		       objectattribute cus,
                      		       objectattribute revdate,
@@ -231,11 +231,8 @@ public partial class ManualContext(
                             objp
                        from ranked_subq
                       where rn = 1;
-                     """.Replace("'MANUAL'",
-            program != CsdbContext.CsdbProgram.B_IFM
-                ? "'MANUALTYPE'" /* In maintenance manual DB's, we use 'MANUALTYPE' just to mix it up for no good reason */
-                : "'MANUAL'", StringComparison.Ordinal);
+                     """;
         Debug.Assert(ManualsMetadata != null, nameof(ManualsMetadata) + " != null");
-        return await ManualsMetadata.FromSqlRaw(query).ToListAsync();
+        return await ManualsMetadata.FromSqlRaw(query).ToListAsync(cancellationToken: token);
     }
 }

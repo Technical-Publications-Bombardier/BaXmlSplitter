@@ -14,7 +14,7 @@ public class ManualMetadata
     [Required]
     [Column(TypeName = "VARCHAR2(255)")]
     [MaxLength(255)]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     /// <summary>
     ///     Gets or sets the MANUAL.
@@ -22,10 +22,9 @@ public class ManualMetadata
     /// <value>
     ///     The MANUAL.
     /// </value>
-    [Required]
     [Column(TypeName = "VARCHAR2(1999)")]
     [MaxLength(1999)]
-    public string Manual { get; set; }
+    public string? Manual { get; set; }
 
     /// <summary>
     ///     Gets or sets the DOCNBR.
@@ -36,7 +35,7 @@ public class ManualMetadata
     [Required]
     [Column(TypeName = "VARCHAR2(1999)")]
     [MaxLength(1999)]
-    public string Docnbr { get; set; }
+    public required string Docnbr { get; set; }
 
     /// <summary>
     ///     Gets or sets the CUS.
@@ -47,7 +46,7 @@ public class ManualMetadata
     [Required]
     [Column(TypeName = "VARCHAR2(1999)")]
     [MaxLength(1999)]
-    public string Cus { get; set; }
+    public required string Cus { get; set; }
 
     /// <summary>
     ///     Gets or sets the TSN.
@@ -58,7 +57,7 @@ public class ManualMetadata
     [Required]
     [Column(TypeName = "VARCHAR2(1999)")]
     [MaxLength(1999)]
-    public string Tsn { get; set; }
+    public required string Tsn { get; set; }
 
     /// <summary>
     ///     Gets or sets the STATE.
@@ -69,7 +68,7 @@ public class ManualMetadata
     [Required]
     [Column(TypeName = "VARCHAR2(40)")]
     [MaxLength(40)]
-    public string State { get; set; }
+    public required string State { get; set; }
 
     /// <summary>
     ///     Gets or sets the revision date.

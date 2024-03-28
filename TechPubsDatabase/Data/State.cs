@@ -24,7 +24,7 @@ public class State
     [Column(TypeName = "VARCHAR2(12)")]
     [MaxLength(12)]
     [Required]
-    public string StateName { get; set; }
+    public required string StateName { get; set; }
 
     /// <summary>
     ///     Gets or sets the Remark.
@@ -34,5 +34,5 @@ public class State
     /// </value>
     [Column(TypeName = "VARCHAR2(1999)")]
     [MaxLength(1999)]
-    public string Remark { get; set; }
+    public string? Remark { get; set; }
 }

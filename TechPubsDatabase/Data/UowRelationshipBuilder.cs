@@ -21,7 +21,7 @@ public class UowRelationshipBuilder(ManualContext context)
         return state switch
         {
             ManualState.Official => uow.CurrentState == 2,
-            ManualState.WorkInProgress => uow.CurrentState != 2,
+            ManualState.WorkInProgress => true,
             ManualState.None => false,
             _ => throw new ArgumentOutOfRangeException(nameof(state), state,
                 "No units-of-work would be selected by this state")
@@ -34,14 +34,15 @@ public class UowRelationshipBuilder(ManualContext context)
     /// <param name="rootName">The name of the root node.</param>
     /// <param name="rootObjectId">The root object reference.</param>
     /// <param name="pubState">The desired publication status of the manual</param>
+    /// <param name="token">The <see cref="CancellationToken"/> token</param>
     /// <returns>An <see cref="XmlDocument"/> to represent the states for each unit-of-work in the manual</returns>
-    public XmlDocument ConstructXml(string rootName, long rootObjectId, ManualState pubState = ManualState.Official)
+    public async Task<XmlDocument> ConstructXml(string rootName, long rootObjectId, ManualState pubState = ManualState.Official, CancellationToken token = default)
     {
         var xmlDoc = new XmlDocument();
         var rootNode = xmlDoc.CreateElement(rootName);
         xmlDoc.AppendChild(rootNode);
 
-        AppendChildren(rootNode, rootObjectId, pubState);
+        await AppendChildrenAsync(rootNode, rootObjectId, pubState, token);
 
         return xmlDoc;
     }
@@ -52,14 +53,15 @@ public class UowRelationshipBuilder(ManualContext context)
     /// <param name="parentNode">The parent node.</param>
     /// <param name="parentObjectId">The parent object reference.</param>
     /// <param name="pubState">The desired publication status of the manual</param>
-    private void AppendChildren(XmlNode parentNode, long parentObjectId, ManualState pubState)
+    /// <param name="token">The <see cref="CancellationToken"/> token</param>
+    private async Task AppendChildrenAsync(XmlNode parentNode, long parentObjectId, ManualState pubState, CancellationToken token = default)
     {
         if (context.ObjectNew == null || pubState == ManualState.None) return;
-        var children = context.ObjectNew
+        var children = await context.ObjectNew
             .Include(o => o.ObjectAttributes)
             .Include(o => o.State)
             .Where(o => o.ParentObjectId == parentObjectId && o.CurrentState != null && o.CurrentState != 3 /* Filter out OBSOLETE */)
-            .ToList();
+            .ToListAsync(cancellationToken: token);
         children = children.Where(o => UowHasPubState(o, pubState)).ToList();
         Debug.WriteLineIf(children is { Count: > 0 }, $"There were no children for object ref {parentObjectId}",
             "Information");
@@ -102,7 +104,7 @@ public class UowRelationshipBuilder(ManualContext context)
             }
 
             if (groupObjectId != -1)
-                AppendChildren(childNode, parentObjectId: groupObjectId, pubState);
+                await AppendChildrenAsync(childNode, parentObjectId: groupObjectId, pubState, token);
         }
     }
 }
